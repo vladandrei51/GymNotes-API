@@ -8,7 +8,6 @@ import org.jsoup.nodes.Document;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
-    private volatile Document doc = null;
     private volatile HTMLParser htmlParser;
 
     private void initializeView(){
@@ -20,21 +19,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeView();
-        htmlParser = new HTMLParser();
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doc = htmlParser.initializeDoc();
-            }
-        });
-        try {
-            t.start();
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(htmlParser.findMuscleGroups(doc));
+
+        htmlParser = new HTMLParser();
+        System.out.println(htmlParser.findMuscleGroups());
 
 
     }

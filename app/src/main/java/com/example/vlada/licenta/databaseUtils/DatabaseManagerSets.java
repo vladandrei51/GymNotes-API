@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.vlada.licenta.domain.Exercise;
-import com.example.vlada.licenta.domain.MuscleGroup;
 import com.example.vlada.licenta.domain.Set;
 
 import java.util.ArrayList;

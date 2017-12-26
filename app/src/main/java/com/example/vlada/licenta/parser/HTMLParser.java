@@ -10,7 +10,24 @@ import java.util.ArrayList;
 
 public class HTMLParser {
 
-    public Document initializeDoc(){
+    private volatile Document doc = null;
+
+    public HTMLParser() {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doc = initializeDoc();
+            }
+        });
+        try {
+            t.start();
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Document initializeDoc(){
         try {
             Document doc = Jsoup.connect("https://www.bodybuilding.com/exercises").get();
             return doc;
@@ -21,7 +38,7 @@ public class HTMLParser {
 
     }
 
-    public ArrayList<String> findMuscleGroups(Document doc){
+    public ArrayList<String> findMuscleGroups(){
         ArrayList<String> muscleGroups = new ArrayList<>();
         Elements section = doc.select("a");
         if (section != null) {
