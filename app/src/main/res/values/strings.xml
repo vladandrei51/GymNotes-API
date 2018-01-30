@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">licenta</string>
+    <string name="server_url">http://172.19.224.168:8080</string>
 </resources>
