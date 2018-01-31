@@ -5,7 +5,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.vlada.licenta.Domain.Exercise;
@@ -15,6 +14,7 @@ import com.example.vlada.licenta.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -26,22 +26,18 @@ import io.realm.Realm;
  */
 
 public class ExerciseActivity extends AppCompatActivity {
-    ArrayList<String> exerciseName;
     ListView lvItems;
     private CompositeDisposable disposables = new CompositeDisposable();
     private ExerciseClient exerciseClient;
     private List<Exercise> exerciseList;
     private Realm realm;
-    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
         exerciseList = new ArrayList<>();
-        exerciseName = new ArrayList<>();
         lvItems = findViewById(R.id.lvItems);
-        searchView = findViewById(R.id.searchView);
 
         this.realm = Realm.getDefaultInstance();
         exerciseClient = new ExerciseClient(this);
@@ -50,6 +46,7 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     private void setupExerciseList() {
+        List<String> exerciseName = exerciseList.stream().map(Exercise::getName).collect(Collectors.toList());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_view, exerciseName);
         lvItems.setAdapter(adapter);
         lvItems.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
@@ -78,7 +75,7 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     private void getExercisesError(Throwable throwable) {
-        displayToast(throwable.getMessage());
+        showAlert(throwable.getMessage(), "Will load cached data if available");
         exerciseList = realm.where(Exercise.class).findAll();
         setupExerciseList();
 
@@ -89,10 +86,8 @@ public class ExerciseActivity extends AppCompatActivity {
         for (int i = 0; i < exercises.size(); i++) {
             Exercise foundExercise = exercises.get(i);
             this.exerciseList.add(foundExercise);
-            exerciseName.add(foundExercise.getName());
             this.realm.executeTransaction(realm -> realm.copyToRealmOrUpdate(foundExercise));
         }
-        displayToast("Done");
         setupExerciseList();
     }
 
