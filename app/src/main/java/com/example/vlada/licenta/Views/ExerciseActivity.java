@@ -23,10 +23,10 @@ import io.realm.Realm;
  */
 
 public class ExerciseActivity extends AppCompatActivity {
+    ArrayList<String> exerciseName;
     private CompositeDisposable disposables = new CompositeDisposable();
     private ExerciseClient exerciseClient;
     private List<Exercise> exerciseList;
-
     private Realm realm;
 
     @Override
@@ -34,6 +34,7 @@ public class ExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
         exerciseList = new ArrayList<>();
+        exerciseName = new ArrayList<>();
 
         this.realm = Realm.getDefaultInstance();
         exerciseClient = new ExerciseClient(this);
@@ -43,9 +44,8 @@ public class ExerciseActivity extends AppCompatActivity {
 
     private void setupExerciseList() {
         ListView lvItems = findViewById(R.id.lvItems);
-        ArrayAdapter<Exercise> adapter = new ArrayAdapter<>(this, R.layout.list_view, exerciseList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_view, exerciseName);
         lvItems.setAdapter(adapter);
-        displayToast(exerciseList.size() + " elements");
     }
 
 
@@ -61,6 +61,7 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     private void getExercisesError(Throwable throwable) {
+        displayToast(throwable.getMessage());
         exerciseList = realm.where(Exercise.class).findAll();
         setupExerciseList();
 
@@ -71,7 +72,8 @@ public class ExerciseActivity extends AppCompatActivity {
         for (int i = 0; i < exercises.size(); i++) {
             Exercise foundExercise = exercises.get(i);
             this.exerciseList.add(foundExercise);
-            this.realm.executeTransactionAsync(realm -> realm.copyToRealmOrUpdate(foundExercise));
+            exerciseName.add(foundExercise.getName());
+            this.realm.executeTransaction(realm -> realm.copyToRealmOrUpdate(foundExercise));
         }
         displayToast("Done");
         setupExerciseList();
