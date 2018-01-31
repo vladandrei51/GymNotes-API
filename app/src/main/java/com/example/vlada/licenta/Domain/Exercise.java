@@ -129,10 +129,19 @@ public class Exercise extends RealmObject {
         return name != null ? name.equals(exercise.name) : exercise.name == null;
     }
 
+    public String toPrettyString() {
+        return "Name = " + name + "\n\n" +
+                "Muscle Group = " + musclegroup + "\n\n" +
+                "Description = " + description + "\n\n" +
+                "Rating = " + rating + "\n\n" +
+                "Type = " + type + "\n";
+    }
+
     @Override
     public String toString() {
         return "Exercise{" +
-                "musclegroup='" + musclegroup + '\'' +
+                "id=" + id +
+                ", musclegroup='" + musclegroup + '\'' +
                 ", name='" + name + '\'' +
                 ", picsUrl='" + picsUrl + '\'' +
                 ", description='" + description + '\'' +
