@@ -1,26 +1,41 @@
 package com.example.vlada.licenta.Domain;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
-public class Exercise {
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
+
+public class Exercise extends RealmObject {
+    @SerializedName("id")
+    @PrimaryKey
     private int id;
 
+    @SerializedName("musclegroup")
     private String musclegroup;
 
+    @SerializedName("name")
     private String name;
 
+    @SerializedName("picsUrl")
     private String picsUrl;
 
+    @SerializedName("description")
     private String description;
 
+    @SerializedName("rating")
     private String rating;
 
+    @SerializedName("videoUrl")
     private String videoUrl;
 
+    @SerializedName("type")
     private String type;
 
+    @Ignore
     private List<Lift> lifts;
-
 
 
     public Exercise() {

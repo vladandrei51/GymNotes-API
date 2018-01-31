@@ -1,4 +1,5 @@
 package com.example.vlada.licenta.Net.DTOs;
+
 import com.google.gson.annotations.SerializedName;
 
 

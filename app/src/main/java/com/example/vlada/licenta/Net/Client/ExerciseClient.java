@@ -2,8 +2,8 @@ package com.example.vlada.licenta.Net.Client;
 
 import android.content.Context;
 
-import com.example.vlada.licenta.Net.DTOs.TokenDTO;
 import com.example.vlada.licenta.Domain.Exercise;
+import com.example.vlada.licenta.Net.DTOs.TokenDTO;
 import com.example.vlada.licenta.R;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-interface ExerciseResource{
+interface ExerciseResource {
     String EXERCISE_PATH = "/api-1.0-SNAPSHOT/api/exercises";
 
     @GET(EXERCISE_PATH + "/all")
@@ -30,6 +30,7 @@ interface ExerciseResource{
     Observable<TokenDTO> addExercise(@Body Exercise exercise);
 
 }
+
 public class ExerciseClient {
     private ExerciseResource exerciseResource;
     private Context context;
@@ -46,15 +47,15 @@ public class ExerciseClient {
         this.exerciseResource = retrofit.create(ExerciseResource.class);
     }
 
-    public Observable<List<Exercise>> getExercises(){
+    public Observable<List<Exercise>> getExercises() {
         return exerciseResource.getExercises();
     }
 
-    public Observable<Exercise> getExerciseByID(String id){
+    public Observable<Exercise> getExerciseByID(String id) {
         return exerciseResource.getExerciseByID(id);
     }
 
-    public Observable<TokenDTO> addExercise(Exercise exercise){
+    public Observable<TokenDTO> addExercise(Exercise exercise) {
         return exerciseResource.addExercise(exercise);
     }
 

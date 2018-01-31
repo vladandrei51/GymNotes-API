@@ -1,17 +1,11 @@
 package com.example.vlada.licenta;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
 
-import com.example.vlada.licenta.Domain.Exercise;
-import com.example.vlada.licenta.Net.Client.ExerciseClient;
-import com.example.vlada.licenta.Net.DTOs.TokenDTO;
 import com.example.vlada.licenta.Views.ExerciseActivity;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
