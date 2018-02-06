@@ -1,6 +1,8 @@
 package com.example.vlada.licenta.Domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum MuscleGroup {
@@ -21,9 +23,9 @@ public enum MuscleGroup {
     GLUTES("glutes", "Glutes"),
     HAMSTRINGS("hamstrings", "Hamstrings");
 
-    private static final String EXERCISES_URL = "https://www.bodybuilding.com/exercises/muscle/";
     private static Map<String, MuscleGroup> nameEnumMap = new HashMap<>();
     private static Map<String, MuscleGroup> URLEnumMap = new HashMap<>();
+    private static List<String> allNames = new ArrayList<>();
 
     static {
         for (MuscleGroup muscleGroup : MuscleGroup.values()) {
@@ -33,6 +35,9 @@ public enum MuscleGroup {
         for (MuscleGroup muscleGroup1 : MuscleGroup.values()) {
             URLEnumMap.put(muscleGroup1.url, muscleGroup1);
         }
+        for (MuscleGroup muscleGroup : MuscleGroup.values()) {
+            allNames.add(muscleGroup.getName());
+        }
     }
 
     String url;
@@ -40,7 +45,7 @@ public enum MuscleGroup {
 
 
     MuscleGroup(String url, String name) {
-        this.url = EXERCISES_URL + url;
+        this.url = url;
         this.name = name;
     }
 
@@ -49,7 +54,11 @@ public enum MuscleGroup {
     }
 
     public static MuscleGroup getEnumFromURL(String URL) {
-        return URLEnumMap.get(EXERCISES_URL + URL);
+        return URLEnumMap.get(URL);
+    }
+
+    public static List<String> getAllNames() {
+        return allNames;
     }
 
     public String getUrl() {

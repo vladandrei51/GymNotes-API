@@ -23,6 +23,9 @@ interface ExerciseResource {
     @GET(EXERCISE_PATH + "/all")
     Observable<List<Exercise>> getExercises();
 
+    @GET(EXERCISE_PATH + "/get/musclegroup/{muscleGroup}")
+    Observable<List<Exercise>> getExercisesByMG(@Path("muscleGroup") String muscleGroup);
+
     @GET(EXERCISE_PATH + "/allNames")
     Observable<List<String>> getExercisesNames();
 
@@ -65,6 +68,10 @@ public class ExerciseClient {
 
     public Observable<TokenDTO> addExercise(Exercise exercise) {
         return exerciseResource.addExercise(exercise);
+    }
+
+    public Observable<List<Exercise>> getExercisesByMG(String muscleGroup) {
+        return exerciseResource.getExercisesByMG(muscleGroup);
     }
 
 }

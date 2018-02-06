@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">licenta</string>
+    <string name="app_name">GymNotes</string>
     <string name="server_url">http://172.19.224.168:8080</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="mg_url_intent_param">mg_url</string>
+    <string name="mg_name_intent_param">mg_name</string>
+
 </resources>

@@ -18,6 +18,7 @@ import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
@@ -40,8 +41,11 @@ public class ExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
 
+        exerciseClient = new ExerciseClient(this);
+
+
         this.realm = Realm.getDefaultInstance();
-        this.results = realm.where(Exercise.class).findAllAsync();
+        this.results = realm.where(Exercise.class).contains("musclegroup", getIntent().getStringExtra(getString(R.string.mg_name_intent_param)), Case.INSENSITIVE).findAllAsync();
         this.adapter = new RealmBaseAdapter<Exercise>(results) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -64,7 +68,6 @@ public class ExerciseActivity extends AppCompatActivity {
 
             }
         };
-        exerciseClient = new ExerciseClient(this);
         populateExerciseList();
 
         ListView lvItems = findViewById(R.id.lvItems);
@@ -79,7 +82,7 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     void populateExerciseList() {
-        disposables.add(exerciseClient.getExercises()
+        disposables.add(exerciseClient.getExercisesByMG(getIntent().getStringExtra(getString(R.string.mg_url_intent_param)))
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         this::getExercisesSuccess,
@@ -89,6 +92,11 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     private void getExercisesError(Throwable throwable) {
+//        if(!((ExerciseActivity.this.isFinishing())))
+//        {
+//            Intent intent = new Intent(ExerciseActivity.this, MainActivity.class);
+//            startActivity(intent);
+//        }
         runOnUiThread(() -> {
             displayToast("Could not connect to the server, cached data is being used");
         });
@@ -97,7 +105,7 @@ public class ExerciseActivity extends AppCompatActivity {
     private void getExercisesSuccess(List<Exercise> exercises) {
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
-                realm.where(Exercise.class).findAll()
+                realm.where(Exercise.class).contains("musclegroup", getIntent().getStringExtra(getString(R.string.mg_name_intent_param)), Case.INSENSITIVE).findAll()
                         .deleteAllFromRealm();
                 for (Exercise exercise : exercises) {
                     realm.insertOrUpdate(exercise);
