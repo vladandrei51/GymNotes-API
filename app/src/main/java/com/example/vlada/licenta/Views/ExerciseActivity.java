@@ -40,6 +40,7 @@ public class ExerciseActivity extends BaseDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
+        setTitle(getIntent().getStringExtra(getString(R.string.mg_name_intent_param)));
 
 
         exerciseClient = new ExerciseClient(this);

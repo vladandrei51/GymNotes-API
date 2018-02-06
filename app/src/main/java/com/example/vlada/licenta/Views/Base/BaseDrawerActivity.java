@@ -27,8 +27,8 @@ import java.util.List;
 public class BaseDrawerActivity extends AppCompatActivity {
     protected RelativeLayout fullLayout;
     protected FrameLayout frameLayout;
+    protected DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    private DrawerLayout mDrawerLayout;
     private ArrayAdapter<String> mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private String mActivityTitle;
@@ -47,9 +47,6 @@ public class BaseDrawerActivity extends AppCompatActivity {
         mDrawerList = findViewById(R.id.navList);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mActivityTitle = getTitle().toString();
-
-
-        //Your drawer content...
 
         addDrawerItems();
         setupDrawer();

@@ -23,7 +23,5 @@ public class MainActivity extends BaseDrawerActivity {
 
 
         setContentView(R.layout.activity_main);
-
     }
-
 }
