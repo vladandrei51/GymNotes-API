@@ -27,7 +27,6 @@ import java.util.List;
 public class BaseDrawerActivity extends AppCompatActivity {
     protected RelativeLayout fullLayout;
     protected FrameLayout frameLayout;
-
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ArrayAdapter<String> mAdapter;
