@@ -2,7 +2,6 @@ package com.example.vlada.licenta.Views;
 
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.Toast;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Views.Base.BaseDrawerActivity;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import io.realm.RealmResults;
  * Created by andrei-valentin.vlad on 1/30/2018.
  */
 
-public class ExerciseActivity extends AppCompatActivity {
+public class ExerciseActivity extends BaseDrawerActivity {
 
     private CompositeDisposable disposables = new CompositeDisposable();
     private ExerciseClient exerciseClient;
@@ -40,6 +40,7 @@ public class ExerciseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
+
 
         exerciseClient = new ExerciseClient(this);
 

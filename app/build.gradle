@@ -38,6 +38,7 @@ repositories {
 dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.0.9'
     compile 'com.google.code.gson:gson:2.2.+'
+    compile 'com.android.support:design:25.2.0'
     compile 'com.android.support:support-v4:26.0.+'
     compile 'io.realm:android-adapters:2.1.1'
     compile 'com.android.support:appcompat-v7:26.1.0'
