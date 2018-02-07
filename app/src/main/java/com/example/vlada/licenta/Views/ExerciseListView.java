@@ -2,6 +2,7 @@ package com.example.vlada.licenta.Views;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -42,7 +43,6 @@ public class ExerciseListView extends AppCompatActivity {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private List<String> muscleGroups;
 
@@ -51,7 +51,7 @@ public class ExerciseListView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_main);
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
         muscleGroups = MuscleGroup.getAllNames();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
@@ -71,19 +71,23 @@ public class ExerciseListView extends AppCompatActivity {
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */
+                this,                /* host Activity */
+                mDrawerLayout,              /* DrawerLayout object */
+                R.string.drawer_open,       /* "open drawer" description for accessibility */
+                R.string.drawer_close       /* "close drawer" description for accessibility */
         ) {
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle(mTitle);
+                    invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                }
             }
 
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle(R.string.drawer_open);
+                    invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                }
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -132,7 +136,6 @@ public class ExerciseListView extends AppCompatActivity {
     }
 
 
-
     /**
      * When using the ActionBarDrawerToggle, you must call it during
      * onPostCreate() and onConfigurationChanged()...
@@ -173,7 +176,7 @@ public class ExerciseListView extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.activity_exercise, container, false);
+            View rootView = inflater.inflate(R.layout.activity_exercise_list, container, false);
             int i = getArguments().getInt(ARG_NUMBER);
             this.selectedMG = MuscleGroup.getAllNames().get(i);
             exerciseClient = new ExerciseClient(getContext());
@@ -216,6 +219,15 @@ public class ExerciseListView extends AppCompatActivity {
                 return true;
             });
 
+            lvItems.setOnItemClickListener((a, v, position, id) -> {
+
+                Intent intent = new Intent(getContext(), ExerciseView.class);
+                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(position);
+                intent.putExtra("exercise_name", clickedExercise.getName());
+                startActivity(intent);
+            });
+
+
             return rootView;
         }
 
@@ -230,8 +242,11 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         private void getExercisesError(Throwable throwable) {
-            getActivity().runOnUiThread(() -> showAlertDialog("Cached data is being used", throwable.getMessage()));
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> showAlertDialog("Cached data is being used", throwable.getMessage()));
+            }
         }
+
 
         private void getExercisesSuccess(List<Exercise> exercises) {
             try (Realm r = Realm.getDefaultInstance()) {

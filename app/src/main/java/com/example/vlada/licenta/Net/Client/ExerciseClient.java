@@ -31,7 +31,7 @@ interface ExerciseResource {
 
 
     @GET(EXERCISE_PATH + "/get/id/{id}")
-    Observable<Exercise> getExerciseByID(@Path("id") String id);
+    Observable<Exercise> getExerciseByID(@Path("id") int id);
 
     @POST(EXERCISE_PATH + "/add")
     Observable<TokenDTO> addExercise(@Body Exercise exercise);
@@ -62,7 +62,7 @@ public class ExerciseClient {
         return exerciseResource.getExercisesNames();
     }
 
-    public Observable<Exercise> getExerciseByID(String id) {
+    public Observable<Exercise> getExerciseByID(int id) {
         return exerciseResource.getExerciseByID(id);
     }
 
