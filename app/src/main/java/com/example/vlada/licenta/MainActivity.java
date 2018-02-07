@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.vlada.licenta.Views.ExerciseList;
+import com.example.vlada.licenta.Views.ExerciseListView;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(MainActivity.this, ExerciseList.class);
+        Intent intent = new Intent(MainActivity.this, ExerciseListView.class);
         startActivity(intent);
     }
 }

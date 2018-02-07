@@ -37,7 +37,7 @@ import io.realm.RealmResults;
  * Created by andrei-valentin.vlad on 2/7/2018.
  */
 
-public class ExerciseList extends AppCompatActivity {
+public class ExerciseListView extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
