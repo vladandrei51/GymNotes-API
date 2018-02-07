@@ -2,14 +2,14 @@ package com.example.vlada.licenta;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.example.vlada.licenta.Views.Base.BaseDrawerActivity;
-import com.example.vlada.licenta.Views.ExercisesFragment;
+import com.example.vlada.licenta.Views.ExerciseList;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class MainActivity extends BaseDrawerActivity {
+public class MainActivity extends AppCompatActivity {
 
 
     @Override
@@ -25,7 +25,7 @@ public class MainActivity extends BaseDrawerActivity {
 
 
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(MainActivity.this, ExercisesFragment.class);
+        Intent intent = new Intent(MainActivity.this, ExerciseList.class);
         startActivity(intent);
     }
 }

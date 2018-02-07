@@ -4,11 +4,13 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,7 +37,7 @@ import io.realm.RealmResults;
  * Created by andrei-valentin.vlad on 2/7/2018.
  */
 
-public class ExercisesFragment extends AppCompatActivity {
+public class ExerciseList extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -51,26 +53,26 @@ public class ExercisesFragment extends AppCompatActivity {
 
         mTitle = mDrawerTitle = getTitle();
         muscleGroups = MuscleGroup.getAllNames();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerList = findViewById(R.id.left_drawer);
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+        mDrawerList.setAdapter(new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, muscleGroups));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -84,7 +86,7 @@ public class ExercisesFragment extends AppCompatActivity {
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
             selectItem(0);
@@ -93,9 +95,9 @@ public class ExercisesFragment extends AppCompatActivity {
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        Fragment fragment = new PlanetFragment();
+        Fragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
-        args.putInt(PlanetFragment.ARG_NUMBER, position);
+        args.putInt(ExerciseFragment.ARG_NUMBER, position);
         fragment.setArguments(args);
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -110,8 +112,26 @@ public class ExercisesFragment extends AppCompatActivity {
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mTitle);
+        }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        // ActionBarDrawerToggle will take care of this.
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        switch (item.getItemId()) {
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+
 
     /**
      * When using the ActionBarDrawerToggle, you must call it during
@@ -133,9 +153,9 @@ public class ExercisesFragment extends AppCompatActivity {
     }
 
     /**
-     * Fragment that appears in the "content_frame", shows a planet
+     * Fragment that appears in the "content_frame", shows exercises list
      */
-    public static class PlanetFragment extends Fragment {
+    public static class ExerciseFragment extends Fragment {
         public static final String ARG_NUMBER = "drawer_number";
 
         private CompositeDisposable disposables = new CompositeDisposable();
@@ -147,7 +167,7 @@ public class ExercisesFragment extends AppCompatActivity {
         private String selectedMG;
 
 
-        public PlanetFragment() {
+        public ExerciseFragment() {
             // Empty constructor required for fragment subclasses
         }
 
@@ -164,15 +184,15 @@ public class ExercisesFragment extends AppCompatActivity {
             this.adapter = new RealmBaseAdapter<Exercise>(results) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
-                    PlanetFragment.ViewHolder viewHolder;
+                    ExerciseFragment.ViewHolder viewHolder;
                     if (convertView == null) {
                         convertView = LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.list_view, parent, false);
-                        viewHolder = new PlanetFragment.ViewHolder();
+                        viewHolder = new ExerciseFragment.ViewHolder();
                         viewHolder.exerciseName = convertView.findViewById(R.id.label);
                         convertView.setTag(viewHolder);
                     } else {
-                        viewHolder = (PlanetFragment.ViewHolder) convertView.getTag();
+                        viewHolder = (ExerciseFragment.ViewHolder) convertView.getTag();
                     }
 
                     if (adapterData != null) {
@@ -192,7 +212,7 @@ public class ExercisesFragment extends AppCompatActivity {
 
             lvItems.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
                 Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(pos);
-                displayToast(clickedExercise.getName());
+                showAlertDialog(clickedExercise.getName(), clickedExercise.toPrettyString());
                 return true;
             });
 
@@ -210,9 +230,7 @@ public class ExercisesFragment extends AppCompatActivity {
         }
 
         private void getExercisesError(Throwable throwable) {
-            getActivity().runOnUiThread(() -> {
-                displayToast("Could not connect to the server, cached data is being used");
-            });
+            getActivity().runOnUiThread(() -> showAlertDialog("Cached data is being used", throwable.getMessage()));
         }
 
         private void getExercisesSuccess(List<Exercise> exercises) {
@@ -232,13 +250,19 @@ public class ExercisesFragment extends AppCompatActivity {
             toast.show();
         }
 
+        void showAlertDialog(String title, String message) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(title)
+                    .setMessage(message)
+                    .show();
+        }
+
 
         private static class ViewHolder {
             TextView exerciseName;
         }
     }
 
-    /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
