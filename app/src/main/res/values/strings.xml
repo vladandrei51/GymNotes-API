@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">GymNotes</string>
-    <string name="server_url">http://172.19.224.168:8080</string>
+    <string name="server_url">http://172.19.224.168:8081</string>
     <string name="drawer_open">Choose muscle group</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="mg_url_intent_param">mg_url</string>
