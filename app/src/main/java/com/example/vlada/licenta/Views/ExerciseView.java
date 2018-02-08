@@ -17,11 +17,9 @@ import io.realm.Realm;
 
 public class ExerciseView extends BaseActivity {
 
-    private static final int SWIPE_THRESHOLD = 100;
     TextView exerciseName;
     private Realm realm;
     private Exercise exercise;
-    private float _downX;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
