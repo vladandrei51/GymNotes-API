@@ -49,7 +49,7 @@ public class ExerciseListView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_main);
+        setContentView(R.layout.activity_exercise_list_view);
 
         mTitle = getTitle();
         muscleGroups = MuscleGroup.getAllNames();
@@ -176,7 +176,7 @@ public class ExerciseListView extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.activity_exercise_list, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_exercise_list, container, false);
             int i = getArguments().getInt(ARG_NUMBER);
             this.selectedMG = MuscleGroup.getAllNames().get(i);
             exerciseClient = new ExerciseClient(getContext());

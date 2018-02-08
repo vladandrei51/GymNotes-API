@@ -2,59 +2,60 @@ package com.example.vlada.licenta.Views;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.MenuItem;
-import android.widget.TextView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
-import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Views.Base.BaseActivity;
 
 import io.realm.Realm;
 
 /**
- * Created by andrei-valentin.vlad on 2/7/2018.
+ * Created by andrei-valentin.vlad on 2/8/2018.
  */
 
-public class ExerciseView extends BaseActivity {
+public class ExerciseView extends FragmentActivity {
 
-    TextView exerciseName;
     private Realm realm;
-    private Exercise exercise;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exercise);
-
-        exerciseName = findViewById(R.id.textView);
+        setContentView(R.layout.activity_exercise_view);
         this.realm = Realm.getDefaultInstance();
-        if (getIntent().getExtras() != null) {
-            exercise = realm.where(Exercise.class).equalTo("name", getIntent().getExtras().getString("exercise_name")).findFirst();
-            if (exercise != null) {
-                populatePage();
-            }
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true); //for enabling back button on top of activity
-            }
+
+
+        ViewPager pager = findViewById(R.id.pager);
+        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+
+    }
+
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
-    }
-
-    private void populatePage() {
-        setTitle(exercise.getName() + " (" + exercise.getMusclegroup() + ")");
-        exerciseName.setText(exercise.getName());
-    }
-
-    //    For enabling back button on top of the activity
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        @Override
+        public Fragment getItem(int pos) {
+            if (getIntent().getExtras() != null) {
+                switch (pos) {
+                    case 0:
+                        return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                    default:
+                        return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                }
+            }
+            finish();
+            return null;
         }
-        return super.onOptionsItemSelected(item);
-    }
 
+        @Override
+        public int getCount() {
+            return 3;
+        }
+    }
 
 }
