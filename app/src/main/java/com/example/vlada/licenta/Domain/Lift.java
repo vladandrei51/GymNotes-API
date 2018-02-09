@@ -1,6 +1,8 @@
 package com.example.vlada.licenta.Domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
@@ -78,4 +80,12 @@ public class Lift extends RealmObject {
     public String getExercise_name() {
         return exercise_name;
     }
+
+    public String toPrettyString() {
+        return String.format("Weight = " + weight + "\n\n" +
+                "Reps = " + reps + "\n\n" +
+                "Notes = " + notes + "\n\n" +
+                "Date = " + new SimpleDateFormat("HH:mm  dd MMM. yyyy ", Locale.US).format(setDate));
+    }
+
 }

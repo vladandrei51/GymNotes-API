@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Utils.SwipeDismissListViewTouchListener;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Date;
@@ -139,6 +140,37 @@ public class ExerciseLiftFragment extends Fragment {
         };
 
         historyLV.setAdapter(adapter);
+
+        historyLV.setOnItemClickListener((adapterView, view, i, l) -> {
+            Lift lift = (Lift) historyLV.getItemAtPosition(i);
+            Utils.showAlertDialog(getContext(), "", lift.toPrettyString());
+        });
+
+        SwipeDismissListViewTouchListener touchListener =
+                new SwipeDismissListViewTouchListener(
+                        historyLV,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    try (Realm r = Realm.getDefaultInstance()) {
+                                        r.executeTransaction(realm -> {
+                                            results.deleteFromRealm(position);
+                                            adapter.notifyDataSetChanged();
+                                            Utils.displayToast(getContext(), "Successfully deleted");
+                                        });
+                                    }
+                                }
+
+
+                            }
+                        });
+        historyLV.setOnTouchListener(touchListener);
 
     }
 
