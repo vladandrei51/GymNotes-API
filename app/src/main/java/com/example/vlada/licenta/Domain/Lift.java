@@ -1,20 +1,27 @@
 package com.example.vlada.licenta.Domain;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
-public class Lift {
+import io.realm.RealmObject;
+import io.realm.annotations.Required;
+
+public class Lift extends RealmObject {
+
     private int id;
 
     private String notes;
 
     private int reps;
 
-    private Timestamp setDate;
+    private Date setDate;
 
     private int weight;
 
     //bi-directional many-to-one association to Exercise
     private Exercise exercise;
+
+    @Required
+    private String exercise_name;
 
     public Lift() {
     }
@@ -43,11 +50,11 @@ public class Lift {
         this.reps = reps;
     }
 
-    public Timestamp getSetDate() {
-        return this.setDate;
+    public Date getSetDate() {
+        return setDate;
     }
 
-    public void setSetDate(Timestamp setDate) {
+    public void setSetDate(Date setDate) {
         this.setDate = setDate;
     }
 
@@ -65,5 +72,10 @@ public class Lift {
 
     public void setExercise(Exercise exercise) {
         this.exercise = exercise;
+        this.exercise_name = this.exercise.getName();
+    }
+
+    public String getExercise_name() {
+        return exercise_name;
     }
 }

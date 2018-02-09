@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Realm.setDefaultConfiguration(config);
 
-
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(MainActivity.this, ExerciseListView.class);
         startActivity(intent);

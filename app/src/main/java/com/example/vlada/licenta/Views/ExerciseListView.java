@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,12 +17,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.MuscleGroup;
 import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.List;
 
@@ -215,7 +214,7 @@ public class ExerciseListView extends AppCompatActivity {
 
             lvItems.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
                 Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(pos);
-                showAlertDialog(clickedExercise.getName(), clickedExercise.toPrettyString());
+                Utils.showAlertDialog(getContext(), clickedExercise.getName(), clickedExercise.toPrettyString());
                 return true;
             });
 
@@ -243,7 +242,7 @@ public class ExerciseListView extends AppCompatActivity {
 
         private void getExercisesError(Throwable throwable) {
             if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> showAlertDialog("Cached data is being used", throwable.getMessage()));
+                getActivity().runOnUiThread(() -> Utils.showAlertDialog(getContext(), "Cached data is being used", throwable.getMessage()));
             }
         }
 
@@ -258,18 +257,6 @@ public class ExerciseListView extends AppCompatActivity {
                     }
                 });
             }
-        }
-
-        private void displayToast(String message) {
-            Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
-            toast.show();
-        }
-
-        void showAlertDialog(String title, String message) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(title)
-                    .setMessage(message)
-                    .show();
         }
 
 

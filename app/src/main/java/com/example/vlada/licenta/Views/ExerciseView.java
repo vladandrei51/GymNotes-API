@@ -44,6 +44,8 @@ public class ExerciseView extends FragmentActivity {
                 switch (pos) {
                     case 0:
                         return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                    case 1:
+                        return ExerciseLiftFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
                     default:
                         return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
                 }
