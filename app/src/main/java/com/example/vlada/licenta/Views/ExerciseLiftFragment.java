@@ -1,5 +1,6 @@
 package com.example.vlada.licenta.Views;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.example.vlada.licenta.Utils.SwipeDismissListViewTouchListener;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Date;
+import java.util.Locale;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -103,6 +105,7 @@ public class ExerciseLiftFragment extends Fragment {
         return rootView;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     void populateHistoryList() {
 
         this.results = realm.where(Lift.class)
@@ -127,11 +130,11 @@ public class ExerciseLiftFragment extends Fragment {
                 if (adapterData != null) {
                     final Lift item = adapterData.get(position);
                     if (item.getWeight() > 1)
-                        viewHolder.text.setText(String.format("%d kgs for %d reps", item.getWeight(), item.getReps()));
+                        viewHolder.text.setText(String.format(Locale.US, "%d kgs for %d reps", item.getWeight(), item.getReps()));
                     else if (item.getWeight() == 1)
-                        viewHolder.text.setText(String.format("%d kg for %d reps", item.getWeight(), item.getReps()));
+                        viewHolder.text.setText(String.format(Locale.US, "%d kg for %d reps", item.getWeight(), item.getReps()));
                     else if (item.getWeight() == 0) {
-                        viewHolder.text.setText(String.format("Bodyweight for %d reps", item.getReps()));
+                        viewHolder.text.setText(String.format(Locale.US, "Bodyweight for %d reps", item.getReps()));
                     }
                 }
                 return convertView;
@@ -141,6 +144,11 @@ public class ExerciseLiftFragment extends Fragment {
 
         historyLV.setAdapter(adapter);
 
+        ListListeners();
+
+    }
+
+    void ListListeners() {
         historyLV.setOnItemClickListener((adapterView, view, i, l) -> {
             Lift lift = (Lift) historyLV.getItemAtPosition(i);
             Utils.showAlertDialog(getContext(), "", lift.toPrettyString());
@@ -154,6 +162,7 @@ public class ExerciseLiftFragment extends Fragment {
                             public boolean canDismiss(int position) {
                                 return true;
                             }
+
 
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
@@ -171,11 +180,13 @@ public class ExerciseLiftFragment extends Fragment {
                             }
                         });
         historyLV.setOnTouchListener(touchListener);
-
     }
+
 
     private static class ViewHolder {
         TextView text;
+
+
     }
 
 }

@@ -34,7 +34,7 @@ public class ExerciseView extends FragmentActivity {
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
 
-        public MyPagerAdapter(FragmentManager fm) {
+        MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

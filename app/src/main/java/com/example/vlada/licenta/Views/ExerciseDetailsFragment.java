@@ -1,6 +1,7 @@
 package com.example.vlada.licenta.Views;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,14 +39,15 @@ public class ExerciseDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
         exerciseNameTV = rootView.findViewById(R.id.textView);
 
         this.realm = Realm.getDefaultInstance();
-        exercise = realm.where(Exercise.class).equalTo("name", getArguments().getString("exercise_name")).findFirst();
+        if (getArguments().getString("exercise_name") != null)
+            exercise = realm.where(Exercise.class).equalTo("name", getArguments().getString("exercise_name")).findFirst();
 
         if (exercise != null) {
             populatePage();

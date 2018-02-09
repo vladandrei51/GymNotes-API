@@ -5,12 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Rect;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -57,22 +57,6 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
         mCallbacks = callbacks;
     }
 
-    public void setEnabled(boolean enabled) {
-        mPaused = !enabled;
-    }
-
-    public AbsListView.OnScrollListener makeScrollListener() {
-        return new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                setEnabled(scrollState != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-            }
-        };
-    }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -281,12 +265,9 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
             }
         });
 
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                lp.height = (Integer) valueAnimator.getAnimatedValue();
-                dismissView.setLayoutParams(lp);
-            }
+        animator.addUpdateListener(valueAnimator -> {
+            lp.height = (Integer) valueAnimator.getAnimatedValue();
+            dismissView.setLayoutParams(lp);
         });
 
         mPendingDismisses.add(new PendingDismissData(dismissPosition, dismissView));
@@ -302,16 +283,16 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
     }
 
     class PendingDismissData implements Comparable<PendingDismissData> {
-        public int position;
         public View view;
+        int position;
 
-        public PendingDismissData(int position, View view) {
+        PendingDismissData(int position, View view) {
             this.position = position;
             this.view = view;
         }
 
         @Override
-        public int compareTo(PendingDismissData other) {
+        public int compareTo(@NonNull PendingDismissData other) {
             // Sort by descending position
             return other.position - position;
         }
