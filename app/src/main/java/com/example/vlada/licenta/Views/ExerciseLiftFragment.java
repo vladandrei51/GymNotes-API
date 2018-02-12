@@ -67,6 +67,8 @@ public class ExerciseLiftFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_exercise_lift, container, false);
 
+        exercise = new Exercise();
+
         weightET = rootView.findViewById(R.id.weightET);
         repsET = rootView.findViewById(R.id.repsET);
         addBT = rootView.findViewById(R.id.addSetButton);
@@ -91,7 +93,7 @@ public class ExerciseLiftFragment extends Fragment {
 
             lift.setSetDate(new Date());
 
-            if (exercise != null) lift.setExercise(exercise);
+            if (exercise.getId() > 0) lift.setExercise(exercise); //if the exercise was found
 
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {

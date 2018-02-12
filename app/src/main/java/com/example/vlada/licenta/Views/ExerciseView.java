@@ -10,21 +10,19 @@ import android.support.v4.view.ViewPager;
 
 import com.example.vlada.licenta.R;
 
-import io.realm.Realm;
-
 /**
  * Created by andrei-valentin.vlad on 2/8/2018.
  */
 
 public class ExerciseView extends FragmentActivity {
 
-    private Realm realm;
+//    private Realm realm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_view);
-        this.realm = Realm.getDefaultInstance();
+//        this.realm = Realm.getDefaultInstance();
 
 
         ViewPager pager = findViewById(R.id.pager);
@@ -46,6 +44,8 @@ public class ExerciseView extends FragmentActivity {
                         return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
                     case 1:
                         return ExerciseLiftFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                    case 2:
+                        return ExerciseChartFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
                     default:
                         return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
                 }

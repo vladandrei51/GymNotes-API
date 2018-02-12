@@ -47,6 +47,7 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0' //needed
 
+    compile 'com.github.PhilJay:MPAndroidChart:v2.0.9'
 }
 
 apply plugin: 'realm-android'
