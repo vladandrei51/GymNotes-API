@@ -10,6 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.MuscleGroup;
 import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Utils.RealmMigration;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.List;
@@ -45,10 +48,14 @@ public class ExerciseListView extends AppCompatActivity {
     private CharSequence mTitle;
     private List<String> muscleGroups;
 
+    private Realm realm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_list_view);
+
+        realm = Realm.getDefaultInstance();
 
         mTitle = getTitle();
         muscleGroups = MuscleGroup.getAllNames();
@@ -96,6 +103,14 @@ public class ExerciseListView extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment = new ExerciseFragment();
@@ -127,11 +142,19 @@ public class ExerciseListView extends AppCompatActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
+        RealmMigration realmMigration = new RealmMigration(getApplicationContext());
         switch (item.getItemId()) {
+            case R.id.backup_menu:
+                realmMigration.backup();
+                break;
+            case R.id.restore_menu:
+                realmMigration.restore();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
+        return true;
     }
 
 

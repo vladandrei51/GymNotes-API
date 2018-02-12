@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GymNotes</string>
+    <string name="app_name">Gym Buddy</string>
     <string name="server_url">http://172.19.224.168:8081</string>
     <string name="drawer_open">Choose muscle group</string>
     <string name="drawer_close">Close navigation drawer</string>
