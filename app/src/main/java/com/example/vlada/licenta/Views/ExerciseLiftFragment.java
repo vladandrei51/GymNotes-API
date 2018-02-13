@@ -1,6 +1,5 @@
 package com.example.vlada.licenta.Views;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -37,7 +36,7 @@ public class ExerciseLiftFragment extends Fragment {
     EditText weightET;
     EditText repsET;
     Button addBT;
-    ListView historyLV;
+    ListView listView;
     private Realm realm;
     private RealmResults<Lift> results;
     private RealmBaseAdapter<Lift> adapter;
@@ -57,6 +56,7 @@ public class ExerciseLiftFragment extends Fragment {
         return f;
     }
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,11 +72,18 @@ public class ExerciseLiftFragment extends Fragment {
         weightET = rootView.findViewById(R.id.weightET);
         repsET = rootView.findViewById(R.id.repsET);
         addBT = rootView.findViewById(R.id.addSetButton);
-        historyLV = rootView.findViewById(R.id.historyLV);
+        listView = rootView.findViewById(R.id.historyLV);
 
         this.realm = Realm.getDefaultInstance();
         exercise = realm.where(Exercise.class).equalTo("name", getArguments().getString("exercise_name")).findFirst();
 
+        populateList();
+        addButtonClickListener();
+
+        return rootView;
+    }
+
+    void addButtonClickListener() {
         addBT.setOnClickListener(v -> {
             Lift lift = new Lift();
             lift.setNotes(null);
@@ -98,17 +105,17 @@ public class ExerciseLiftFragment extends Fragment {
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
+//                    if (realm != null) realm.close();
+
                 });
                 Utils.displayToast(getContext(), "Successfully added");
+//                r.close();
             }
         });
-        populateHistoryList();
 
-        return rootView;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    void populateHistoryList() {
+    void populateList() {
 
         this.results = realm.where(Lift.class)
                 .contains("exercise_name", getArguments().getString("exercise_name"), Case.INSENSITIVE)
@@ -144,21 +151,21 @@ public class ExerciseLiftFragment extends Fragment {
             }
         };
 
-        historyLV.setAdapter(adapter);
+        listView.setAdapter(adapter);
 
         ListListeners();
 
     }
 
     void ListListeners() {
-        historyLV.setOnItemClickListener((adapterView, view, i, l) -> {
-            Lift lift = (Lift) historyLV.getItemAtPosition(i);
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            Lift lift = (Lift) listView.getItemAtPosition(i);
             Utils.showAlertDialog(getContext(), "", lift.toPrettyString());
         });
 
         SwipeDismissListViewTouchListener touchListener =
                 new SwipeDismissListViewTouchListener(
-                        historyLV,
+                        listView,
                         new SwipeDismissListViewTouchListener.DismissCallbacks() {
                             @Override
                             public boolean canDismiss(int position) {
@@ -174,21 +181,30 @@ public class ExerciseLiftFragment extends Fragment {
                                             results.deleteFromRealm(position);
                                             adapter.notifyDataSetChanged();
                                             Utils.displayToast(getContext(), "Successfully deleted");
+//                                            if (realm != null) realm.close();
                                         });
+//                                        r.close();
                                     }
                                 }
 
 
                             }
                         });
-        historyLV.setOnTouchListener(touchListener);
+        listView.setOnTouchListener(touchListener);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (realm != null)
+            realm.close();
+    }
 
     private static class ViewHolder {
         TextView text;
 
 
     }
+
 
 }

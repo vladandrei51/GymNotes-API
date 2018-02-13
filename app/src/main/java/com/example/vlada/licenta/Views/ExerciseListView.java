@@ -44,18 +44,15 @@ public class ExerciseListView extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private CharSequence mTitle;
     private List<String> muscleGroups;
 
-    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_list_view);
 
-        realm = Realm.getDefaultInstance();
 
         mTitle = getTitle();
         muscleGroups = MuscleGroup.getAllNames();
@@ -190,10 +187,9 @@ public class ExerciseListView extends AppCompatActivity {
         private RealmResults<Exercise> results;
         private RealmBaseAdapter<Exercise> adapter;
         private String selectedMG;
-
+        private ListView lvItems;
 
         public ExerciseFragment() {
-            // Empty constructor required for fragment subclasses
         }
 
         @Override
@@ -204,8 +200,40 @@ public class ExerciseListView extends AppCompatActivity {
             exerciseClient = new ExerciseClient(getContext());
 
             this.realm = Realm.getDefaultInstance();
-            this.results = realm.where(Exercise.class).contains("musclegroup", selectedMG, Case.INSENSITIVE).findAllAsync();
 
+            getActivity().setTitle(selectedMG);
+
+            populateWithDataFromRealm();
+            populateExerciseList();
+
+
+            lvItems = rootView.findViewById(R.id.lvItems);
+            lvItems.setAdapter(adapter);
+
+            listListeners();
+
+            return rootView;
+        }
+
+        void listListeners() {
+            lvItems.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
+                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(pos);
+                Utils.showAlertDialog(getContext(), clickedExercise.getName(), clickedExercise.toPrettyString());
+                return true;
+            });
+
+            lvItems.setOnItemClickListener((a, v, position, id) -> {
+
+                Intent intent = new Intent(getContext(), ExerciseView.class);
+                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(position);
+                intent.putExtra("exercise_name", clickedExercise.getName());
+                startActivity(intent);
+            });
+
+        }
+
+        void populateWithDataFromRealm() {
+            this.results = realm.where(Exercise.class).contains("musclegroup", selectedMG, Case.INSENSITIVE).findAllAsync();
             this.adapter = new RealmBaseAdapter<Exercise>(results) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
@@ -229,28 +257,7 @@ public class ExerciseListView extends AppCompatActivity {
                 }
             };
 
-            getActivity().setTitle(selectedMG);
-            populateExerciseList();
 
-            ListView lvItems = rootView.findViewById(R.id.lvItems);
-            lvItems.setAdapter(adapter);
-
-            lvItems.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
-                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(pos);
-                Utils.showAlertDialog(getContext(), clickedExercise.getName(), clickedExercise.toPrettyString());
-                return true;
-            });
-
-            lvItems.setOnItemClickListener((a, v, position, id) -> {
-
-                Intent intent = new Intent(getContext(), ExerciseView.class);
-                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(position);
-                intent.putExtra("exercise_name", clickedExercise.getName());
-                startActivity(intent);
-            });
-
-
-            return rootView;
         }
 
         void populateExerciseList() {
@@ -278,10 +285,18 @@ public class ExerciseListView extends AppCompatActivity {
                     for (Exercise exercise : exercises) {
                         realm.insertOrUpdate(exercise);
                     }
+//                    if (realm != null)
+//                        realm.close();
                 });
+//                r.close();
             }
         }
 
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            if (realm != null) realm.close();
+        }
 
         private static class ViewHolder {
             TextView exerciseName;
@@ -294,4 +309,5 @@ public class ExerciseListView extends AppCompatActivity {
             selectItem(position);
         }
     }
+
 }

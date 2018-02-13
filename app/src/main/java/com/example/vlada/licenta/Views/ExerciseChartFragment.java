@@ -114,4 +114,10 @@ public class ExerciseChartFragment extends Fragment {
     float getEstimated1RM(float weight, float reps) {
         return weight * (36 / (37 - reps));
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        realm.close();
+    }
 }

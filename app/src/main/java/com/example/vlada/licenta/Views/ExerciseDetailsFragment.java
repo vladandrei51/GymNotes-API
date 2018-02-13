@@ -60,5 +60,10 @@ public class ExerciseDetailsFragment extends Fragment {
         exerciseNameTV.setText(exercise.getName());
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (realm != null)
+            realm.close();
+    }
 }

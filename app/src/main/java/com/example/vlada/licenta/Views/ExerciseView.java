@@ -16,13 +16,11 @@ import com.example.vlada.licenta.R;
 
 public class ExerciseView extends FragmentActivity {
 
-//    private Realm realm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_view);
-//        this.realm = Realm.getDefaultInstance();
 
 
         ViewPager pager = findViewById(R.id.pager);

@@ -22,6 +22,7 @@ public class Lift extends RealmObject {
     //bi-directional many-to-one association to Exercise
     private Exercise exercise;
 
+
     @Required
     private String exercise_name;
 
@@ -74,10 +75,11 @@ public class Lift extends RealmObject {
 
     public void setExercise(Exercise exercise) {
         this.exercise = exercise;
-        this.exercise_name = this.exercise.getName();
+        exercise_name = exercise.getName();
     }
 
     public String getExercise_name() {
+        if (exercise != null) return exercise.getName();
         return exercise_name;
     }
 

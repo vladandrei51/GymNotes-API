@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration
                 .Builder()
-                .deleteRealmIfMigrationNeeded()
+//                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //        try (Realm r = Realm.getDefaultInstance()) {
 //            r.executeTransaction(realm -> {
-//                Exercise exercise = realm.where(Exercise.class).equalTo("name", "Side Neck Stretch").findFirst();
+//                Exercise exercise = realm.where(Exercise.class).equalTo("name", "Chin To Chest Stretch").findFirst();
 //                lift.setExercise(exercise);
 //                lift.setWeight(10);
 //                lift.setReps(10);
@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
 //                realm.insert(lift2);
 //            });
 //        }
+//
 
-
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
         Intent intent = new Intent(MainActivity.this, ExerciseListView.class);
         startActivity(intent);
         finish();
