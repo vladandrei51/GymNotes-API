@@ -105,11 +105,9 @@ public class ExerciseLiftFragment extends Fragment {
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
-//                    if (realm != null) realm.close();
 
                 });
                 Utils.displayToast(getContext(), "Successfully added");
-//                r.close();
             }
         });
 
@@ -181,9 +179,7 @@ public class ExerciseLiftFragment extends Fragment {
                                             results.deleteFromRealm(position);
                                             adapter.notifyDataSetChanged();
                                             Utils.displayToast(getContext(), "Successfully deleted");
-//                                            if (realm != null) realm.close();
                                         });
-//                                        r.close();
                                     }
                                 }
 
