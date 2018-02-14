@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by andrei-valentin.vlad on 2/12/2018.
@@ -17,10 +18,12 @@ public class RealmMigration {
 
     private Context context;
     private Realm realm;
+    private RealmConfiguration realmConfiguration;
 
-    public RealmMigration(Context context) {
-        this.realm = Realm.getInstance(Realm.getDefaultConfiguration());
+    public RealmMigration(Context context, RealmConfiguration realmConfiguration) {
+        this.realm = Realm.getInstance(realmConfiguration);
         this.context = context;
+        this.realmConfiguration = realmConfiguration;
     }
 
 
@@ -50,8 +53,9 @@ public class RealmMigration {
 
     public void restore() {
 
-        realm.close();
-        if (Realm.getGlobalInstanceCount(Realm.getDefaultConfiguration()) == 0) {
+        while (!realm.isClosed())
+            realm.close();
+        if (Realm.getGlobalInstanceCount(realmConfiguration) == 0) {
 
             //Restore
             File exportRealmPATH = context.getExternalFilesDir(null);
@@ -64,7 +68,7 @@ public class RealmMigration {
 
             Utils.displayToast(context, "Successfully restored!");
         } else {
-            Utils.displayToast(context, "Global=" + Realm.getGlobalInstanceCount(Realm.getDefaultConfiguration()) + " local=" + Realm.getLocalInstanceCount(Realm.getDefaultConfiguration()));
+            Utils.displayToast(context, "Global=" + Realm.getGlobalInstanceCount(realmConfiguration) + " local=" + Realm.getLocalInstanceCount(realmConfiguration));
         }
     }
 

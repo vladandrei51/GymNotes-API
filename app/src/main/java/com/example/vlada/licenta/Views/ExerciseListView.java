@@ -140,7 +140,7 @@ public class ExerciseListView extends AppCompatActivity {
             return true;
         }
 
-        RealmMigration realmMigration = new RealmMigration(getApplicationContext());
+        RealmMigration realmMigration = new RealmMigration(getApplicationContext(), Realm.getDefaultConfiguration());
         switch (item.getItemId()) {
             case R.id.backup_menu:
                 realmMigration.backup();
