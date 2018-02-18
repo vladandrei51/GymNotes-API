@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class ExerciseLiftFragment extends Fragment {
     private Realm realm;
     private RealmResults<Lift> results;
     private RecyclerView recyclerView;
-    private AdapterItemsRecycler adapterItemsRecycler;
+    private AdapterItemsRecycler adapter;
 
     private DividerItemDecoration mDividerItemDecoration;
 
@@ -107,7 +108,7 @@ public class ExerciseLiftFragment extends Fragment {
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
-                    adapterItemsRecycler.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                 });
                 Utils.displayToast(getContext(), "Successfully added");
             }
@@ -122,7 +123,7 @@ public class ExerciseLiftFragment extends Fragment {
                 .findAll()
                 .sort("setDate", Sort.DESCENDING);
 
-        adapterItemsRecycler = new AdapterItemsRecycler(results, getContext(), new ItemsListener());
+        adapter = new AdapterItemsRecycler(results, getContext(), new ItemsListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
@@ -132,14 +133,39 @@ public class ExerciseLiftFragment extends Fragment {
         );
         recyclerView.addItemDecoration(mDividerItemDecoration);
 
-        recyclerView.setAdapter(adapterItemsRecycler);
+        recyclerView.setAdapter(adapter);
 
 
-        ListListeners();
+        SwipeToDelete();
 
     }
 
-    void ListListeners() {
+    void SwipeToDelete() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                Utils.displayToast(getContext(), "Moved");
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                final int position = viewHolder.getAdapterPosition();
+                try (Realm r = Realm.getDefaultInstance()) {
+                    r.executeTransaction(realm -> {
+                        results.deleteFromRealm(position);
+                        adapter.notifyDataSetChanged();
+                        Utils.displayToast(getContext(), "Successfully deleted");
+                    });
+
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 
