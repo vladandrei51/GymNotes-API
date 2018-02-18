@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import android.widget.EditText;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Utils.AdapterItemsRecycler;
+import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Date;
@@ -37,11 +38,12 @@ public class ExerciseLiftFragment extends Fragment {
     EditText weightET;
     EditText repsET;
     Button addBT;
+    Toolbar toolbar;
 
     private Realm realm;
     private RealmResults<Lift> results;
     private RecyclerView recyclerView;
-    private AdapterItemsRecycler adapter;
+    private AdapterLiftRecycler adapter;
 
     private DividerItemDecoration mDividerItemDecoration;
 
@@ -72,6 +74,9 @@ public class ExerciseLiftFragment extends Fragment {
 
         exercise = new Exercise();
 
+        toolbar = rootView.findViewById(R.id.my_toolbar);
+        toolbar.setTitle(getArguments().getString("exercise_name"));
+        toolbar.setTitleTextColor(android.graphics.Color.WHITE);
         weightET = rootView.findViewById(R.id.weightET);
         repsET = rootView.findViewById(R.id.repsET);
         addBT = rootView.findViewById(R.id.addSetButton);
@@ -97,14 +102,11 @@ public class ExerciseLiftFragment extends Fragment {
 
             if (weightET.getText().toString().length() > 0) {
                 lift.setWeight(Integer.parseInt(weightET.getText().toString()));
-            } else if (weightET.getText().toString().length() == 0) {
-                lift.setWeight(0);
             }
 
             lift.setSetDate(new Date());
 
             if (exercise.getId() > 0) lift.setExercise(exercise); //if the exercise was found
-
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
@@ -112,6 +114,7 @@ public class ExerciseLiftFragment extends Fragment {
                 });
                 Utils.displayToast(getContext(), "Successfully added");
             }
+
         });
 
     }
@@ -123,7 +126,7 @@ public class ExerciseLiftFragment extends Fragment {
                 .findAll()
                 .sort("setDate", Sort.DESCENDING);
 
-        adapter = new AdapterItemsRecycler(results, getContext(), new ItemsListener());
+        adapter = new AdapterLiftRecycler(results, getContext(), new ItemsListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
@@ -180,7 +183,7 @@ public class ExerciseLiftFragment extends Fragment {
         @Override
         public void onClick(View view) {
             Lift itemTouched = results.get(recyclerView.getChildAdapterPosition(view));
-            Utils.displayToast(getContext(), itemTouched.getWeight() + "");
+            Utils.displayToast(getContext(), "clicked");
         }
     }
 
