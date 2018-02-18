@@ -3,26 +3,26 @@ package com.example.vlada.licenta.Views;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Utils.SwipeDismissListViewTouchListener;
+import com.example.vlada.licenta.Utils.AdapterItemsRecycler;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Date;
-import java.util.Locale;
 
 import io.realm.Case;
 import io.realm.Realm;
-import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -36,11 +36,13 @@ public class ExerciseLiftFragment extends Fragment {
     EditText weightET;
     EditText repsET;
     Button addBT;
-    ListView listView;
+
     private Realm realm;
     private RealmResults<Lift> results;
-    private RealmBaseAdapter<Lift> adapter;
+    private RecyclerView recyclerView;
+    private AdapterItemsRecycler adapterItemsRecycler;
 
+    private DividerItemDecoration mDividerItemDecoration;
 
     public ExerciseLiftFragment() {
 
@@ -72,7 +74,7 @@ public class ExerciseLiftFragment extends Fragment {
         weightET = rootView.findViewById(R.id.weightET);
         repsET = rootView.findViewById(R.id.repsET);
         addBT = rootView.findViewById(R.id.addSetButton);
-        listView = rootView.findViewById(R.id.historyLV);
+        recyclerView = rootView.findViewById(R.id.historyLV);
 
         this.realm = Realm.getDefaultInstance();
         exercise = realm.where(Exercise.class).equalTo("name", getArguments().getString("exercise_name")).findFirst();
@@ -105,7 +107,7 @@ public class ExerciseLiftFragment extends Fragment {
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
-
+                    adapterItemsRecycler.notifyDataSetChanged();
                 });
                 Utils.displayToast(getContext(), "Successfully added");
             }
@@ -120,73 +122,25 @@ public class ExerciseLiftFragment extends Fragment {
                 .findAll()
                 .sort("setDate", Sort.DESCENDING);
 
-        this.adapter = new RealmBaseAdapter<Lift>(results) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ExerciseLiftFragment.ViewHolder viewHolder;
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.list_view, parent, false);
-                    viewHolder = new ExerciseLiftFragment.ViewHolder();
-                    viewHolder.text = convertView.findViewById(R.id.label);
-                    convertView.setTag(viewHolder);
-                } else {
-                    viewHolder = (ExerciseLiftFragment.ViewHolder) convertView.getTag();
-                }
+        adapterItemsRecycler = new AdapterItemsRecycler(results, getContext(), new ItemsListener());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-                if (adapterData != null) {
-                    final Lift item = adapterData.get(position);
-                    if (item.getWeight() > 1)
-                        viewHolder.text.setText(String.format(Locale.US, "%d kgs for %d reps", item.getWeight(), item.getReps()));
-                    else if (item.getWeight() == 1)
-                        viewHolder.text.setText(String.format(Locale.US, "%d kg for %d reps", item.getWeight(), item.getReps()));
-                    else if (item.getWeight() == 0) {
-                        viewHolder.text.setText(String.format(Locale.US, "Bodyweight for %d reps", item.getReps()));
-                    }
-                }
-                return convertView;
+        mDividerItemDecoration = new DividerItemDecoration(
+                recyclerView.getContext(),
+                DividerItemDecoration.VERTICAL
+        );
+        recyclerView.addItemDecoration(mDividerItemDecoration);
 
-            }
-        };
+        recyclerView.setAdapter(adapterItemsRecycler);
 
-        listView.setAdapter(adapter);
 
         ListListeners();
 
     }
 
     void ListListeners() {
-        listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            Lift lift = (Lift) listView.getItemAtPosition(i);
-            Utils.showAlertDialog(getContext(), "", lift.toPrettyString());
-        });
 
-        SwipeDismissListViewTouchListener touchListener =
-                new SwipeDismissListViewTouchListener(
-                        listView,
-                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return true;
-                            }
-
-
-                            @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
-                                    try (Realm r = Realm.getDefaultInstance()) {
-                                        r.executeTransaction(realm -> {
-                                            results.deleteFromRealm(position);
-                                            adapter.notifyDataSetChanged();
-                                            Utils.displayToast(getContext(), "Successfully deleted");
-                                        });
-                                    }
-                                }
-
-
-                            }
-                        });
-        listView.setOnTouchListener(touchListener);
     }
 
     @Override
@@ -196,11 +150,12 @@ public class ExerciseLiftFragment extends Fragment {
             realm.close();
     }
 
-    private static class ViewHolder {
-        TextView text;
-
-
+    class ItemsListener implements AdapterView.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Lift itemTouched = results.get(recyclerView.getChildAdapterPosition(view));
+            Utils.displayToast(getContext(), itemTouched.getWeight() + "");
+        }
     }
-
 
 }
