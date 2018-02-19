@@ -43,7 +43,6 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         Lift item = itemList.get(position);
         ViewHolder itemViewHolder = (ViewHolder) holder;
         itemViewHolder.loadItem(item);
-
     }
 
     @Override
@@ -75,7 +74,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
                 else if (item.getWeight() == 1)
                     text.setText(String.format(Locale.US, "Failed attempt for %d kg", item.getWeight()));
                 else if (item.getWeight() == 0)
-                    text.setText(String.format(Locale.US, "Failed attempt for bodyweight lift", item.getWeight()));
+                    text.setText("Failed attempt for bodyweight lift");
             }
         }
     }

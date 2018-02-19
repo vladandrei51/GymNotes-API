@@ -24,6 +24,8 @@ import io.realm.Case;
 import io.realm.Realm;
 import io.realm.Sort;
 
+import static com.example.vlada.licenta.Utils.Utils.getEstimated1RM;
+
 /**
  * Created by andrei-valentin.vlad on 2/12/2018.
  */
@@ -33,6 +35,7 @@ public class ExerciseChartFragment extends Fragment {
     private BarChart barChart;
     private Realm realm;
     private List<String> xAxis;
+    private String exercise_name;
 
     public ExerciseChartFragment() {
 
@@ -56,6 +59,8 @@ public class ExerciseChartFragment extends Fragment {
         this.realm = Realm.getDefaultInstance();
         barChart = rootView.findViewById(R.id.chart);
 
+        exercise_name = getArguments().getString("exercise_name");
+
         populateLiftList();
 
         return rootView;
@@ -63,7 +68,7 @@ public class ExerciseChartFragment extends Fragment {
 
     private void populateLiftList() {
         lifts = realm.where(Lift.class)
-                .contains("exercise_name", getArguments().getString("exercise_name"), Case.INSENSITIVE)
+                .contains("exercise_name", exercise_name, Case.INSENSITIVE)
                 .sort("setDate", Sort.ASCENDING)
                 .findAll();
         setupChart();
@@ -82,15 +87,15 @@ public class ExerciseChartFragment extends Fragment {
         ArrayList<BarEntry> valueSet = new ArrayList<>();
 
         for (String liftDate : xAxis) {
-            float max1RM = 0;
+            float highest1RM = 0;
             for (Lift lift : lifts) {
                 if (new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(lift.getSetDate()).equals(liftDate)) {
-                    float estimated1RM = getEstimated1RM(lift.getWeight(), lift.getReps());
-                    if (estimated1RM >= max1RM)
-                        max1RM = estimated1RM;
+                    float current1RM = getEstimated1RM(lift);
+                    if (current1RM >= highest1RM)
+                        highest1RM = current1RM;
                 }
             }
-            BarEntry barEntry = new BarEntry(max1RM, xAxis.indexOf(liftDate));
+            BarEntry barEntry = new BarEntry(highest1RM, xAxis.indexOf(liftDate));
             valueSet.add(barEntry);
         }
 
@@ -111,9 +116,6 @@ public class ExerciseChartFragment extends Fragment {
         barChart.invalidate();
     }
 
-    float getEstimated1RM(float weight, float reps) {
-        return weight * (36 / (37 - reps));
-    }
 
     @Override
     public void onDestroyView() {

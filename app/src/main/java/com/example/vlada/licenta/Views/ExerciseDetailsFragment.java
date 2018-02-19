@@ -22,6 +22,7 @@ public class ExerciseDetailsFragment extends Fragment {
     TextView exerciseNameTV;
     Exercise exercise;
     private Realm realm;
+    private String exercise_name;
 
     public ExerciseDetailsFragment() {
 
@@ -35,6 +36,7 @@ public class ExerciseDetailsFragment extends Fragment {
 
         f.setArguments(b);
 
+
         return f;
     }
 
@@ -45,9 +47,12 @@ public class ExerciseDetailsFragment extends Fragment {
 
         exerciseNameTV = rootView.findViewById(R.id.textView);
 
+        exercise_name = getArguments().getString("exercise_name");
+
+
         this.realm = Realm.getDefaultInstance();
-        if (getArguments().getString("exercise_name") != null)
-            exercise = realm.where(Exercise.class).equalTo("name", getArguments().getString("exercise_name")).findFirst();
+
+        exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
 
         if (exercise != null) {
             populatePage();

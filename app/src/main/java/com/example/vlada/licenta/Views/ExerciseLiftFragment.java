@@ -45,7 +45,7 @@ public class ExerciseLiftFragment extends Fragment {
     private RecyclerView recyclerView;
     private AdapterLiftRecycler adapter;
 
-    private DividerItemDecoration mDividerItemDecoration;
+    private String exercise_name;
 
     public ExerciseLiftFragment() {
 
@@ -66,6 +66,7 @@ public class ExerciseLiftFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        exercise_name = getArguments().getString("exercise_name");
         if (getArguments().getString("exercise_name") == null)
             return null;
 
@@ -83,7 +84,13 @@ public class ExerciseLiftFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.historyLV);
 
         this.realm = Realm.getDefaultInstance();
-        exercise = realm.where(Exercise.class).equalTo("name", getArguments().getString("exercise_name")).findFirst();
+        exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
+
+        this.results = realm.where(Lift.class)
+                .contains("exercise_name", exercise_name, Case.INSENSITIVE)
+                .findAll()
+                .sort("setDate", Sort.DESCENDING);
+
 
         populateList();
         addButtonClickListener();
@@ -96,6 +103,9 @@ public class ExerciseLiftFragment extends Fragment {
             Lift lift = new Lift();
             lift.setNotes(null);
 
+            lift.setReps(0);
+            lift.setWeight(0);
+
             if (repsET.getText().toString().length() > 0) {
                 lift.setReps(Integer.parseInt(repsET.getText().toString()));
             }
@@ -106,7 +116,7 @@ public class ExerciseLiftFragment extends Fragment {
 
             lift.setSetDate(new Date());
 
-            if (exercise.getId() > 0) lift.setExercise(exercise); //if the exercise was found
+            if (exercise.getId() > 0) lift.setExercise(exercise);
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
@@ -115,29 +125,25 @@ public class ExerciseLiftFragment extends Fragment {
                 Utils.displayToast(getContext(), "Successfully added");
             }
 
+
         });
 
     }
 
     void populateList() {
 
-        this.results = realm.where(Lift.class)
-                .contains("exercise_name", getArguments().getString("exercise_name"), Case.INSENSITIVE)
-                .findAll()
-                .sort("setDate", Sort.DESCENDING);
 
         adapter = new AdapterLiftRecycler(results, getContext(), new ItemsListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        mDividerItemDecoration = new DividerItemDecoration(
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
                 recyclerView.getContext(),
                 DividerItemDecoration.VERTICAL
         );
         recyclerView.addItemDecoration(mDividerItemDecoration);
 
         recyclerView.setAdapter(adapter);
-
 
         SwipeToDelete();
 
@@ -148,7 +154,6 @@ public class ExerciseLiftFragment extends Fragment {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                Utils.displayToast(getContext(), "Moved");
                 return false;
             }
 
