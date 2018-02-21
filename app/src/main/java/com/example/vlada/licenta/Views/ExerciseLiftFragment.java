@@ -34,16 +34,16 @@ import io.realm.Sort;
 
 public class ExerciseLiftFragment extends Fragment {
 
-    Exercise exercise;
-    EditText weightET;
-    EditText repsET;
-    Button addBT;
-    Toolbar toolbar;
+    Exercise mExercise;
+    EditText mWeightET;
+    EditText mRepsET;
+    Button mAddBT;
+    Toolbar mToolbar;
 
-    private Realm realm;
-    private RealmResults<Lift> results;
-    private RecyclerView recyclerView;
-    private AdapterLiftRecycler adapter;
+    private Realm mRealm;
+    private RealmResults<Lift> mResults;
+    private RecyclerView mRecyclerView;
+    private AdapterLiftRecycler mAdapter;
 
     private String exercise_name;
 
@@ -67,26 +67,23 @@ public class ExerciseLiftFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         exercise_name = getArguments().getString("exercise_name");
-        if (getArguments().getString("exercise_name") == null)
-            return null;
-
 
         View rootView = inflater.inflate(R.layout.fragment_exercise_lift, container, false);
 
-        exercise = new Exercise();
+        mExercise = new Exercise();
 
-        toolbar = rootView.findViewById(R.id.my_toolbar);
-        toolbar.setTitle(getArguments().getString("exercise_name"));
-        toolbar.setTitleTextColor(android.graphics.Color.WHITE);
-        weightET = rootView.findViewById(R.id.weightET);
-        repsET = rootView.findViewById(R.id.repsET);
-        addBT = rootView.findViewById(R.id.addSetButton);
-        recyclerView = rootView.findViewById(R.id.historyLV);
+        mToolbar = rootView.findViewById(R.id.my_toolbar);
+        mToolbar.setTitle(getArguments().getString("exercise_name"));
+        mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
+        mWeightET = rootView.findViewById(R.id.weightET);
+        mRepsET = rootView.findViewById(R.id.repsET);
+        mAddBT = rootView.findViewById(R.id.addSetButton);
+        mRecyclerView = rootView.findViewById(R.id.historyLV);
 
-        this.realm = Realm.getDefaultInstance();
-        exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
+        this.mRealm = Realm.getDefaultInstance();
+        mExercise = mRealm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
 
-        this.results = realm.where(Lift.class)
+        this.mResults = mRealm.where(Lift.class)
                 .contains("exercise_name", exercise_name, Case.INSENSITIVE)
                 .findAll()
                 .sort("setDate", Sort.DESCENDING);
@@ -99,28 +96,28 @@ public class ExerciseLiftFragment extends Fragment {
     }
 
     void addButtonClickListener() {
-        addBT.setOnClickListener(v -> {
+        mAddBT.setOnClickListener(v -> {
             Lift lift = new Lift();
             lift.setNotes(null);
 
             lift.setReps(0);
             lift.setWeight(0);
 
-            if (repsET.getText().toString().length() > 0) {
-                lift.setReps(Integer.parseInt(repsET.getText().toString()));
+            if (mRepsET.getText().toString().length() > 0) {
+                lift.setReps(Integer.parseInt(mRepsET.getText().toString()));
             }
 
-            if (weightET.getText().toString().length() > 0) {
-                lift.setWeight(Integer.parseInt(weightET.getText().toString()));
+            if (mWeightET.getText().toString().length() > 0) {
+                lift.setWeight(Integer.parseInt(mWeightET.getText().toString()));
             }
 
             lift.setSetDate(new Date());
 
-            if (exercise.getId() > 0) lift.setExercise(exercise);
+            if (mExercise.getId() > 0) lift.setExercise(mExercise);
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
                     realm.insertOrUpdate(lift);
-                    adapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                 });
                 Utils.displayToast(getContext(), "Successfully added");
             }
@@ -133,17 +130,17 @@ public class ExerciseLiftFragment extends Fragment {
     void populateList() {
 
 
-        adapter = new AdapterLiftRecycler(results, getContext(), new ItemsListener());
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener());
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
-                recyclerView.getContext(),
+                mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL
         );
-        recyclerView.addItemDecoration(mDividerItemDecoration);
+        mRecyclerView.addItemDecoration(mDividerItemDecoration);
 
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(mAdapter);
 
         SwipeToDelete();
 
@@ -163,8 +160,8 @@ public class ExerciseLiftFragment extends Fragment {
                 final int position = viewHolder.getAdapterPosition();
                 try (Realm r = Realm.getDefaultInstance()) {
                     r.executeTransaction(realm -> {
-                        results.deleteFromRealm(position);
-                        adapter.notifyDataSetChanged();
+                        mResults.deleteFromRealm(position);
+                        mAdapter.notifyDataSetChanged();
                         Utils.displayToast(getContext(), "Successfully deleted");
                     });
 
@@ -173,21 +170,21 @@ public class ExerciseLiftFragment extends Fragment {
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (realm != null)
-            realm.close();
+        if (mRealm != null)
+            mRealm.close();
     }
 
     class ItemsListener implements AdapterView.OnClickListener {
         @Override
         public void onClick(View view) {
-            Lift itemTouched = results.get(recyclerView.getChildAdapterPosition(view));
+            Lift itemTouched = mResults.get(mRecyclerView.getChildAdapterPosition(view));
             Utils.displayToast(getContext(), "clicked");
         }
     }

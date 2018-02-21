@@ -19,9 +19,9 @@ import io.realm.Realm;
 
 public class ExerciseDetailsFragment extends Fragment {
 
-    TextView exerciseNameTV;
-    Exercise exercise;
-    private Realm realm;
+    TextView mExerciseNameTV;
+    Exercise mExercise;
+    private Realm mRealm;
     private String exercise_name;
 
     public ExerciseDetailsFragment() {
@@ -45,16 +45,16 @@ public class ExerciseDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
-        exerciseNameTV = rootView.findViewById(R.id.textView);
+        mExerciseNameTV = rootView.findViewById(R.id.textView);
 
         exercise_name = getArguments().getString("exercise_name");
 
 
-        this.realm = Realm.getDefaultInstance();
+        this.mRealm = Realm.getDefaultInstance();
 
-        exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
+        mExercise = mRealm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
 
-        if (exercise != null) {
+        if (mExercise != null) {
             populatePage();
         }
 
@@ -62,13 +62,13 @@ public class ExerciseDetailsFragment extends Fragment {
     }
 
     private void populatePage() {
-        exerciseNameTV.setText(exercise.getName());
+        mExerciseNameTV.setText(mExercise.getName());
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (realm != null)
-            realm.close();
+        if (mRealm != null)
+            mRealm.close();
     }
 }

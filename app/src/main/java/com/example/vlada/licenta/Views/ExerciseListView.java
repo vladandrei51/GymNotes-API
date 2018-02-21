@@ -45,7 +45,7 @@ public class ExerciseListView extends AppCompatActivity {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mTitle;
-    private List<String> muscleGroups;
+    private List<String> mMuscleGroups;
 
 
     @Override
@@ -55,7 +55,7 @@ public class ExerciseListView extends AppCompatActivity {
 
 
         mTitle = getTitle();
-        muscleGroups = MuscleGroup.getAllNames();
+        mMuscleGroups = MuscleGroup.getAllNames();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
 
@@ -63,7 +63,7 @@ public class ExerciseListView extends AppCompatActivity {
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
         mDrawerList.setAdapter(new ArrayAdapter<>(this,
-                R.layout.drawer_list_item, muscleGroups));
+                R.layout.drawer_list_item, mMuscleGroups));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
@@ -120,7 +120,7 @@ public class ExerciseListView extends AppCompatActivity {
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(muscleGroups.get(position));
+        setTitle(mMuscleGroups.get(position));
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -187,14 +187,14 @@ public class ExerciseListView extends AppCompatActivity {
     public static class ExerciseFragment extends Fragment {
         public static final String ARG_NUMBER = "drawer_number";
 
-        private CompositeDisposable disposables = new CompositeDisposable();
-        private ExerciseClient exerciseClient;
+        private CompositeDisposable mDisposable = new CompositeDisposable();
+        private ExerciseClient mExerciseClient;
 
-        private Realm realm;
-        private RealmResults<Exercise> results;
-        private RealmBaseAdapter<Exercise> adapter;
-        private String selectedMG;
-        private ListView lvItems;
+        private Realm mRealm;
+        private RealmResults<Exercise> mResults;
+        private RealmBaseAdapter<Exercise> mAdapter;
+        private String mSelectedMG;
+        private ListView mListView;
 
         public ExerciseFragment() {
         }
@@ -203,19 +203,18 @@ public class ExerciseListView extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_exercise_list, container, false);
             int i = getArguments().getInt(ARG_NUMBER);
-            this.selectedMG = MuscleGroup.getAllNames().get(i);
-            exerciseClient = new ExerciseClient(getContext());
-
-            this.realm = Realm.getDefaultInstance();
-
-            getActivity().setTitle(selectedMG);
+            this.mSelectedMG = MuscleGroup.getAllNames().get(i);
+            mExerciseClient = new ExerciseClient(getContext());
+            mListView = rootView.findViewById(R.id.lvItems);
+            this.mRealm = Realm.getDefaultInstance();
 
             populateWithDataFromRealm();
+
+            getActivity().setTitle(mSelectedMG);
+
             populateExerciseList();
 
-
-            lvItems = rootView.findViewById(R.id.lvItems);
-            lvItems.setAdapter(adapter);
+            mListView.setAdapter(mAdapter);
 
             listListeners();
 
@@ -223,16 +222,16 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         void listListeners() {
-            lvItems.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
-                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(pos);
+            mListView.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
+                Exercise clickedExercise = (Exercise) mListView.getItemAtPosition(pos);
                 Utils.showAlertDialog(getContext(), clickedExercise.getName(), clickedExercise.toPrettyString());
                 return true;
             });
 
-            lvItems.setOnItemClickListener((a, v, position, id) -> {
+            mListView.setOnItemClickListener((a, v, position, id) -> {
 
                 Intent intent = new Intent(getContext(), ExerciseView.class);
-                Exercise clickedExercise = (Exercise) lvItems.getItemAtPosition(position);
+                Exercise clickedExercise = (Exercise) mListView.getItemAtPosition(position);
                 intent.putExtra("exercise_name", clickedExercise.getName());
                 startActivity(intent);
             });
@@ -240,8 +239,8 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         void populateWithDataFromRealm() {
-            this.results = realm.where(Exercise.class).contains("musclegroup", selectedMG, Case.INSENSITIVE).findAllAsync();
-            this.adapter = new RealmBaseAdapter<Exercise>(results) {
+            this.mResults = mRealm.where(Exercise.class).contains("musclegroup", mSelectedMG, Case.INSENSITIVE).findAllAsync();
+            this.mAdapter = new RealmBaseAdapter<Exercise>(mResults) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     ExerciseFragment.ViewHolder viewHolder;
@@ -268,7 +267,7 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         void populateExerciseList() {
-            disposables.add(exerciseClient.getExercisesByMG(MuscleGroup.getEnumFromName(selectedMG).getUrl())
+            mDisposable.add(mExerciseClient.getExercisesByMG(MuscleGroup.getEnumFromName(mSelectedMG).getUrl())
                     .subscribeOn(Schedulers.io())
                     .subscribe(
                             this::getExercisesSuccess,
@@ -287,7 +286,7 @@ public class ExerciseListView extends AppCompatActivity {
         private void getExercisesSuccess(List<Exercise> exercises) {
             try (Realm r = Realm.getDefaultInstance()) {
                 r.executeTransaction(realm -> {
-                    realm.where(Exercise.class).contains("musclegroup", selectedMG, Case.INSENSITIVE).findAll()
+                    realm.where(Exercise.class).contains("musclegroup", mSelectedMG, Case.INSENSITIVE).findAll()
                             .deleteAllFromRealm();
                     for (Exercise exercise : exercises) {
                         realm.insertOrUpdate(exercise);
@@ -299,7 +298,7 @@ public class ExerciseListView extends AppCompatActivity {
         @Override
         public void onDestroyView() {
             super.onDestroyView();
-            if (realm != null) realm.close();
+            if (mRealm != null) mRealm.close();
         }
 
         private static class ViewHolder {

@@ -31,10 +31,10 @@ import static com.example.vlada.licenta.Utils.Utils.getEstimated1RM;
  */
 
 public class ExerciseChartFragment extends Fragment {
-    List<Lift> lifts;
-    private BarChart barChart;
-    private Realm realm;
-    private List<String> xAxis;
+    List<Lift> mLifts;
+    private BarChart mBarChart;
+    private Realm mRealm;
+    private List<String> mXAxis;
     private String exercise_name;
 
     public ExerciseChartFragment() {
@@ -56,8 +56,8 @@ public class ExerciseChartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_chart, container, false);
-        this.realm = Realm.getDefaultInstance();
-        barChart = rootView.findViewById(R.id.chart);
+        this.mRealm = Realm.getDefaultInstance();
+        mBarChart = rootView.findViewById(R.id.chart);
 
         exercise_name = getArguments().getString("exercise_name");
 
@@ -67,7 +67,7 @@ public class ExerciseChartFragment extends Fragment {
     }
 
     private void populateLiftList() {
-        lifts = realm.where(Lift.class)
+        mLifts = mRealm.where(Lift.class)
                 .contains("exercise_name", exercise_name, Case.INSENSITIVE)
                 .sort("setDate", Sort.ASCENDING)
                 .findAll();
@@ -75,10 +75,10 @@ public class ExerciseChartFragment extends Fragment {
     }
 
     private void getXAxisValues() {
-        xAxis = new ArrayList<>();
-        for (Lift lift : lifts) {
+        mXAxis = new ArrayList<>();
+        for (Lift lift : mLifts) {
             String date = new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(lift.getSetDate());
-            if (!xAxis.contains(date)) xAxis.add(date);
+            if (!mXAxis.contains(date)) mXAxis.add(date);
         }
     }
 
@@ -86,16 +86,16 @@ public class ExerciseChartFragment extends Fragment {
         ArrayList<BarDataSet> dataSets;
         ArrayList<BarEntry> valueSet = new ArrayList<>();
 
-        for (String liftDate : xAxis) {
+        for (String liftDate : mXAxis) {
             float highest1RM = 0;
-            for (Lift lift : lifts) {
+            for (Lift lift : mLifts) {
                 if (new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(lift.getSetDate()).equals(liftDate)) {
                     float current1RM = getEstimated1RM(lift);
                     if (current1RM >= highest1RM)
                         highest1RM = current1RM;
                 }
             }
-            BarEntry barEntry = new BarEntry(highest1RM, xAxis.indexOf(liftDate));
+            BarEntry barEntry = new BarEntry(highest1RM, mXAxis.indexOf(liftDate));
             valueSet.add(barEntry);
         }
 
@@ -109,17 +109,17 @@ public class ExerciseChartFragment extends Fragment {
 
     void setupChart() {
         getXAxisValues();
-        BarData data = new BarData(xAxis, getDataSet());
-        barChart.setData(data);
-        barChart.setDescription("Estimated 1 rep max");
-        barChart.animateXY(1000, 1000);
-        barChart.invalidate();
+        BarData data = new BarData(mXAxis, getDataSet());
+        mBarChart.setData(data);
+        mBarChart.setDescription("Estimated 1 rep max");
+        mBarChart.animateXY(1000, 1000);
+        mBarChart.invalidate();
     }
 
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        realm.close();
+        mRealm.close();
     }
 }
