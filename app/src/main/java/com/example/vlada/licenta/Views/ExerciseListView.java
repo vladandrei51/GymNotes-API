@@ -24,17 +24,16 @@ import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.MuscleGroup;
 import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Utils.RealmMigration;
+import com.example.vlada.licenta.Utils.RealmBackup;
+import com.example.vlada.licenta.Utils.RealmHelper;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
-import io.realm.RealmResults;
 
 /**
  * Created by andrei-valentin.vlad on 2/7/2018.
@@ -140,13 +139,13 @@ public class ExerciseListView extends AppCompatActivity {
             return true;
         }
 
-        RealmMigration realmMigration = new RealmMigration(getApplicationContext(), Realm.getDefaultConfiguration());
+        RealmBackup realmBackup = new RealmBackup(getApplicationContext(), Realm.getDefaultConfiguration());
         switch (item.getItemId()) {
             case R.id.backup_menu:
-                realmMigration.backup();
+                realmBackup.backup();
                 break;
             case R.id.restore_menu:
-                realmMigration.restore();
+                realmBackup.restore();
                 Intent intent = getIntent();
                 overridePendingTransition(0, 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -190,8 +189,7 @@ public class ExerciseListView extends AppCompatActivity {
         private CompositeDisposable mDisposable = new CompositeDisposable();
         private ExerciseClient mExerciseClient;
 
-        private Realm mRealm;
-        private RealmResults<Exercise> mResults;
+        private RealmHelper mRealmHelper;
         private RealmBaseAdapter<Exercise> mAdapter;
         private String mSelectedMG;
         private ListView mListView;
@@ -202,20 +200,18 @@ public class ExerciseListView extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_exercise_list, container, false);
-            int i = getArguments().getInt(ARG_NUMBER);
-            this.mSelectedMG = MuscleGroup.getAllNames().get(i);
-            mExerciseClient = new ExerciseClient(getContext());
-            mListView = rootView.findViewById(R.id.lvItems);
-            this.mRealm = Realm.getDefaultInstance();
 
-            populateWithDataFromRealm();
-
+            this.mSelectedMG = MuscleGroup.getAllNames().get(getArguments().getInt(ARG_NUMBER));
             getActivity().setTitle(mSelectedMG);
 
+            mExerciseClient = new ExerciseClient(getContext());
+            mListView = rootView.findViewById(R.id.lvItems);
+            mRealmHelper = new RealmHelper();
+
+            populateWithDataFromRealm();
             populateExerciseList();
 
             mListView.setAdapter(mAdapter);
-
             listListeners();
 
             return rootView;
@@ -239,8 +235,7 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         void populateWithDataFromRealm() {
-            this.mResults = mRealm.where(Exercise.class).contains("musclegroup", mSelectedMG, Case.INSENSITIVE).findAllAsync();
-            this.mAdapter = new RealmBaseAdapter<Exercise>(mResults) {
+            this.mAdapter = new RealmBaseAdapter<Exercise>(mRealmHelper.findAllAsyncFiltered(Exercise.class, "musclegroup", mSelectedMG)) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     ExerciseFragment.ViewHolder viewHolder;
@@ -284,21 +279,14 @@ public class ExerciseListView extends AppCompatActivity {
 
 
         private void getExercisesSuccess(List<Exercise> exercises) {
-            try (Realm r = Realm.getDefaultInstance()) {
-                r.executeTransaction(realm -> {
-                    realm.where(Exercise.class).contains("musclegroup", mSelectedMG, Case.INSENSITIVE).findAll()
-                            .deleteAllFromRealm();
-                    for (Exercise exercise : exercises) {
-                        realm.insertOrUpdate(exercise);
-                    }
-                });
-            }
+            mRealmHelper.deleteAllFiltered(Exercise.class, "musclegroup", mSelectedMG);
+            mRealmHelper.insertAllFromList(exercises);
         }
 
         @Override
         public void onDestroyView() {
             super.onDestroyView();
-            if (mRealm != null) mRealm.close();
+            mRealmHelper.closeRealm();
         }
 
         private static class ViewHolder {

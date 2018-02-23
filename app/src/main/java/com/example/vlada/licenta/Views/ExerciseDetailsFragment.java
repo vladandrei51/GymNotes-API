@@ -10,8 +10,7 @@ import android.widget.TextView;
 
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.R;
-
-import io.realm.Realm;
+import com.example.vlada.licenta.Utils.RealmHelper;
 
 /**
  * Created by andrei-valentin.vlad on 2/7/2018.
@@ -21,8 +20,8 @@ public class ExerciseDetailsFragment extends Fragment {
 
     TextView mExerciseNameTV;
     Exercise mExercise;
-    private Realm mRealm;
-    private String exercise_name;
+    private String mExerciseName;
+    private RealmHelper mRealmHelper;
 
     public ExerciseDetailsFragment() {
 
@@ -46,13 +45,11 @@ public class ExerciseDetailsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
         mExerciseNameTV = rootView.findViewById(R.id.textView);
+        mRealmHelper = new RealmHelper();
+        mExerciseName = getArguments().getString("exercise_name");
 
-        exercise_name = getArguments().getString("exercise_name");
 
-
-        this.mRealm = Realm.getDefaultInstance();
-
-        mExercise = mRealm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
+        mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
 
         if (mExercise != null) {
             populatePage();
@@ -68,7 +65,6 @@ public class ExerciseDetailsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mRealm != null)
-            mRealm.close();
+        mRealmHelper.closeRealm();
     }
 }

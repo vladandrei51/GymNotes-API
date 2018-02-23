@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Utils.RealmHelper;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import io.realm.Case;
-import io.realm.Realm;
 import io.realm.Sort;
 
 import static com.example.vlada.licenta.Utils.Utils.getEstimated1RM;
@@ -33,9 +32,9 @@ import static com.example.vlada.licenta.Utils.Utils.getEstimated1RM;
 public class ExerciseChartFragment extends Fragment {
     List<Lift> mLifts;
     private BarChart mBarChart;
-    private Realm mRealm;
     private List<String> mXAxis;
-    private String exercise_name;
+    private String mExerciseName;
+    private RealmHelper mRealmHelper;
 
     public ExerciseChartFragment() {
 
@@ -56,22 +55,21 @@ public class ExerciseChartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_chart, container, false);
-        this.mRealm = Realm.getDefaultInstance();
-        mBarChart = rootView.findViewById(R.id.chart);
 
-        exercise_name = getArguments().getString("exercise_name");
+        mRealmHelper = new RealmHelper();
+
+        mBarChart = rootView.findViewById(R.id.chart);
+        mExerciseName = getArguments().getString("exercise_name");
 
         populateLiftList();
+        setupChart();
+
 
         return rootView;
     }
 
     private void populateLiftList() {
-        mLifts = mRealm.where(Lift.class)
-                .contains("exercise_name", exercise_name, Case.INSENSITIVE)
-                .sort("setDate", Sort.ASCENDING)
-                .findAll();
-        setupChart();
+        mLifts = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.ASCENDING);
     }
 
     private void getXAxisValues() {
@@ -120,6 +118,6 @@ public class ExerciseChartFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRealm.close();
+        mRealmHelper.closeRealm();
     }
 }

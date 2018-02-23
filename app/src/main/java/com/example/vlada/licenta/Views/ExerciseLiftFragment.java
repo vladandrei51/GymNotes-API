@@ -19,12 +19,11 @@ import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
+import com.example.vlada.licenta.Utils.RealmHelper;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Date;
 
-import io.realm.Case;
-import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -40,12 +39,11 @@ public class ExerciseLiftFragment extends Fragment {
     Button mAddBT;
     Toolbar mToolbar;
 
-    private Realm mRealm;
+
     private RealmResults<Lift> mResults;
     private RecyclerView mRecyclerView;
     private AdapterLiftRecycler mAdapter;
-
-    private String exercise_name;
+    private RealmHelper mRealmHelper;
 
     public ExerciseLiftFragment() {
 
@@ -66,28 +64,24 @@ public class ExerciseLiftFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        exercise_name = getArguments().getString("exercise_name");
-
         View rootView = inflater.inflate(R.layout.fragment_exercise_lift, container, false);
 
-        mExercise = new Exercise();
+        String exercise_name = getArguments().getString("exercise_name");
+
+        mRealmHelper = new RealmHelper();
 
         mToolbar = rootView.findViewById(R.id.my_toolbar);
-        mToolbar.setTitle(getArguments().getString("exercise_name"));
-        mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
         mWeightET = rootView.findViewById(R.id.weightET);
         mRepsET = rootView.findViewById(R.id.repsET);
         mAddBT = rootView.findViewById(R.id.addSetButton);
         mRecyclerView = rootView.findViewById(R.id.historyLV);
 
-        this.mRealm = Realm.getDefaultInstance();
-        mExercise = mRealm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
+        mToolbar.setTitle(exercise_name);
+        mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
-        this.mResults = mRealm.where(Lift.class)
-                .contains("exercise_name", exercise_name, Case.INSENSITIVE)
-                .findAll()
-                .sort("setDate", Sort.DESCENDING);
+        mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", exercise_name);
 
+        this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", exercise_name, "setDate", Sort.DESCENDING);
 
         populateList();
         addButtonClickListener();
@@ -114,13 +108,10 @@ public class ExerciseLiftFragment extends Fragment {
             lift.setSetDate(new Date());
 
             if (mExercise.getId() > 0) lift.setExercise(mExercise);
-            try (Realm r = Realm.getDefaultInstance()) {
-                r.executeTransaction(realm -> {
-                    realm.insertOrUpdate(lift);
-                    mAdapter.notifyDataSetChanged();
-                });
-                Utils.displayToast(getContext(), "Successfully added");
-            }
+
+            mRealmHelper.insert(lift);
+            mAdapter.notifyDataSetChanged();
+            Utils.displayToast(getContext(), "Successfully added");
 
 
         });
@@ -156,16 +147,11 @@ public class ExerciseLiftFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                //Remove swiped item from list and notify the RecyclerView
-                final int position = viewHolder.getAdapterPosition();
-                try (Realm r = Realm.getDefaultInstance()) {
-                    r.executeTransaction(realm -> {
-                        mResults.deleteFromRealm(position);
-                        mAdapter.notifyDataSetChanged();
-                        Utils.displayToast(getContext(), "Successfully deleted");
-                    });
+                /* Remove swiped item from list and notify the RecyclerView */
+                mRealmHelper.deleteAtPosition(mResults, viewHolder.getAdapterPosition());
+                mAdapter.notifyDataSetChanged();
+                Utils.displayToast(getContext(), "Successfully deleted");
 
-                }
             }
         };
 
@@ -177,8 +163,7 @@ public class ExerciseLiftFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mRealm != null)
-            mRealm.close();
+        mRealmHelper.closeRealm();
     }
 
     class ItemsListener implements AdapterView.OnClickListener {

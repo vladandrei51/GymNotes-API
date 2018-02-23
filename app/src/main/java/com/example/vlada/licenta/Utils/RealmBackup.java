@@ -14,13 +14,13 @@ import io.realm.RealmConfiguration;
  * Created by andrei-valentin.vlad on 2/12/2018.
  */
 
-public class RealmMigration {
+public class RealmBackup {
 
     private Context context;
     private Realm realm;
     private RealmConfiguration realmConfiguration;
 
-    public RealmMigration(Context context, RealmConfiguration realmConfiguration) {
+    public RealmBackup(Context context, RealmConfiguration realmConfiguration) {
         this.realm = Realm.getInstance(realmConfiguration);
         this.context = context;
         this.realmConfiguration = realmConfiguration;
@@ -68,7 +68,8 @@ public class RealmMigration {
 
             Utils.displayToast(context, "Successfully restored!");
         } else {
-            Utils.displayToast(context, "Global=" + Realm.getGlobalInstanceCount(realmConfiguration) + " local=" + Realm.getLocalInstanceCount(realmConfiguration));
+            Utils.displayToast(context, "Global instances = " + Realm.getGlobalInstanceCount(realmConfiguration) +
+                    "\nLocal instances = " + Realm.getLocalInstanceCount(realmConfiguration));
         }
     }
 
