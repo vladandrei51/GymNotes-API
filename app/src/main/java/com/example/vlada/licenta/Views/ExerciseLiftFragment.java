@@ -80,7 +80,6 @@ public class ExerciseLiftFragment extends Fragment {
         mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", exercise_name);
-
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", exercise_name, "setDate", Sort.DESCENDING);
 
         populateList();
@@ -93,7 +92,6 @@ public class ExerciseLiftFragment extends Fragment {
         mAddBT.setOnClickListener(v -> {
             Lift lift = new Lift();
             lift.setNotes(null);
-
             lift.setReps(0);
             lift.setWeight(0);
 
@@ -112,8 +110,6 @@ public class ExerciseLiftFragment extends Fragment {
             mRealmHelper.insert(lift);
             mAdapter.notifyDataSetChanged();
             Utils.displayToast(getContext(), "Successfully added");
-
-
         });
 
     }
@@ -130,16 +126,12 @@ public class ExerciseLiftFragment extends Fragment {
                 DividerItemDecoration.VERTICAL
         );
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
-
         mRecyclerView.setAdapter(mAdapter);
-
         SwipeToDelete();
-
     }
 
     void SwipeToDelete() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -151,7 +143,6 @@ public class ExerciseLiftFragment extends Fragment {
                 mRealmHelper.deleteAtPosition(mResults, viewHolder.getAdapterPosition());
                 mAdapter.notifyDataSetChanged();
                 Utils.displayToast(getContext(), "Successfully deleted");
-
             }
         };
 

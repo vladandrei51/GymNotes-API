@@ -45,9 +45,7 @@ public class ExerciseChartFragment extends Fragment {
         ExerciseChartFragment f = new ExerciseChartFragment();
         Bundle b = new Bundle();
         b.putString("exercise_name", text);
-
         f.setArguments(b);
-
         return f;
     }
 
@@ -74,17 +72,17 @@ public class ExerciseChartFragment extends Fragment {
 
     private void getXAxisValues() {
         mXAxis = new ArrayList<>();
-        for (Lift lift : mLifts) {
-            String date = new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(lift.getSetDate());
+        mLifts.forEach(l -> {
+            String date = new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(l.getSetDate());
             if (!mXAxis.contains(date)) mXAxis.add(date);
-        }
+        });
     }
 
     private ArrayList<BarDataSet> getDataSet() {
         ArrayList<BarDataSet> dataSets;
         ArrayList<BarEntry> valueSet = new ArrayList<>();
 
-        for (String liftDate : mXAxis) {
+        mXAxis.forEach(liftDate -> {
             float highest1RM = 0;
             for (Lift lift : mLifts) {
                 if (new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(lift.getSetDate()).equals(liftDate)) {
@@ -95,9 +93,9 @@ public class ExerciseChartFragment extends Fragment {
             }
             BarEntry barEntry = new BarEntry(highest1RM, mXAxis.indexOf(liftDate));
             valueSet.add(barEntry);
-        }
+        });
 
-        BarDataSet barDataSet = new BarDataSet(valueSet, "1 rep max per date");
+        BarDataSet barDataSet = new BarDataSet(valueSet, "Strength/day");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         dataSets = new ArrayList<>();
@@ -109,7 +107,7 @@ public class ExerciseChartFragment extends Fragment {
         getXAxisValues();
         BarData data = new BarData(mXAxis, getDataSet());
         mBarChart.setData(data);
-        mBarChart.setDescription("Estimated 1 rep max");
+        mBarChart.setDescription("Estimated maximum strength");
         mBarChart.animateXY(1000, 1000);
         mBarChart.invalidate();
     }

@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 //                realm.insert(lift2);
 //            });
 //        }
-//
+
 
 //        setContentView(R.layout.activity_main);
         Intent intent = new Intent(MainActivity.this, ExerciseListView.class);
