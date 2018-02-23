@@ -60,13 +60,13 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         }
 
         void loadItem(Lift item) {
-            if (item.getReps() > 0) {
+            if (item.getReps() > 1) {
                 if (item.getWeight() > 1)
                     text.setText(String.format(Locale.US, "%d kgs for %d reps", item.getWeight(), item.getReps()));
                 else if (item.getWeight() == 1)
                     text.setText(String.format(Locale.US, "%d kg for %d reps", item.getWeight(), item.getReps()));
                 else if (item.getWeight() == 0) {
-                    text.setText(String.format(Locale.US, "Bodyweight for %d reps", item.getReps()));
+                    text.setText(String.format(Locale.US, "Bodyweight lift for %d reps", item.getReps()));
                 }
             } else if (item.getReps() == 0) {
                 if (item.getWeight() > 1)
@@ -74,7 +74,16 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
                 else if (item.getWeight() == 1)
                     text.setText(String.format(Locale.US, "Failed attempt for %d kg", item.getWeight()));
                 else if (item.getWeight() == 0)
-                    text.setText("Failed attempt for bodyweight lift");
+                    text.setText("Failed attempt for a bodyweight lift");
+            } else if (item.getReps() == 1) {
+                if (item.getWeight() > 1)
+                    text.setText(String.format(Locale.US, "%d kgs for 1 rep", item.getWeight()));
+                else if (item.getWeight() == 1)
+                    text.setText(String.format(Locale.US, "%d kg for 1 rep", item.getWeight()));
+                else if (item.getWeight() == 0) {
+                    text.setText("Bodyweight lift for 1 rep");
+                }
+
             }
         }
     }
