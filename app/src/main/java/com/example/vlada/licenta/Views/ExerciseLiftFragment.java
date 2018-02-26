@@ -22,6 +22,7 @@ import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
 import com.example.vlada.licenta.Utils.RealmHelper;
 import com.example.vlada.licenta.Utils.Utils;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import io.realm.RealmResults;
@@ -38,6 +39,8 @@ public class ExerciseLiftFragment extends Fragment {
     EditText mRepsET;
     Button mAddBT;
     Toolbar mToolbar;
+
+    String mExerciseName;
 
 
     private RealmResults<Lift> mResults;
@@ -66,7 +69,7 @@ public class ExerciseLiftFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_exercise_lift, container, false);
 
-        String exercise_name = getArguments().getString("exercise_name");
+        mExerciseName = getArguments().getString("exercise_name");
 
         mRealmHelper = new RealmHelper();
 
@@ -76,11 +79,11 @@ public class ExerciseLiftFragment extends Fragment {
         mAddBT = rootView.findViewById(R.id.addSetButton);
         mRecyclerView = rootView.findViewById(R.id.historyLV);
 
-        mToolbar.setTitle(exercise_name);
+        mToolbar.setTitle(mExerciseName);
         mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
-        mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", exercise_name);
-        this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", exercise_name, "setDate", Sort.DESCENDING);
+        mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
+        this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
 
         populateList();
         addButtonClickListener();
@@ -90,19 +93,21 @@ public class ExerciseLiftFragment extends Fragment {
 
     void addButtonClickListener() {
         mAddBT.setOnClickListener(v -> {
+
+            float highest1RMPreAdd = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName)
+                    .stream().map(Utils::getEstimated1RM).max(Comparator.naturalOrder()).orElse(null);
+
+
             Lift lift = new Lift();
             lift.setNotes(null);
             lift.setReps(0);
             lift.setWeight(0);
-
             if (mRepsET.getText().toString().length() > 0) {
                 lift.setReps(Integer.parseInt(mRepsET.getText().toString()));
             }
-
             if (mWeightET.getText().toString().length() > 0) {
                 lift.setWeight(Integer.parseInt(mWeightET.getText().toString()));
             }
-
             lift.setSetDate(new Date());
 
             if (mExercise.getId() > 0) lift.setExercise(mExercise);
@@ -110,6 +115,10 @@ public class ExerciseLiftFragment extends Fragment {
             mRealmHelper.insert(lift);
             mAdapter.notifyDataSetChanged();
             Utils.displayToast(getContext(), "Successfully added");
+
+            if (highest1RMPreAdd < Utils.getEstimated1RM(lift)) {
+                Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+            }
         });
 
     }
