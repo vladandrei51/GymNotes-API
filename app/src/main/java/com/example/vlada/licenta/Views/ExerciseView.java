@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 
 import com.example.vlada.licenta.R;
 
@@ -16,11 +17,16 @@ import com.example.vlada.licenta.R;
 
 public class ExerciseView extends FragmentActivity {
 
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_view);
+        mToolbar = findViewById(R.id.my_toolbar);
+        if (getIntent().getExtras() != null)
+            mToolbar.setTitle(getIntent().getExtras().getString("exercise_name"));
+        mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
 
         ViewPager pager = findViewById(R.id.pager);
@@ -36,6 +42,8 @@ public class ExerciseView extends FragmentActivity {
 
         @Override
         public Fragment getItem(int pos) {
+
+
             if (getIntent().getExtras() != null) {
                 switch (pos) {
                     case 0:

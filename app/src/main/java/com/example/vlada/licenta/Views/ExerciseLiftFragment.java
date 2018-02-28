@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +37,6 @@ public class ExerciseLiftFragment extends Fragment {
     EditText mWeightET;
     EditText mRepsET;
     Button mAddBT;
-    Toolbar mToolbar;
 
     String mExerciseName;
 
@@ -73,14 +71,11 @@ public class ExerciseLiftFragment extends Fragment {
 
         mRealmHelper = new RealmHelper();
 
-        mToolbar = rootView.findViewById(R.id.my_toolbar);
         mWeightET = rootView.findViewById(R.id.weightET);
         mRepsET = rootView.findViewById(R.id.repsET);
         mAddBT = rootView.findViewById(R.id.addSetButton);
         mRecyclerView = rootView.findViewById(R.id.historyLV);
 
-        mToolbar.setTitle(mExerciseName);
-        mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
