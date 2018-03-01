@@ -3,6 +3,7 @@ package com.example.vlada.licenta.Views;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,8 @@ import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
 import com.example.vlada.licenta.Utils.RealmHelper;
 import com.example.vlada.licenta.Utils.Utils;
 
+import java.util.Comparator;
+
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -33,8 +36,7 @@ public class ExerciseLiftFragment extends Fragment {
     FloatingActionButton mAddBT;
 
     String mExerciseName;
-
-
+    DialogFragment mDialog;
     private RealmResults<Lift> mResults;
     private RecyclerView mRecyclerView;
     private AdapterLiftRecycler mAdapter;
@@ -46,12 +48,10 @@ public class ExerciseLiftFragment extends Fragment {
     }
 
     public static ExerciseLiftFragment newInstance(String text) {
-
         ExerciseLiftFragment f = new ExerciseLiftFragment();
         Bundle b = new Bundle();
         b.putString("exercise_name", text);
         f.setArguments(b);
-
         return f;
     }
 
@@ -76,42 +76,46 @@ public class ExerciseLiftFragment extends Fragment {
         return rootView;
     }
 
+    public void showAddLiftDialog() {
+        // Create an instance of the dialog fragment and show it
+        mDialog = new AddLiftDialog();
+        mDialog.setTargetFragment(this, 0);
+        if (getFragmentManager() != null) {
+            mDialog.show(getFragmentManager(), "addLiftDialog");
+        } else {
+            Utils.displayToast(getContext(), "Error");
+        }
+    }
+
+
     void addButtonClickListener() {
         mAddBT.setOnClickListener(v -> {
-            Utils.displayToast(getContext(), "clicked");
-
-//            float highest1RMPreAdd = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName)
-//                    .stream().map(Utils::getEstimated1RM).max(Comparator.naturalOrder()).orElse(null);
-//
-//
-//            Lift lift = new Lift();
-//            lift.setNotes(null);
-//            lift.setReps(0);
-//            lift.setWeight(0);
-//            if (mRepsET.getText().toString().length() > 0) {
-//                lift.setReps(Integer.parseInt(mRepsET.getText().toString()));
-//            }
-//            if (mWeightET.getText().toString().length() > 0) {
-//                lift.setWeight(Integer.parseInt(mWeightET.getText().toString()));
-//            }
-//            lift.setSetDate(new Date());
-//
-//            if (mExercise.getId() > 0) lift.setExercise(mExercise);
-//
-//            mRealmHelper.insert(lift);
-//            mAdapter.notifyDataSetChanged();
-//            Utils.displayToast(getContext(), "Successfully added");
-//
-//            if (highest1RMPreAdd < Utils.getEstimated1RM(lift)) {
-//                Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
-//            }
+            showAddLiftDialog();
         });
 
     }
 
+    public void insertLiftFromDialog(Lift lift) {
+        if (lift != null) {
+            float highest1RMPreAdd = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName)
+                    .stream()
+                    .map(Utils::getEstimated1RM)
+                    .max(Comparator.naturalOrder())
+                    .orElse(0f);
+            if (mExercise.getId() > 0) lift.setExercise(mExercise);
+
+            mRealmHelper.insert(lift);
+            mAdapter.notifyDataSetChanged();
+            Utils.displayToast(getContext(), "Successfully added");
+
+            if (highest1RMPreAdd < Utils.getEstimated1RM(lift)) {
+                Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+            }
+        }
+
+    }
+
     void populateList() {
-
-
         mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -152,6 +156,7 @@ public class ExerciseLiftFragment extends Fragment {
         mRealmHelper.closeRealm();
     }
 
+
     class ItemsListener implements AdapterView.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -161,3 +166,4 @@ public class ExerciseLiftFragment extends Fragment {
     }
 
 }
+
