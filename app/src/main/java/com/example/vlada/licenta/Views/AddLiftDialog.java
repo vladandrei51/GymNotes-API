@@ -53,7 +53,7 @@ public class AddLiftDialog extends DialogFragment {
         mAddBT.setOnClickListener(v -> {
             mLift.setNotes(mNotesET.getText().toString().length() > 0 && mNotesCB.isChecked() ? mNotesET.getText().toString() : "");
             mLift.setReps(mRepsET.getText().toString().length() > 0 ? Integer.parseInt(mRepsET.getText().toString()) : 0);
-            mLift.setWeight(mWeightET.getText().toString().length() > 0 ? Integer.parseInt(mRepsET.getText().toString()) : 0);
+            mLift.setWeight(mWeightET.getText().toString().length() > 0 ? Integer.parseInt(mWeightET.getText().toString()) : 0);
             mLift.setSetDate(new Date());
             dismissDialog();
             ExerciseLiftFragment exerciseLiftFragment = (ExerciseLiftFragment) getTargetFragment();
