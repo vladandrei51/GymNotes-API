@@ -2,26 +2,24 @@ package com.example.vlada.licenta.Views;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Utils.RealmHelper;
 
 /**
  * Created by andrei-valentin.vlad on 2/7/2018.
  */
 
-public class ExerciseDetailsFragment extends Fragment {
+public class ExerciseDetailsFragment extends BaseFragment {
 
     TextView mExerciseNameTV;
     Exercise mExercise;
     private String mExerciseName;
-    private RealmHelper mRealmHelper;
 
     public ExerciseDetailsFragment() {
 
@@ -45,7 +43,6 @@ public class ExerciseDetailsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
         mExerciseNameTV = rootView.findViewById(R.id.textView);
-        mRealmHelper = new RealmHelper();
         mExerciseName = getArguments().getString("exercise_name");
 
 
@@ -65,6 +62,5 @@ public class ExerciseDetailsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRealmHelper.closeRealm();
     }
 }

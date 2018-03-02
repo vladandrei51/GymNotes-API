@@ -1,10 +1,9 @@
 package com.example.vlada.licenta.Views;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,12 +19,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.MuscleGroup;
 import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.RealmBackup;
-import com.example.vlada.licenta.Utils.RealmHelper;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.List;
@@ -109,13 +108,24 @@ public class ExerciseListView extends AppCompatActivity {
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        Fragment fragment = new ExerciseFragment();
+//        Fragment fragment = new ExerciseFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(ExerciseFragment.ARG_NUMBER, position);
+//        fragment.setArguments(args);
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        ExerciseFragment fragment = new ExerciseFragment();
         Bundle args = new Bundle();
         args.putInt(ExerciseFragment.ARG_NUMBER, position);
         fragment.setArguments(args);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
+
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
@@ -133,8 +143,6 @@ public class ExerciseListView extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // The action bar home/up action should open or close the drawer.
-        // ActionBarDrawerToggle will take care of this.
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
@@ -161,11 +169,6 @@ public class ExerciseListView extends AppCompatActivity {
     }
 
 
-    /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
-     */
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -180,16 +183,12 @@ public class ExerciseListView extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /**
-     * Fragment that appears in the "content_frame", shows exercises list
-     */
-    public static class ExerciseFragment extends Fragment {
+    public static class ExerciseFragment extends BaseFragment {
         public static final String ARG_NUMBER = "drawer_number";
 
         private CompositeDisposable mDisposable = new CompositeDisposable();
         private ExerciseClient mExerciseClient;
 
-        private RealmHelper mRealmHelper;
         private RealmBaseAdapter<Exercise> mAdapter;
         private String mSelectedMG;
         private ListView mListView;
@@ -198,7 +197,7 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_exercise_list, container, false);
 
             this.mSelectedMG = MuscleGroup.getAllNames().get(getArguments().getInt(ARG_NUMBER));
@@ -206,7 +205,7 @@ public class ExerciseListView extends AppCompatActivity {
 
             mExerciseClient = new ExerciseClient(getContext());
             mListView = rootView.findViewById(R.id.lvItems);
-            mRealmHelper = new RealmHelper();
+
 
             populateWithDataFromRealm();
             populateExerciseList();
@@ -273,7 +272,10 @@ public class ExerciseListView extends AppCompatActivity {
 
         private void getExercisesError(Throwable throwable) {
             if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> Utils.showAlertDialog(getContext(), "Cached data is being used", throwable.getMessage()));
+                getActivity().runOnUiThread(() -> {
+                    Utils.showAlertDialog(getContext(), "Cached data is being used", throwable.getMessage());
+                    mAdapter.notifyDataSetChanged();
+                });
             }
         }
 
@@ -286,7 +288,6 @@ public class ExerciseListView extends AppCompatActivity {
         @Override
         public void onDestroyView() {
             super.onDestroyView();
-            mRealmHelper.closeRealm();
         }
 
         private static class ViewHolder {

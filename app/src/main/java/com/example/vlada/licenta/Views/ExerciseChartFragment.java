@@ -2,14 +2,13 @@ package com.example.vlada.licenta.Views;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Utils.RealmHelper;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -27,12 +26,11 @@ import static com.example.vlada.licenta.Utils.Utils.getEstimated1RM;
  * Created by andrei-valentin.vlad on 2/12/2018.
  */
 
-public class ExerciseChartFragment extends Fragment {
+public class ExerciseChartFragment extends BaseFragment {
     List<Lift> mLifts;
     private BarChart mBarChart;
     private List<String> mXAxis;
     private String mExerciseName;
-    private RealmHelper mRealmHelper;
 
     public ExerciseChartFragment() {
 
@@ -51,8 +49,6 @@ public class ExerciseChartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_chart, container, false);
-
-        mRealmHelper = new RealmHelper();
 
         mBarChart = rootView.findViewById(R.id.chart);
         mExerciseName = getArguments().getString("exercise_name");
@@ -117,6 +113,5 @@ public class ExerciseChartFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRealmHelper.closeRealm();
     }
 }

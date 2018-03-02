@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
-import com.example.vlada.licenta.Utils.RealmHelper;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Comparator;
@@ -29,7 +28,7 @@ import io.realm.Sort;
  * Created by andrei-valentin.vlad on 2/9/2018.
  */
 
-public class ExerciseLiftFragment extends Fragment {
+public class ExerciseLiftFragment extends BaseFragment {
 
     Exercise mExercise;
     FloatingActionButton mAddBT;
@@ -39,7 +38,6 @@ public class ExerciseLiftFragment extends Fragment {
     private RealmResults<Lift> mResults;
     private RecyclerView mRecyclerView;
     private AdapterLiftRecycler mAdapter;
-    private RealmHelper mRealmHelper;
 
 
     public ExerciseLiftFragment() {
@@ -65,7 +63,6 @@ public class ExerciseLiftFragment extends Fragment {
         mAddBT = rootView.findViewById(R.id.fab);
         mRecyclerView = rootView.findViewById(R.id.historyLV);
 
-        mRealmHelper = new RealmHelper();
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
         populateList();
@@ -135,7 +132,6 @@ public class ExerciseLiftFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRealmHelper.closeRealm();
     }
 
 
