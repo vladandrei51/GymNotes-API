@@ -90,4 +90,10 @@ public class Lift extends RealmObject {
                 "Date = " + new SimpleDateFormat("HH:mm  dd MMM. yyyy ", Locale.US).format(setDate));
     }
 
+    public String date2PrettyString() {
+        if (setDate != null)
+            return new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(setDate);
+        return "";
+    }
+
 }

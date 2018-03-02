@@ -16,10 +16,8 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import io.realm.Sort;
 
@@ -73,7 +71,7 @@ public class ExerciseChartFragment extends Fragment {
     private void getXAxisValues() {
         mXAxis = new ArrayList<>();
         mLifts.forEach(l -> {
-            String date = new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(l.getSetDate());
+            String date = l.date2PrettyString();
             if (!mXAxis.contains(date)) mXAxis.add(date);
         });
     }
@@ -85,7 +83,7 @@ public class ExerciseChartFragment extends Fragment {
         mXAxis.forEach(liftDate -> {
             float highest1RM = 0;
             for (Lift lift : mLifts) {
-                if (new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(lift.getSetDate()).equals(liftDate)) {
+                if (lift.date2PrettyString().equals(liftDate)) {
                     float current1RM = getEstimated1RM(lift);
                     if (current1RM >= highest1RM)
                         highest1RM = current1RM;
@@ -106,10 +104,13 @@ public class ExerciseChartFragment extends Fragment {
     void setupChart() {
         getXAxisValues();
         BarData data = new BarData(mXAxis, getDataSet());
-        mBarChart.setData(data);
-        mBarChart.setDescription("Estimated maximum strength");
-        mBarChart.animateXY(1000, 1000);
-        mBarChart.invalidate();
+        getActivity().runOnUiThread(() -> {
+            mBarChart.setData(data);
+            mBarChart.setDescription("Estimated maximum strength");
+            mBarChart.animateXY(1000, 1000);
+            mBarChart.invalidate();
+
+        });
     }
 
 

@@ -241,9 +241,9 @@ public class ExerciseListView extends AppCompatActivity {
                     ExerciseFragment.ViewHolder viewHolder;
                     if (convertView == null) {
                         convertView = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.list_view, parent, false);
+                                .inflate(R.layout.exercise_list_view, parent, false);
                         viewHolder = new ExerciseFragment.ViewHolder();
-                        viewHolder.exerciseName = convertView.findViewById(R.id.label);
+                        viewHolder.exerciseName = convertView.findViewById(R.id.exercise_list_view_label);
                         convertView.setTag(viewHolder);
                     } else {
                         viewHolder = (ExerciseFragment.ViewHolder) convertView.getTag();
