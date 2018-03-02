@@ -42,9 +42,11 @@ public class AddLiftDialog extends DialogFragment {
         mLift = new Lift();
 
         Dialog builder = new Dialog(getActivity());
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E0E0E0")));
-        builder.setContentView(view);
+        if (builder.getWindow() != null) {
+            builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#E0E0E0")));
+            builder.setContentView(view);
+        }
         listeners();
         return builder;
     }
