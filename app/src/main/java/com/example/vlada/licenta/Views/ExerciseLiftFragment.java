@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +68,6 @@ public class ExerciseLiftFragment extends Fragment {
         mRealmHelper = new RealmHelper();
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
-
         populateList();
         addButtonClickListener();
 
@@ -97,7 +95,7 @@ public class ExerciseLiftFragment extends Fragment {
 
     public void insertLiftFromDialog(Lift lift) {
         if (lift != null) {
-            float highest1RMPreAdd = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName)
+            float highest1RMPreAdd = mResults
                     .stream()
                     .map(Utils::getEstimated1RM)
                     .max(Comparator.naturalOrder())
@@ -105,7 +103,7 @@ public class ExerciseLiftFragment extends Fragment {
             if (mExercise.getId() > 0) lift.setExercise(mExercise);
 
             mRealmHelper.insert(lift);
-            mAdapter.notifyDataSetChanged();
+            updateList();
             Utils.displayToast(getContext(), "Successfully added");
 
             if (highest1RMPreAdd < Utils.getEstimated1RM(lift)) {
@@ -126,28 +124,12 @@ public class ExerciseLiftFragment extends Fragment {
         );
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
         mRecyclerView.setAdapter(mAdapter);
-        SwipeToDelete();
     }
 
-    void SwipeToDelete() {
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                /* Remove swiped item from list and notify the RecyclerView */
-                mRealmHelper.deleteAtPosition(mResults, viewHolder.getAdapterPosition());
-                mAdapter.notifyDataSetChanged();
-                Utils.displayToast(getContext(), "Successfully deleted");
-            }
-        };
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
-
+    public void updateList() {
+        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener());
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -160,7 +142,7 @@ public class ExerciseLiftFragment extends Fragment {
     class ItemsListener implements AdapterView.OnClickListener {
         @Override
         public void onClick(View view) {
-            Lift itemTouched = mResults.get(mRecyclerView.getChildAdapterPosition(view));
+//            Lift itemTouched = mResults.get(mRecyclerView.getChildAdapterPosition(view));
 //            Utils.displayToast(getContext(), "clicked");
         }
     }
