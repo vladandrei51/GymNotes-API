@@ -14,22 +14,41 @@ import com.example.vlada.licenta.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import io.realm.RealmResults;
 
 public class AdapterLiftRecycler extends RecyclerView.Adapter {
 
     private RealmResults<Lift> itemList;
+    private List<Lift> adapterItems;
     private Context context;
     private View.OnClickListener listener;
     private List<String> datesList;
-
 
     public AdapterLiftRecycler(RealmResults<Lift> itemList, Context context, View.OnClickListener listener) {
         this.itemList = itemList;
         this.context = context;
         this.listener = listener;
         datesList = new ArrayList<>();
+        adapterItems = new ArrayList<>();
+        loadAdapterItems();
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    private void loadAdapterItems() {
+        for (Lift lift : itemList.stream().filter(distinctByKey(Lift::date2PrettyString)).collect(Collectors.toCollection(ArrayList::new))) {
+            adapterItems.add(lift);
+            adapterItems.addAll(itemList.stream().filter(l -> l.date2PrettyString().equals(lift.date2PrettyString())).collect(Collectors.toCollection(ArrayList::new)));
+        }
     }
 
     @NonNull
@@ -39,21 +58,19 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         assert inflater != null;
         View view = inflater.inflate(R.layout.lift_list_view, parent, false);
         view.setOnClickListener(listener);
-
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Lift currentLift = itemList.get(position - datesList.size());
-        if (currentLift != null) {
-            if (!datesList.contains(currentLift.date2PrettyString())) {
-                datesList.add(currentLift.date2PrettyString());
-                ViewHolder itemViewHolder = (ViewHolder) holder;
-                itemViewHolder.loadDate(currentLift);
+        ViewHolder itemViewHolder = (ViewHolder) holder;
+        if (position == 0) itemViewHolder.loadDate(adapterItems.get(position));
+        else {
+            if (adapterItems.get(position).date2PrettyString().equals(adapterItems.get(position - 1).date2PrettyString())) {
+                itemViewHolder.loadLift(adapterItems.get(position));
             } else {
-                ViewHolder itemViewHolder = (ViewHolder) holder;
-                itemViewHolder.loadLift(currentLift);
+                itemViewHolder.loadDate(adapterItems.get(position));
             }
         }
     }
@@ -109,6 +126,13 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             mLiftTextTV.setVisibility(View.GONE);
             mDateTV.setVisibility(View.VISIBLE);
             mDateTV.setText(currentLift.date2PrettyString());
+        }
+
+        void loadDate(String date) {
+            mLiftTextTV.setVisibility(View.GONE);
+            mDateTV.setVisibility(View.VISIBLE);
+            mDateTV.setText(date);
+
         }
 
 
