@@ -30,7 +30,7 @@ public class AddLiftDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
+        assert getActivity() != null;
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_add_lift, new LinearLayout(getActivity()), false);
 
         mCancelBT = view.findViewById(R.id.cancelDialogBT);
@@ -61,9 +61,7 @@ public class AddLiftDialog extends DialogFragment {
                 exerciseLiftFragment.insertLiftFromDialog(mLift);
             }
         });
-        mCancelBT.setOnClickListener(v -> {
-            dismissDialog();
-        });
+        mCancelBT.setOnClickListener(v -> dismissDialog());
         mNotesCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 mNotesET.setVisibility(View.VISIBLE);

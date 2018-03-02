@@ -200,8 +200,10 @@ public class ExerciseListView extends AppCompatActivity {
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_exercise_list, container, false);
 
-            this.mSelectedMG = MuscleGroup.getAllNames().get(getArguments().getInt(ARG_NUMBER));
-            getActivity().setTitle(mSelectedMG);
+            if (getArguments() != null && getActivity() != null) {
+                this.mSelectedMG = MuscleGroup.getAllNames().get(getArguments().getInt(ARG_NUMBER));
+                getActivity().setTitle(mSelectedMG);
+            }
 
             mExerciseClient = new ExerciseClient(getContext());
             mListView = rootView.findViewById(R.id.lvItems);

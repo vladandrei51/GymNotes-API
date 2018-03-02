@@ -49,9 +49,9 @@ public class ExerciseChartFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_chart, container, false);
-
         mBarChart = rootView.findViewById(R.id.chart);
-        mExerciseName = getArguments().getString("exercise_name");
+        if (getArguments() != null)
+            mExerciseName = getArguments().getString("exercise_name");
 
         populateLiftList();
         setupChart();
@@ -100,13 +100,15 @@ public class ExerciseChartFragment extends BaseFragment {
     void setupChart() {
         getXAxisValues();
         BarData data = new BarData(mXAxis, getDataSet());
-        getActivity().runOnUiThread(() -> {
-            mBarChart.setData(data);
-            mBarChart.setDescription("Estimated maximum strength");
-            mBarChart.animateXY(1000, 1000);
-            mBarChart.invalidate();
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                mBarChart.setData(data);
+                mBarChart.setDescription("Estimated maximum strength");
+                mBarChart.animateXY(1000, 1000);
+                mBarChart.invalidate();
 
-        });
+            });
+        }
     }
 
 

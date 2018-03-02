@@ -59,7 +59,8 @@ public class ExerciseLiftFragment extends BaseFragment {
 
         View rootView = inflater.inflate(R.layout.fragment_exercise_lift, container, false);
 
-        mExerciseName = getArguments().getString("exercise_name");
+        if (getArguments() != null)
+            mExerciseName = getArguments().getString("exercise_name");
         mAddBT = rootView.findViewById(R.id.fab);
         mRecyclerView = rootView.findViewById(R.id.historyLV);
 
@@ -84,9 +85,7 @@ public class ExerciseLiftFragment extends BaseFragment {
 
 
     void addButtonClickListener() {
-        mAddBT.setOnClickListener(v -> {
-            showAddLiftDialog();
-        });
+        mAddBT.setOnClickListener(v -> showAddLiftDialog());
 
     }
 

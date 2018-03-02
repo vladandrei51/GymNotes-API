@@ -43,9 +43,8 @@ public class ExerciseDetailsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
         mExerciseNameTV = rootView.findViewById(R.id.textView);
-        mExerciseName = getArguments().getString("exercise_name");
-
-
+        if (getArguments() != null)
+            mExerciseName = getArguments().getString("exercise_name");
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
 
         if (mExercise != null) {
