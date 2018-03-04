@@ -12,7 +12,6 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/dateTV"
         android:layout_width="fill_parent"
@@ -26,4 +25,12 @@
         android:textColor="@color/blue_300"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/notesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details" />
+
+
 </RelativeLayout>

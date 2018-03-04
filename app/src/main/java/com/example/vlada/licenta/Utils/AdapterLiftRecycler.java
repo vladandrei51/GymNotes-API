@@ -14,13 +14,11 @@ import com.example.vlada.licenta.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import io.realm.RealmResults;
+
+import static com.example.vlada.licenta.Utils.Utils.distinctByKey;
 
 public class AdapterLiftRecycler extends RecyclerView.Adapter {
 
@@ -29,6 +27,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
     private Context mContext;
     private View.OnClickListener mListener;
     private ArrayList<Boolean> mIsLift;
+    private int mExpandedPosition = -1;
 
     public AdapterLiftRecycler(RealmResults<Lift> itemList, Context context, View.OnClickListener listener) {
         this.mItemsList = itemList;
@@ -39,10 +38,6 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         loadAdapterItems();
     }
 
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
 
     private void loadAdapterItems() {
         for (Lift lift : mItemsList.stream().filter(distinctByKey(Lift::date2PrettyString)).collect(Collectors.toCollection(ArrayList::new))) {
@@ -71,6 +66,18 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         ViewHolder itemViewHolder = (ViewHolder) holder;
         if (mIsLift.get(position)) itemViewHolder.loadLift(mAdapterItems.get(position));
         else itemViewHolder.loadDate(mAdapterItems.get(position));
+
+        if (mIsLift.get(position)) {
+            final boolean isExpanded = position == mExpandedPosition;
+            itemViewHolder.mNotesTV.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            holder.itemView.setActivated(isExpanded);
+            holder.itemView.setOnClickListener(v -> {
+                mExpandedPosition = isExpanded ? -1 : position;
+                notifyItemChanged(position);
+            });
+        } else {
+            itemViewHolder.mNotesTV.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -83,12 +90,14 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
     private class ViewHolder extends RecyclerView.ViewHolder {
         TextView mLiftTextTV;
         TextView mDateTV;
+        TextView mNotesTV;
 
         ViewHolder(View itemView) {
             super(itemView);
             mLiftTextTV = itemView.findViewById(R.id.label);
             mDateTV = itemView.findViewById(R.id.dateTV);
             mDateTV.setKeyListener(null);
+            mNotesTV = itemView.findViewById(R.id.notesTV);
         }
 
         void loadLift(Lift currentLift) {
@@ -125,7 +134,6 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             mDateTV.setVisibility(View.VISIBLE);
             mDateTV.setText(currentLift.date2PrettyString());
         }
-
 
     }
 
