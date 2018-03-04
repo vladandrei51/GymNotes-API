@@ -28,27 +28,18 @@ public class RealmBackup {
 
 
     public void backup() {
-
         File exportRealmFile;
-
         File exportRealmPATH = context.getExternalFilesDir(null);
         String exportRealmFileName = "default.realm";
-
-
         // create a backup file
         exportRealmFile = new File(exportRealmPATH, exportRealmFileName);
-
         // if backup file already exists, delete it
         exportRealmFile.delete();
-
         // copy current realm to backup file
         realm.writeCopyTo(exportRealmFile);
-
         String msg = "File exported to Path: " + context.getExternalFilesDir(null);
         Utils.displayToast(context, msg);
-
         if (realm != null) realm.close();
-
     }
 
     public void restore() {
@@ -56,16 +47,10 @@ public class RealmBackup {
         while (!realm.isClosed())
             realm.close();
         if (Realm.getGlobalInstanceCount(realmConfiguration) == 0) {
-
             //Restore
-            File exportRealmPATH = context.getExternalFilesDir(null);
             String FileName = "default.realm";
-
             String restoreFilePath = context.getExternalFilesDir(null) + "/" + FileName;
-
-
             copyBundledRealmFile(restoreFilePath, FileName);
-
             Utils.displayToast(context, "Successfully restored!");
         } else {
             Utils.displayToast(context, "Global instances = " + Realm.getGlobalInstanceCount(realmConfiguration) +
@@ -76,11 +61,8 @@ public class RealmBackup {
     private void copyBundledRealmFile(String oldFilePath, String outFileName) {
         try {
             File file = new File(context.getFilesDir(), outFileName);
-
             FileOutputStream outputStream = new FileOutputStream(file);
-
             FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
-
             byte[] buf = new byte[1024];
             int bytesRead;
             while ((bytesRead = inputStream.read(buf)) > 0) {
@@ -92,9 +74,5 @@ public class RealmBackup {
         }
     }
 
-    private String dbPath() {
-
-        return realm.getPath();
-    }
 }
 
