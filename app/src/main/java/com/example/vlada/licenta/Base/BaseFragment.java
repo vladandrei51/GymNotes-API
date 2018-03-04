@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import com.example.vlada.licenta.Utils.RealmHelper;
 
 public class BaseFragment extends Fragment {
-    protected RealmHelper mRealmHelper;
+    protected static RealmHelper mRealmHelper;
 
     public BaseFragment() {
         mRealmHelper = new RealmHelper();
