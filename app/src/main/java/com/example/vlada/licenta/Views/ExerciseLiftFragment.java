@@ -85,7 +85,6 @@ public class ExerciseLiftFragment extends BaseFragment {
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
         populateList();
         addButtonClickListener();
-
         return rootView;
     }
 

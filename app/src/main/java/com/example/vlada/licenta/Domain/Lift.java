@@ -21,6 +21,7 @@ public class Lift extends RealmObject {
 
     private long date_ms;
 
+
     private Exercise exercise;
 
 

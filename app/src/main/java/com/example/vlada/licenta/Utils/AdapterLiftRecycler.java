@@ -82,6 +82,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
                 notifyItemChanged(position);
             });
         }
+
     }
 
     private Lift getClickedLift() {
