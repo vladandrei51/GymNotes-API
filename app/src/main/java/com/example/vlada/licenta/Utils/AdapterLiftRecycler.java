@@ -34,6 +34,8 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
     private int mExpandedPosition = -1;
     private Lift mClickedLift;
     private Fragment mFragment;
+    private int mPreviousExpandedPosition = -1;
+
 
     public AdapterLiftRecycler(RealmResults<Lift> itemList, Context context, View.OnClickListener listener, Fragment fragment) {
         this.mItemsList = itemList;
@@ -76,9 +78,14 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             final boolean isExpanded = position == mExpandedPosition;
             itemViewHolder.mHiddenLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             holder.itemView.setActivated(isExpanded);
+
+            if (isExpanded)
+                mPreviousExpandedPosition = position;
+
             holder.itemView.setOnClickListener(v -> {
                 mExpandedPosition = isExpanded ? -1 : position;
                 mClickedLift = mAdapterItems.get(position);
+                notifyItemChanged(mPreviousExpandedPosition);
                 notifyItemChanged(position);
             });
         }

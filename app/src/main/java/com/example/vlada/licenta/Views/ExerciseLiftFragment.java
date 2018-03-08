@@ -53,20 +53,23 @@ public class ExerciseLiftFragment extends BaseFragment {
     }
 
     public void deleteLift(Lift clickedLift) {
-        Realm realm;
-        realm = Realm.getDefaultInstance();
-        realm.executeTransaction(realm1 -> {
-            RealmResults<Lift> result = realm1.where(Lift.class)
-                    .equalTo("notes", clickedLift.getNotes())
-                    .equalTo("reps", clickedLift.getReps())
-                    .equalTo("weight", clickedLift.getWeight())
-                    .equalTo("date_ms", clickedLift.getDate_ms())
-                    .equalTo("exercise_name", clickedLift.getExercise_name())
-                    .findAll();
-            result.deleteAllFromRealm();
-        });
-        realm.close();
-        updateList();
+        if (clickedLift != null) {
+            Realm realm;
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(realm1 -> {
+                RealmResults<Lift> result = realm1.where(Lift.class)
+                        .equalTo("notes", clickedLift.getNotes())
+                        .equalTo("reps", clickedLift.getReps())
+                        .equalTo("weight", clickedLift.getWeight())
+                        .equalTo("date_ms", clickedLift.getDate_ms())
+                        .equalTo("exercise_name", clickedLift.getExercise_name())
+                        .findAll();
+                result.deleteAllFromRealm();
+            });
+            realm.close();
+            updateList();
+            Utils.displayToast(getContext(), "Successfully deleted");
+        }
     }
 
     @Override
