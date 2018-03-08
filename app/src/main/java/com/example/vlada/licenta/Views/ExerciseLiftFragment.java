@@ -60,14 +60,13 @@ public class ExerciseLiftFragment extends BaseFragment {
                     .equalTo("notes", clickedLift.getNotes())
                     .equalTo("reps", clickedLift.getReps())
                     .equalTo("weight", clickedLift.getWeight())
-                    .equalTo("setDate", clickedLift.getSetDate())
+                    .equalTo("date_ms", clickedLift.getDate_ms())
                     .equalTo("exercise_name", clickedLift.getExercise_name())
                     .findAll();
             result.deleteAllFromRealm();
         });
         realm.close();
         updateList();
-
     }
 
     @Override
@@ -91,7 +90,6 @@ public class ExerciseLiftFragment extends BaseFragment {
     }
 
     public void showAddLiftDialog() {
-        // Create an instance of the dialog fragment and show it
         mDialog = new AddLiftDialog();
         mDialog.setTargetFragment(this, 0);
         if (getFragmentManager() != null) {

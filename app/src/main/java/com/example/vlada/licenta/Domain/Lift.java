@@ -19,7 +19,8 @@ public class Lift extends RealmObject {
 
     private int weight;
 
-    //bi-directional many-to-one association to Exercise
+    private long date_ms;
+
     private Exercise exercise;
 
 
@@ -59,6 +60,11 @@ public class Lift extends RealmObject {
 
     public void setSetDate(Date setDate) {
         this.setDate = setDate;
+        date_ms = setDate.getTime();
+    }
+
+    public long getDate_ms() {
+        return date_ms;
     }
 
     public int getWeight() {
@@ -95,5 +101,4 @@ public class Lift extends RealmObject {
             return new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(setDate);
         return "";
     }
-
 }

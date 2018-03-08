@@ -107,14 +107,6 @@ public class ExerciseListView extends AppCompatActivity {
 
 
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-//        Fragment fragment = new ExerciseFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(ExerciseFragment.ARG_NUMBER, position);
-//        fragment.setArguments(args);
-//
-//        FragmentManager fragmentManager = getFragmentManager();
-//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
