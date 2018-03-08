@@ -2,14 +2,18 @@ package com.example.vlada.licenta.Utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Views.ExerciseLiftFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,12 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
     private View.OnClickListener mListener;
     private ArrayList<Boolean> mIsLift;
     private int mExpandedPosition = -1;
+    private Lift mClickedLift;
+    private Fragment mFragment;
 
-    public AdapterLiftRecycler(RealmResults<Lift> itemList, Context context, View.OnClickListener listener) {
+    public AdapterLiftRecycler(RealmResults<Lift> itemList, Context context, View.OnClickListener listener, Fragment fragment) {
         this.mItemsList = itemList;
+        this.mFragment = fragment;
         this.mContext = context;
         this.mListener = listener;
         mAdapterItems = new ArrayList<>();
@@ -53,9 +60,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int viewType) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        View view = inflater.inflate(R.layout.lift_list_view, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.lift_list_view, parent, false);
         view.setOnClickListener(mListener);
         return new ViewHolder(view);
     }
@@ -69,15 +74,18 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
 
         if (mIsLift.get(position)) {
             final boolean isExpanded = position == mExpandedPosition;
-            itemViewHolder.mNotesTV.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            itemViewHolder.mHiddenLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             holder.itemView.setActivated(isExpanded);
             holder.itemView.setOnClickListener(v -> {
                 mExpandedPosition = isExpanded ? -1 : position;
+                mClickedLift = mAdapterItems.get(position);
                 notifyItemChanged(position);
             });
-        } else {
-            itemViewHolder.mNotesTV.setVisibility(View.GONE);
         }
+    }
+
+    private Lift getClickedLift() {
+        return mClickedLift;
     }
 
     @Override
@@ -91,14 +99,19 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         TextView mLiftTextTV;
         TextView mDateTV;
         TextView mNotesTV;
+        LinearLayout mHiddenLayout;
+        ImageButton mDeleteButton;
 
         ViewHolder(View itemView) {
             super(itemView);
-            mLiftTextTV = itemView.findViewById(R.id.label);
+            mLiftTextTV = itemView.findViewById(R.id.LiftTV);
             mDateTV = itemView.findViewById(R.id.dateTV);
-            mDateTV.setKeyListener(null);
             mNotesTV = itemView.findViewById(R.id.notesTV);
+            mHiddenLayout = itemView.findViewById(R.id.conditionally_visible_layout);
+            mDeleteButton = itemView.findViewById(R.id.deleteLiftBT);
+            mDeleteButton.setOnClickListener(v -> ((ExerciseLiftFragment) mFragment).deleteLift(getClickedLift()));
         }
+
 
         void loadLift(Lift currentLift) {
             mDateTV.setVisibility(View.GONE);
@@ -126,6 +139,9 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
                 else if (currentLift.getWeight() == 0) {
                     mLiftTextTV.setText(R.string.bw_for_1);
                 }
+            }
+            if (currentLift.getNotes() != null && currentLift.getNotes().length() > 0) {
+                mLiftTextTV.append("*");
             }
         }
 

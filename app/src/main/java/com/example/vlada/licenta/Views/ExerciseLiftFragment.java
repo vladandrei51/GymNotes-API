@@ -21,6 +21,7 @@ import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Comparator;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -39,7 +40,6 @@ public class ExerciseLiftFragment extends BaseFragment {
     private RecyclerView mRecyclerView;
     private AdapterLiftRecycler mAdapter;
 
-
     public ExerciseLiftFragment() {
 
     }
@@ -52,6 +52,23 @@ public class ExerciseLiftFragment extends BaseFragment {
         return f;
     }
 
+    public void deleteLift(Lift clickedLift) {
+        Realm realm;
+        realm = Realm.getDefaultInstance();
+        realm.executeTransaction(realm1 -> {
+            RealmResults<Lift> result = realm1.where(Lift.class)
+                    .equalTo("notes", clickedLift.getNotes())
+                    .equalTo("reps", clickedLift.getReps())
+                    .equalTo("weight", clickedLift.getWeight())
+                    .equalTo("setDate", clickedLift.getSetDate())
+                    .equalTo("exercise_name", clickedLift.getExercise_name())
+                    .findAll();
+            result.deleteAllFromRealm();
+        });
+        realm.close();
+        updateList();
+
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,6 +80,7 @@ public class ExerciseLiftFragment extends BaseFragment {
             mExerciseName = getArguments().getString("exercise_name");
         mAddBT = rootView.findViewById(R.id.fab);
         mRecyclerView = rootView.findViewById(R.id.historyLV);
+
 
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
@@ -110,7 +128,7 @@ public class ExerciseLiftFragment extends BaseFragment {
     }
 
     void populateList() {
-        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener());
+        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
@@ -124,7 +142,7 @@ public class ExerciseLiftFragment extends BaseFragment {
 
 
     public void updateList() {
-        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener());
+        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
