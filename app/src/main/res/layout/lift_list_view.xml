@@ -41,13 +41,22 @@
             android:textColor="@android:color/white" />
 
         <ImageButton
+            android:id="@+id/editLiftBT"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_weight="0.3"
+            android:background="@android:color/holo_blue_dark"
+            android:src="@drawable/ic_edit_white_24dp" />
+
+
+        <ImageButton
             android:id="@+id/deleteLiftBT"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:layout_weight="0.3"
             android:background="@color/red_400"
-            android:contentDescription="Delete Lift"
             android:src="@drawable/ic_delete_white_24dp" />
     </LinearLayout>
 
