@@ -77,15 +77,15 @@ public class ExerciseChartFragment extends BaseFragment {
         ArrayList<BarEntry> valueSet = new ArrayList<>();
 
         mXAxis.forEach(liftDate -> {
-            float highest1RM = 0;
+            double highest1RM = 0;
             for (Lift lift : mLifts) {
                 if (lift.date2PrettyString().equals(liftDate)) {
-                    float current1RM = getEstimated1RM(lift);
+                    double current1RM = getEstimated1RM(lift);
                     if (current1RM >= highest1RM)
                         highest1RM = current1RM;
                 }
             }
-            BarEntry barEntry = new BarEntry(highest1RM, mXAxis.indexOf(liftDate));
+            BarEntry barEntry = new BarEntry((long) highest1RM, mXAxis.indexOf(liftDate));
             valueSet.add(barEntry);
         });
 

@@ -62,8 +62,14 @@ public class ExerciseLiftFragment extends BaseFragment {
     }
 
     public void deleteLift(Lift clickedLift) {
+        if (getActivity() == null)
+            return;
+
         if (clickedLift != null) {
-            deleteLiftFromRealm(clickedLift);
+            getActivity().runOnUiThread(() -> {
+                deleteLiftFromRealm(clickedLift);
+                updateRVList();
+            });
         }
     }
 
@@ -72,11 +78,7 @@ public class ExerciseLiftFragment extends BaseFragment {
         realm = Realm.getDefaultInstance();
         realm.executeTransaction(realm1 -> {
             RealmResults<Lift> result = realm1.where(Lift.class)
-                    .equalTo("notes", lift.getNotes())
-                    .equalTo("reps", lift.getReps())
-                    .equalTo("weight", lift.getWeight())
                     .equalTo("date_ms", lift.getDate_ms())
-                    .equalTo("exercise_name", lift.getExercise_name())
                     .findAll();
             result.deleteAllFromRealm();
         });
@@ -120,25 +122,53 @@ public class ExerciseLiftFragment extends BaseFragment {
     }
 
 
-    private void updateLiftFromRealm(Lift originalLift, Lift newLift) {
-        deleteLiftFromRealm(originalLift);
-        mRealmHelper.insert(newLift);
-        updateRVList();
-        Utils.displayToast(getContext(), "Successfully updated");
+    private void updateLiftFromRealm(Lift lift1, Lift lift2) {
+        if (getActivity() == null)
+            return;
+        getActivity().runOnUiThread(() -> {
 
-    }
-
-    public void insertLiftFromDialog(Lift lift) {
-        if (lift != null && mExercise != null) {
-            float highest1RMPreAdd = mResults
+            double highest1RMPreAdd = mResults
                     .stream()
                     .map(Utils::getEstimated1RM)
                     .max(Comparator.naturalOrder())
-                    .orElse(0f);
+                    .orElse(0.0);
+
+            Realm realm;
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            Lift newLift = realm.where(Lift.class)
+                    .equalTo("date_ms", lift1.getDate_ms())
+                    .equalTo("weight", lift1.getWeight())
+                    .equalTo("reps", lift1.getReps())
+                    .findFirst();
+            if (newLift != null) {
+                newLift.setNotes(lift2.getNotes());
+                newLift.setReps(lift2.getReps());
+                newLift.setWeight(lift2.getWeight());
+                realm.commitTransaction();
+                updateRVList();
+                if (highest1RMPreAdd < Utils.getEstimated1RM(newLift)) {
+                    Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+                }
+            }
+            realm.close();
+        });
+    }
+
+    public void insertLiftFromDialog(Lift lift) {
+        if (getActivity() == null)
+            return;
+        if (lift != null && mExercise != null) {
+            double highest1RMPreAdd = mResults
+                    .stream()
+                    .map(Utils::getEstimated1RM)
+                    .max(Comparator.naturalOrder())
+                    .orElse(0.0);
             lift.setExercise(mExercise);
-            mRealmHelper.insert(lift);
-            updateRVList();
-            Utils.displayToast(getContext(), "Successfully added");
+            getActivity().runOnUiThread(() -> {
+                mRealmHelper.insert(lift);
+                updateRVList();
+            });
 
             if (highest1RMPreAdd < Utils.getEstimated1RM(lift)) {
                 Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
@@ -147,7 +177,7 @@ public class ExerciseLiftFragment extends BaseFragment {
 
     }
 
-    void populateList() {
+    private void populateList() {
         mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -182,7 +212,6 @@ public class ExerciseLiftFragment extends BaseFragment {
         EditText mRepsET;
         CheckBox mNotesCB;
         EditText mNotesET;
-        Lift mLift2Add;
         Lift mLift2Edit;
         boolean mEditDialog;
         ExerciseLiftFragment mExerciseLiftFragment;
@@ -214,7 +243,6 @@ public class ExerciseLiftFragment extends BaseFragment {
             mRepsET = view.findViewById(R.id.reps);
             mNotesCB = view.findViewById(R.id.notesCB);
             mNotesET = view.findViewById(R.id.notes);
-            mLift2Add = new Lift();
             mLift2Edit = (mExerciseLiftFragment.getClickedLift());
 
             Dialog builder = new Dialog(getActivity());
@@ -237,12 +265,13 @@ public class ExerciseLiftFragment extends BaseFragment {
         private void listeners() {
             mConfirmButton.setOnClickListener(v -> {
                 if (!mEditDialog) {
-                    mLift2Add.setNotes(mNotesET.getText().toString().length() > 0 && mNotesCB.isChecked() ? mNotesET.getText().toString() : "");
-                    mLift2Add.setReps(mRepsET.getText().toString().length() > 0 ? Integer.parseInt(mRepsET.getText().toString()) : 0);
-                    mLift2Add.setWeight(mWeightET.getText().toString().length() > 0 ? Integer.parseInt(mWeightET.getText().toString()) : 0);
-                    mLift2Add.setSetDate(new Date());
+                    Lift lift2Add = new Lift();
+                    lift2Add.setNotes(mNotesET.getText().toString().length() > 0 && mNotesCB.isChecked() ? mNotesET.getText().toString() : "");
+                    lift2Add.setReps(mRepsET.getText().toString().length() > 0 ? Integer.parseInt(mRepsET.getText().toString()) : 0);
+                    lift2Add.setWeight(mWeightET.getText().toString().length() > 0 ? Integer.parseInt(mWeightET.getText().toString()) : 0);
+                    lift2Add.setSetDate(new Date());
                     dismissDialog();
-                    mExerciseLiftFragment.insertLiftFromDialog(mLift2Add);
+                    mExerciseLiftFragment.insertLiftFromDialog(lift2Add);
                 } else {
                     Lift newLift = new Lift();
                     newLift.setSetDate(mLift2Edit.getSetDate());

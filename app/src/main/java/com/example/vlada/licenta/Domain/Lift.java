@@ -9,7 +9,6 @@ import io.realm.annotations.Required;
 
 public class Lift extends RealmObject {
 
-    private int id;
 
     private String notes;
 
@@ -29,15 +28,12 @@ public class Lift extends RealmObject {
     private String exercise_name;
 
     public Lift() {
+        this.notes = "";
+        this.reps = 0;
+        this.weight = 0;
+        setSetDate(new Date());
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getNotes() {
         return this.notes;
@@ -102,4 +98,5 @@ public class Lift extends RealmObject {
             return new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(setDate);
         return "";
     }
+
 }

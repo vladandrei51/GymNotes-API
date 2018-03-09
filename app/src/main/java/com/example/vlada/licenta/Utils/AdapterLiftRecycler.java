@@ -59,6 +59,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         }
     }
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int viewType) {
@@ -120,7 +121,10 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             mDeleteButton = itemView.findViewById(R.id.deleteLiftBT);
             mEditButton = itemView.findViewById(R.id.editLiftBT);
             mEditButton.setOnClickListener(v -> ((ExerciseLiftFragment) mFragment).editLift(getClickedLift()));
-            mDeleteButton.setOnClickListener(v -> ((ExerciseLiftFragment) mFragment).deleteLift(getClickedLift()));
+            mDeleteButton.setOnClickListener(v -> {
+                ((ExerciseLiftFragment) mFragment).deleteLift(getClickedLift());
+                notifyDataSetChanged();
+            });
         }
 
 
@@ -151,7 +155,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
                     mLiftTextTV.setText(R.string.bw_for_1);
                 }
             }
-            if (currentLift.getNotes() != null && currentLift.getNotes().length() > 0) {
+            if (currentLift.getNotes().length() > 0) {
                 mLiftTextTV.append("*");
             }
         }
