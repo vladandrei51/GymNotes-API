@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by andrei-valentin.vlad on 2/9/2018.
@@ -52,7 +53,15 @@ public class Utils {
 
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
-                for (Exercise exercise : realm.where(Exercise.class).findAll()) {
+//                realm.deleteAll();
+                RealmResults<Exercise> exerciseList = null;
+                try {
+                    exerciseList = realm.where(Exercise.class).findAllAsync();
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                for (Exercise exercise : exerciseList) {
                     lift.setExercise(exercise);
                     for (int i = 0; i < rand.nextInt(5) + 1; i++) {
                         LocalDate localDate = LocalDate.of(rand.nextInt(2018 - 2017 + 1) + 2017, Month.of(rand.nextInt(12 - 1 + 1) + 1), rand.nextInt(28 - 1 + 1) + 1);
