@@ -109,6 +109,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         TextView mNotesTV;
         LinearLayout mHiddenLayout;
         ImageButton mDeleteButton;
+        ImageButton mEditButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -117,6 +118,8 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             mNotesTV = itemView.findViewById(R.id.notesTV);
             mHiddenLayout = itemView.findViewById(R.id.conditionally_visible_layout);
             mDeleteButton = itemView.findViewById(R.id.deleteLiftBT);
+            mEditButton = itemView.findViewById(R.id.editLiftBT);
+            mEditButton.setOnClickListener(v -> ((ExerciseLiftFragment) mFragment).editLift(getClickedLift()));
             mDeleteButton.setOnClickListener(v -> ((ExerciseLiftFragment) mFragment).deleteLift(getClickedLift()));
         }
 

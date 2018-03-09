@@ -55,12 +55,11 @@
         android:weightSum="4">
 
         <Button
-            android:id="@+id/addDialogBT"
+            android:id="@+id/confirmDialogButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_weight="2"
-            android:text="Add" />
+            android:layout_weight="2" />
 
         <Button
             android:id="@+id/cancelDialogBT"
