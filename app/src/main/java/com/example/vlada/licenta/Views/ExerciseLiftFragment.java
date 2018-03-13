@@ -79,6 +79,9 @@ public class ExerciseLiftFragment extends BaseFragment {
         realm.executeTransaction(realm1 -> {
             RealmResults<Lift> result = realm1.where(Lift.class)
                     .equalTo("date_ms", lift.getDate_ms())
+                    .equalTo("notes", lift.getNotes())
+                    .equalTo("reps", lift.getReps())
+                    .equalTo("weight", lift.getWeight())
                     .findAll();
             result.deleteAllFromRealm();
         });
@@ -138,8 +141,9 @@ public class ExerciseLiftFragment extends BaseFragment {
             realm.beginTransaction();
             Lift newLift = realm.where(Lift.class)
                     .equalTo("date_ms", lift1.getDate_ms())
-                    .equalTo("weight", lift1.getWeight())
+                    .equalTo("notes", lift1.getNotes())
                     .equalTo("reps", lift1.getReps())
+                    .equalTo("weight", lift1.getWeight())
                     .findFirst();
             if (newLift != null) {
                 newLift.setNotes(lift2.getNotes());

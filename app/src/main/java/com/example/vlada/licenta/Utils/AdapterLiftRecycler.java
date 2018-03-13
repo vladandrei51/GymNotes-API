@@ -77,7 +77,11 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
 
         if (mIsLift.get(position)) {
             final boolean isExpanded = position == mExpandedPosition;
-            itemViewHolder.mHiddenLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            itemViewHolder.mDetailsLayout.setVisibility(isExpanded && mAdapterItems.get(position).getNotes().length() > 0 ? View.VISIBLE : View.GONE);
+            itemViewHolder.mNotesTV.setText(mAdapterItems.get(position).getNotes().length() > 0 ? mAdapterItems.get(position).getNotes() : "");
+            itemViewHolder.mDeleteButton.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            itemViewHolder.mEditButton.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+
             holder.itemView.setActivated(isExpanded);
 
             if (isExpanded)
@@ -108,7 +112,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
         TextView mLiftTextTV;
         TextView mDateTV;
         TextView mNotesTV;
-        LinearLayout mHiddenLayout;
+        LinearLayout mDetailsLayout;
         ImageButton mDeleteButton;
         ImageButton mEditButton;
 
@@ -117,7 +121,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             mLiftTextTV = itemView.findViewById(R.id.LiftTV);
             mDateTV = itemView.findViewById(R.id.dateTV);
             mNotesTV = itemView.findViewById(R.id.notesTV);
-            mHiddenLayout = itemView.findViewById(R.id.conditionally_visible_layout);
+            mDetailsLayout = itemView.findViewById(R.id.conditionally_visible_layout);
             mDeleteButton = itemView.findViewById(R.id.deleteLiftBT);
             mEditButton = itemView.findViewById(R.id.editLiftBT);
             mEditButton.setOnClickListener(v -> ((ExerciseLiftFragment) mFragment).editLift(getClickedLift()));
