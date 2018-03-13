@@ -89,8 +89,8 @@ public class ExerciseChartFragment extends BaseFragment {
             valueSet.add(barEntry);
         });
 
-        BarDataSet barDataSet = new BarDataSet(valueSet, "Strength/day");
-        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        BarDataSet barDataSet = new BarDataSet(valueSet, "Maximum theoretical strength");
+        barDataSet.setColors(ColorTemplate.PASTEL_COLORS);
 
         dataSets = new ArrayList<>();
         dataSets.add(barDataSet);
@@ -103,7 +103,7 @@ public class ExerciseChartFragment extends BaseFragment {
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
                 mBarChart.setData(data);
-                mBarChart.setDescription("Estimated maximum strength");
+                mBarChart.setDescription(mExerciseName);
                 mBarChart.animateXY(1000, 1000);
                 mBarChart.invalidate();
 
