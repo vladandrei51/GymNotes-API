@@ -1,6 +1,7 @@
 package com.example.vlada.licenta.Views;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -103,6 +104,11 @@ public class ExerciseLiftFragment extends BaseFragment {
 
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
+        else {
+            Intent intent = new Intent(getActivity(), ExerciseListView.class);
+            startActivity(intent);
+        }
+
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
 
         mAddBT = rootView.findViewById(R.id.fab);

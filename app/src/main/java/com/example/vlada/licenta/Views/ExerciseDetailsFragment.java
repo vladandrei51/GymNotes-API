@@ -1,5 +1,6 @@
 package com.example.vlada.licenta.Views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -45,6 +46,11 @@ public class ExerciseDetailsFragment extends BaseFragment {
         mExerciseNameTV = rootView.findViewById(R.id.textView);
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
+        else {
+            Intent intent = new Intent(getActivity(), ExerciseListView.class);
+            startActivity(intent);
+        }
+
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
 
         if (mExercise != null) {
