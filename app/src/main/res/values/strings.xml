@@ -5,4 +5,9 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="failed_bw">Failed attempt for a bodyweight lift</string>
     <string name="bw_for_1">Bodyweight lift for 1 rep</string>
+    <string-array name="chart_spinner_array">
+        <item>Strength</item>
+        <item>Volume</item>
+    </string-array>
+
 </resources>

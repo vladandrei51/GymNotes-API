@@ -35,7 +35,8 @@
                 android:layout_weight="0.7"
                 android:padding="10dip"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="NestedWeights" />
 
             <ImageButton
                 android:id="@+id/editLiftBT"
@@ -67,7 +68,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:visibility="gone">
-
             <TextView
                 android:id="@+id/notesTV"
                 android:layout_width="0dp"
@@ -77,9 +77,8 @@
                 android:background="@android:color/holo_blue_dark"
                 android:gravity="center"
                 android:textColor="@color/blue_50" />
-
         </LinearLayout>
 
-
     </LinearLayout>
+
 </RelativeLayout>

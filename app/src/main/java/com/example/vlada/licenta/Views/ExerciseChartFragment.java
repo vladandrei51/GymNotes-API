@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Lift;
@@ -31,6 +34,8 @@ public class ExerciseChartFragment extends BaseFragment {
     private BarChart mBarChart;
     private List<String> mXAxis;
     private String mExerciseName;
+    private Spinner mSpinner;
+    private TextView mExerciseTV;
 
     public ExerciseChartFragment() {
 
@@ -52,6 +57,15 @@ public class ExerciseChartFragment extends BaseFragment {
         mBarChart = rootView.findViewById(R.id.chart);
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
+
+        mSpinner = rootView.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.chart_spinner_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(adapter);
+
+        mExerciseTV = rootView.findViewById(R.id.exercise_name_chart);
+        mExerciseTV.setText(mExerciseName);
 
         populateLiftList();
         setupChart();
@@ -103,7 +117,7 @@ public class ExerciseChartFragment extends BaseFragment {
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
                 mBarChart.setData(data);
-                mBarChart.setDescription(mExerciseName);
+                mBarChart.setDescription("");
                 mBarChart.animateXY(1000, 1000);
                 mBarChart.invalidate();
 

@@ -23,11 +23,11 @@ public class ExerciseView extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_view);
+
         mToolbar = findViewById(R.id.my_toolbar);
         if (getIntent().getExtras() != null)
             mToolbar.setTitle(getIntent().getExtras().getString("exercise_name"));
         mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
-
 
         ViewPager pager = findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
