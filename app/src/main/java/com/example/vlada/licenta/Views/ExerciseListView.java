@@ -2,6 +2,7 @@ package com.example.vlada.licenta.Views;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
@@ -201,8 +202,8 @@ public class ExerciseListView extends AppCompatActivity {
             mListView = rootView.findViewById(R.id.lvItems);
 
 
-            populateWithDataFromRealm();
-            populateExerciseList();
+            populateFromRealm();
+            AsyncTask.execute(this::populateFromDB);
 
             mListView.setAdapter(mAdapter);
             listListeners();
@@ -227,7 +228,7 @@ public class ExerciseListView extends AppCompatActivity {
 
         }
 
-        void populateWithDataFromRealm() {
+        void populateFromRealm() {
             this.mAdapter = new RealmBaseAdapter<Exercise>(mRealmHelper.findAllAsyncFiltered(Exercise.class, "musclegroup", mSelectedMG)) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
@@ -254,7 +255,7 @@ public class ExerciseListView extends AppCompatActivity {
 
         }
 
-        void populateExerciseList() {
+        void populateFromDB() {
             mDisposable.add(mExerciseClient.getExercisesByMG(MuscleGroup.getEnumFromName(mSelectedMG).getUrl())
                     .subscribeOn(Schedulers.io())
                     .subscribe(
