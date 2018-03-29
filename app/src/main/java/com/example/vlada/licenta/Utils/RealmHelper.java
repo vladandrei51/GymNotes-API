@@ -72,13 +72,6 @@ public class RealmHelper {
                 }
             });
         }
-
-    }
-
-
-    public void closeRealm() {
-        if (mRealm != null)
-            mRealm.close();
     }
 
 }
