@@ -39,7 +39,7 @@ public class Utils {
 
 
     public static double getEstimated1RM(Lift lift) {
-        return (double) lift.getWeight() * (36 / (37 - (double) lift.getReps()));
+        return (double) lift.getWeight() * Math.pow((double) lift.getReps(), 0.10f);
     }
 
     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
