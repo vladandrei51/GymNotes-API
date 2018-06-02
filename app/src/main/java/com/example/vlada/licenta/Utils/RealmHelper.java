@@ -36,6 +36,16 @@ public class RealmHelper {
                 .findAll();
     }
 
+    public <E extends RealmObject> RealmResults<E> allStrengthExercisesByRating(Class<E> realmObject, String field, String key) {
+        return mRealm.where(realmObject)
+                .contains(field, key, Case.INSENSITIVE)
+                .and().not().contains("type", "Cardio", Case.INSENSITIVE)
+                .and().not().contains("type", "Plyometrics", Case.INSENSITIVE)
+                .and().not().contains("type", "Stretching", Case.INSENSITIVE)
+                .findAll()
+                .sort("rating", Sort.DESCENDING);
+    }
+
     public <E extends RealmObject> RealmResults<E> findAllFilteredSorted(Class<E> realmObject, String field, String key, String sortField, Sort sortOrder) {
         return mRealm.where(realmObject)
                 .contains(field, key, Case.INSENSITIVE)

@@ -229,7 +229,7 @@ public class ExerciseListView extends AppCompatActivity {
         }
 
         void populateFromRealm() {
-            this.mAdapter = new RealmBaseAdapter<Exercise>(mRealmHelper.findAllAsyncFiltered(Exercise.class, "musclegroup", mSelectedMG)) {
+            this.mAdapter = new RealmBaseAdapter<Exercise>(mRealmHelper.allStrengthExercisesByRating(Exercise.class, "musclegroup", mSelectedMG)) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     ExerciseFragment.ViewHolder viewHolder;
