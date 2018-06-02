@@ -33,17 +33,22 @@ public class HomeActivity extends AppCompatActivity {
             if (!isFabOpen) {
                 ShowFabMenu();
             } else
-                CloseFabMenu();
+                closeFabMenu();
         });
 
         mLiftingFab.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, ExerciseListView.class);
             startActivity(intent);
+            closeFabMenu();
 
         });
 
+        mCardioFab.setOnClickListener(v -> {
+            closeFabMenu();
+        });
+
         bgFabMenu.setOnClickListener(view -> {
-            CloseFabMenu();
+            closeFabMenu();
         });
 
         super.onCreate(savedInstanceState);
@@ -65,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
                 .rotation(0f);
     }
 
-    private void CloseFabMenu() {
+    private void closeFabMenu() {
         isFabOpen = false;
 
         mMainFab.animate().rotation(0f);
