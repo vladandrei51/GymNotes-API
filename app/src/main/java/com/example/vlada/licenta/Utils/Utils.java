@@ -43,13 +43,17 @@ public class Utils {
     }
 
     public static boolean is1RM(Lift lift, RealmResults<Lift> lifts) {
-        int n = 0;
+        int higher = 0;
+        int same = 0;
         for (Lift aux : lifts) {
-            if (getEstimated1RM(aux) < getEstimated1RM(lift)) {
-                n++;
+            if (getEstimated1RM(lift) > getEstimated1RM(aux)) {
+                higher++;
+            }
+            if (getEstimated1RM(lift) == getEstimated1RM(aux)) {
+                same++;
             }
         }
-        return n == lifts.size() - 1;
+        return higher + same == lifts.size();
     }
 
     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
