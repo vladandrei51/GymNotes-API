@@ -46,6 +46,16 @@ public class RealmHelper {
                 .sort("rating", Sort.DESCENDING);
     }
 
+    public <E extends RealmObject> RealmResults<E> allCardioExercisesByRating(Class<E> realmObject) {
+        return mRealm.where(realmObject)
+                .contains("type", "Cardio", Case.INSENSITIVE)
+                .or().contains("type", "Plyometrics", Case.INSENSITIVE)
+                .or().contains("type", "Stretching", Case.INSENSITIVE)
+                .findAll()
+                .sort("rating", Sort.DESCENDING);
+    }
+
+
     public <E extends RealmObject> RealmResults<E> findAllFilteredSorted(Class<E> realmObject, String field, String key, String sortField, Sort sortOrder) {
         return mRealm.where(realmObject)
                 .contains(field, key, Case.INSENSITIVE)
@@ -65,7 +75,7 @@ public class RealmHelper {
         }
     }
 
-    public <E extends RealmObject> void deleteAllFiltered(Class<E> realmObject, String field, String key) {
+    public <E extends RealmObject> void deleteAllStrengthFiltered(Class<E> realmObject, String field, String key) {
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> realm.where(realmObject)
                     .contains(field, key, Case.INSENSITIVE)
@@ -73,6 +83,18 @@ public class RealmHelper {
                     .deleteAllFromRealm());
         }
     }
+
+    public <E extends RealmObject> void deleteAllCardioFiltered(Class<E> realmObject) {
+        try (Realm r = Realm.getDefaultInstance()) {
+            r.executeTransaction(realm -> realm.where(realmObject)
+                    .contains("type", "Cardio", Case.INSENSITIVE)
+                    .or().contains("type", "Plyometrics", Case.INSENSITIVE)
+                    .or().contains("type", "Stretching", Case.INSENSITIVE)
+                    .findAll()
+                    .deleteAllFromRealm());
+        }
+    }
+
 
     public <E extends RealmObject> void insertAllFromList(List<E> list) {
         try (Realm r = Realm.getDefaultInstance()) {

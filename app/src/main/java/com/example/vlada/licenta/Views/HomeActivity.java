@@ -44,6 +44,9 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         mCardioFab.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, CardioListView.class);
+            startActivity(intent);
+
             closeFabMenu();
         });
 

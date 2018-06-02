@@ -29,6 +29,10 @@ interface ExerciseResource {
     @GET(EXERCISE_PATH + "/allNames")
     Observable<List<String>> getExercisesNames();
 
+    @GET(EXERCISE_PATH + "/get/cardio")
+    Observable<List<Exercise>> getCardioExercises();
+
+
 
     @GET(EXERCISE_PATH + "/get/id/{id}")
     Observable<Exercise> getExerciseByID(@Path("id") int id);
@@ -60,6 +64,10 @@ public class ExerciseClient {
 
     public Observable<List<String>> getExercisesNames() {
         return exerciseResource.getExercisesNames();
+    }
+
+    public Observable<List<Exercise>> getCardioExercises() {
+        return exerciseResource.getCardioExercises();
     }
 
     public Observable<Exercise> getExerciseByID(int id) {
