@@ -28,7 +28,6 @@ import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
 import com.example.vlada.licenta.Utils.Utils;
 
-import java.util.Comparator;
 import java.util.Date;
 
 import io.realm.Realm;
@@ -136,12 +135,6 @@ public class ExerciseLiftFragment extends BaseFragment {
             return;
         getActivity().runOnUiThread(() -> {
 
-            double highest1RMPreAdd = mResults
-                    .stream()
-                    .map(Utils::getEstimated1RM)
-                    .max(Comparator.naturalOrder())
-                    .orElse(0.0);
-
             Realm realm;
             realm = Realm.getDefaultInstance();
             realm.beginTransaction();
@@ -157,7 +150,7 @@ public class ExerciseLiftFragment extends BaseFragment {
                 newLift.setWeight(lift2.getWeight());
                 realm.commitTransaction();
                 updateRVList();
-                if (highest1RMPreAdd < Utils.getEstimated1RM(newLift)) {
+                if (Utils.is1RM(newLift, mResults)) {
                     Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
                 }
             }
@@ -168,21 +161,20 @@ public class ExerciseLiftFragment extends BaseFragment {
     public void insertLiftFromDialog(Lift lift) {
         if (getActivity() == null)
             return;
+
         if (lift != null && mExercise != null) {
-            double highest1RMPreAdd = mResults
-                    .stream()
-                    .map(Utils::getEstimated1RM)
-                    .max(Comparator.naturalOrder())
-                    .orElse(0.0);
             lift.setExercise(mExercise);
+
+
             getActivity().runOnUiThread(() -> {
                 mRealmHelper.insert(lift);
                 updateRVList();
             });
 
-            if (highest1RMPreAdd < Utils.getEstimated1RM(lift)) {
+            if (Utils.is1RM(lift, mResults)) {
                 Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
             }
+
         }
 
     }

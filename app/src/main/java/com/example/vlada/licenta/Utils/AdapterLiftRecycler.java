@@ -162,6 +162,10 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
             if (currentLift.getNotes().length() > 0) {
                 mLiftTextTV.append("*");
             }
+
+            if (Utils.is1RM(currentLift, mItemsList)) {
+                mLiftTextTV.setText(new String(Character.toChars(0x1F3C6)) + " " + mLiftTextTV.getText());
+            }
         }
 
         void loadDate(Lift currentLift) {

@@ -42,6 +42,16 @@ public class Utils {
         return (double) lift.getWeight() * Math.pow((double) lift.getReps(), 0.10f);
     }
 
+    public static boolean is1RM(Lift lift, RealmResults<Lift> lifts) {
+        int n = 0;
+        for (Lift aux : lifts) {
+            if (getEstimated1RM(aux) < getEstimated1RM(lift)) {
+                n++;
+            }
+        }
+        return n == lifts.size() - 1;
+    }
+
     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
