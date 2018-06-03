@@ -20,10 +20,9 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration
                 .Builder()
-//                .deleteRealmIfMigrationNeeded()
+                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-
         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();

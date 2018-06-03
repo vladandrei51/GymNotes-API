@@ -2,6 +2,7 @@ package com.example.vlada.licenta.Views;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,23 +27,35 @@ import com.example.vlada.licenta.Adapter.ExerciseListRecyclerAdapter;
 import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.MuscleGroup;
+import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.RealmBackup;
+import com.example.vlada.licenta.Utils.Utils;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by andrei-valentin.vlad on 2/7/2018.
  */
 
-public class ExerciseListView extends AppCompatActivity {
+public class ExerciseListView extends AppCompatActivity implements SearchView.OnQueryTextListener {
+    public ListenFromActivity activityListener;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mTitle;
     private List<String> mMuscleGroups;
+
+    public void setActivityListener(ListenFromActivity activityListener) {
+        this.activityListener = activityListener;
+    }
 
 
     @Override
@@ -100,6 +114,18 @@ public class ExerciseListView extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.search_view, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(() -> {
+            if (activityListener != null)
+                activityListener.clearSearch();
+            return false;
+
+        });
+
+
         return true;
     }
 
@@ -173,11 +199,36 @@ public class ExerciseListView extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public static class ExerciseFragment extends BaseFragment {
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if (activityListener != null && !Objects.equals(query, ""))
+            activityListener.filterResultsInFragment(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (activityListener != null && !Objects.equals(newText, ""))
+            activityListener.filterResultsInFragment(newText);
+        return false;
+    }
+
+
+    public interface ListenFromActivity {
+        void filterResultsInFragment(String text);
+
+        void clearSearch();
+    }
+
+    public static class ExerciseFragment extends BaseFragment implements ListenFromActivity {
         public static final String ARG_NUMBER = "drawer_number";
 
         private String mSelectedMG;
-        private RecyclerView recycler;
+        private RecyclerView mRecycler;
+        private RealmResults<Exercise> mResults;
+        private CompositeDisposable mDisposable = new CompositeDisposable();
+        private ExerciseClient mExerciseClient;
+        private ExerciseListRecyclerAdapter mAdapter;
 
         public ExerciseFragment() {
         }
@@ -186,37 +237,91 @@ public class ExerciseListView extends AppCompatActivity {
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_exercise_list, container, false);
 
+            if (getActivity() != null) {
+                ((ExerciseListView) getActivity()).setActivityListener(ExerciseFragment.this);
+            }
+
+
             if (getArguments() != null && getActivity() != null) {
                 this.mSelectedMG = MuscleGroup.getAllNames().get(getArguments().getInt(ARG_NUMBER));
                 getActivity().setTitle(mSelectedMG);
             }
 
+            mExerciseClient = new ExerciseClient(getContext());
+            mResults = mRealmHelper.allStrengthExercisesByRating(Exercise.class, "musclegroup", mSelectedMG);
 
-            recycler = rootView.findViewById(R.id.lvItems);
-            recycler.setHasFixedSize(true);
+            mAdapter = new ExerciseListRecyclerAdapter(mResults, new ItemsListener(), mRealmHelper.getRealm());
+            mRecycler = rootView.findViewById(R.id.lvItems);
+            mRecycler.setHasFixedSize(true);
 
             final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recycler.getContext(),
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecycler.getContext(),
                     layoutManager.getOrientation());
-            recycler.addItemDecoration(dividerItemDecoration);
-            recycler.setLayoutManager(layoutManager);
+            mRecycler.addItemDecoration(dividerItemDecoration);
+            mRecycler.setLayoutManager(layoutManager);
 
-            recycler.setAdapter(new ExerciseListRecyclerAdapter(mRealmHelper.allStrengthExercisesByRating(Exercise.class, "musclegroup", mSelectedMG), new ItemsListener()));
+            mRecycler.setAdapter(mAdapter); //populate from realm
+            AsyncTask.execute(this::populateFromDB);
 
             return rootView;
+        }
+
+        private void populateFromDB() {
+            mDisposable.add(mExerciseClient.getExercisesByMG(MuscleGroup.getEnumFromName(mSelectedMG).getUrl())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(
+                            this::getExercisesSuccess,
+                            this::getExercisesError
+                    )
+            );
+
+        }
+
+        private void getExercisesSuccess(List<Exercise> exercises) {
+            mRealmHelper.deleteAllStrengthFiltered(Exercise.class, "musclegroup", mSelectedMG);
+            exercises.sort(
+                    Comparator.comparing(Exercise::getRating));
+            mRealmHelper.insertAllFromList(exercises);
+        }
+
+        private void getExercisesError(Throwable throwable) {
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    Utils.showAlertDialog(getContext(), "Cached data is being used", throwable.getMessage());
+                    mAdapter.notifyDataSetChanged();
+                });
+            }
+        }
+
+
+        private void reinitializeAdapter() {
+            mAdapter = new ExerciseListRecyclerAdapter(mResults, new ItemsListener(), mRealmHelper.getRealm());
+            mRecycler.setAdapter(mAdapter);
+        }
+
+        @Override
+        public void filterResultsInFragment(String text) {
+            mAdapter.filterStrengthExercises(text, mSelectedMG);
+        }
+
+        @Override
+        public void clearSearch() {
+            reinitializeAdapter();
         }
 
 
         class ItemsListener implements AdapterView.OnClickListener {
             @Override
             public void onClick(View view) {
-                Exercise exercise = mRealmHelper.allStrengthExercisesByRating(Exercise.class, "musclegroup", mSelectedMG).get(recycler.getChildAdapterPosition(view));
+                Exercise exercise = mResults.get(mRecycler.getChildAdapterPosition(view));
                 Intent intent = new Intent(getContext(), ExerciseView.class);
-                intent.putExtra("exercise_name", exercise.getName());
+                if (exercise != null)
+                    intent.putExtra("exercise_name", exercise.getName());
                 startActivity(intent);
             }
         }
+
 
     }
 

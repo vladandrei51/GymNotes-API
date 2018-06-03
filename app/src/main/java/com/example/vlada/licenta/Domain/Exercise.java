@@ -18,7 +18,7 @@ public class Exercise extends RealmObject {
 
     private String description;
 
-    private String rating;
+    private float rating;
 
     private String videoUrl;
 
@@ -63,11 +63,11 @@ public class Exercise extends RealmObject {
         this.picsUrl = picsUrl;
     }
 
-    public String getRating() {
+    public float getRating() {
         return this.rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
