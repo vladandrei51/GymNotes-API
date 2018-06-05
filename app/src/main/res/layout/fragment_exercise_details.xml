@@ -1,61 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.35"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/image_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <me.relex.circleindicator.CircleIndicator
+                android:id="@+id/indicator"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true" />
+
+            <RatingBar
+                android:id="@+id/ratingBar3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:paddingTop="10dp"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
+                android:stepSize="0.5" />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.65"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/horizontal_scroll"
-            android:layout_marginTop="137dp"
-            android:autoSizeTextType="uniform"
-            android:background="#CC303F9F"
-            android:maxLines="1"
-            android:textAlignment="center"
-            android:textColor="#EEEEEE"
-            android:textSize="20sp"
-            android:textStyle="italic"
-            tools:text="exercise name" />
-
-        <HorizontalScrollView
-            android:id="@+id/horizontal_scroll"
+            android:id="@+id/exercise_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true">
+            android:maxLines="5"
+            android:padding="10dp"
+            android:scrollHorizontally="true" />
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
-
-        </HorizontalScrollView>
-
-        <RatingBar
-            android:id="@+id/ratingBar3"
+        <TextView
+            android:id="@+id/exercise_1RM"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textView"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="40dp"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:stepSize="0.5" />
+            android:padding="10dp"
+            android:text="Maximum theoretical strength: " />
 
-    </RelativeLayout>
+    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
+
 

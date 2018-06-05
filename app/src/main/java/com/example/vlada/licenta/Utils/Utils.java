@@ -53,7 +53,7 @@ public class Utils {
                 same++;
             }
         }
-        return higher + same == lifts.size();
+        return lift.getWeight() > 0 ? higher + same == lifts.size() : lifts.stream().map(Lift::getReps).max(Integer::compare).orElse(0) == lift.getReps();
     }
 
     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

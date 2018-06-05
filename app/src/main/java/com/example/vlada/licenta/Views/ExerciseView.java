@@ -11,13 +11,17 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.vlada.licenta.R;
 
+import me.relex.circleindicator.CircleIndicator;
+
 /**
  * Created by andrei-valentin.vlad on 2/8/2018.
  */
 
 public class ExerciseView extends FragmentActivity {
 
+    private static ViewPager mPager;
     Toolbar mToolbar;
+    CircleIndicator mIndicator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,14 +33,15 @@ public class ExerciseView extends FragmentActivity {
             mToolbar.setTitle(getIntent().getExtras().getString("exercise_name"));
         mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
-        ViewPager pager = findViewById(R.id.pager);
-        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-
+        mPager = findViewById(R.id.pager);
+        mIndicator = findViewById(R.id.main_indicator);
+        mPager.setAdapter(new ExerciseViewPageAdapter(getSupportFragmentManager()));
+        mIndicator.setViewPager(mPager);
     }
 
-    private class MyPagerAdapter extends FragmentPagerAdapter {
+    private class ExerciseViewPageAdapter extends FragmentPagerAdapter {
 
-        MyPagerAdapter(FragmentManager fm) {
+        ExerciseViewPageAdapter(FragmentManager fm) {
             super(fm);
         }
 

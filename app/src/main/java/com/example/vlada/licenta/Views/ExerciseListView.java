@@ -296,6 +296,7 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
 
 
         private void reinitializeAdapter() {
+            mResults = mRealmHelper.allStrengthExercisesByRating(Exercise.class, "musclegroup", mSelectedMG);
             mAdapter = new ExerciseListRecyclerAdapter(mResults, new ItemsListener(), mRealmHelper.getRealm());
             mRecycler.setAdapter(mAdapter);
         }
@@ -314,11 +315,16 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
         class ItemsListener implements AdapterView.OnClickListener {
             @Override
             public void onClick(View view) {
-                Exercise exercise = mAdapter.getItem(mRecycler.getChildAdapterPosition(view));
-                Intent intent = new Intent(getContext(), ExerciseView.class);
-                if (exercise != null)
-                    intent.putExtra("exercise_name", exercise.getName());
-                startActivity(intent);
+                try {
+                    Exercise exercise = mAdapter.getItem(mRecycler.getChildAdapterPosition(view));
+                    Intent intent = new Intent(getContext(), ExerciseView.class);
+                    if (exercise != null)
+                        intent.putExtra("exercise_name", exercise.getName());
+                    startActivity(intent);
+
+                } catch (ArrayIndexOutOfBoundsException ex) {
+
+                }
             }
         }
 

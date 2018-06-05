@@ -1,17 +1,26 @@
 package com.example.vlada.licenta.Views;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.example.vlada.licenta.Adapter.ImagePagerAdapter;
 import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Exercise;
+import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Utils.Utils;
+
+import me.relex.circleindicator.CircleIndicator;
 
 /**
  * Created by andrei-valentin.vlad on 2/7/2018.
@@ -19,10 +28,13 @@ import com.example.vlada.licenta.R;
 
 public class ExerciseDetailsFragment extends BaseFragment {
 
-    TextView mExerciseNameTV;
+    private static ViewPager mPager;
     Exercise mExercise;
+    TextView mTextViewDescription;
+    TextView mTextView1RM;
     String mExerciseName;
     RatingBar mRatingBar;
+    CircleIndicator indicator;
 
     public ExerciseDetailsFragment() {
 
@@ -45,8 +57,12 @@ public class ExerciseDetailsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
-        mExerciseNameTV = rootView.findViewById(R.id.textView);
+        mTextView1RM = rootView.findViewById(R.id.exercise_1RM);
+        mTextViewDescription = rootView.findViewById(R.id.exercise_description);
+        mPager = rootView.findViewById(R.id.image_pager);
         mRatingBar = rootView.findViewById(R.id.ratingBar3);
+        indicator = rootView.findViewById(R.id.indicator);
+
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
         else {
@@ -63,9 +79,26 @@ public class ExerciseDetailsFragment extends BaseFragment {
     }
 
     private void populatePage() {
-        mExerciseNameTV.setText(mExercise.getName());
+
+        mTextViewDescription.setText(mExercise.getDescription());
         mRatingBar.setRating(mExercise.getRating() / 2);
+        LayerDrawable stars = (LayerDrawable) mRatingBar.getProgressDrawable();
+        double max_rm = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0.0);
+        if (max_rm != 0) {
+            mTextView1RM.append(String.valueOf((int) max_rm) + " kg");
+        } else if (mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).size() == 0) {
+            mTextView1RM.setText("Exercise not performed yet");
+        } else {
+            mTextView1RM.setText("Most amounts of repetitions using bodyweight: " + mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Lift::getReps).max(Integer::compare).orElse(0));
+
+        }
+        stars.getDrawable(2).setColorFilter(Color.rgb(33, 150, 243), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(Color.rgb(63, 81, 181), PorterDuff.Mode.SRC_ATOP);
+
+        mPager.setAdapter(new ImagePagerAdapter(getContext(), mExercise));
+        indicator.setViewPager(mPager);
     }
+
 
     @Override
     public void onDestroyView() {
