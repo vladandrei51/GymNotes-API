@@ -314,7 +314,7 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
         class ItemsListener implements AdapterView.OnClickListener {
             @Override
             public void onClick(View view) {
-                Exercise exercise = mResults.get(mRecycler.getChildAdapterPosition(view));
+                Exercise exercise = mAdapter.getItem(mRecycler.getChildAdapterPosition(view));
                 Intent intent = new Intent(getContext(), ExerciseView.class);
                 if (exercise != null)
                     intent.putExtra("exercise_name", exercise.getName());
