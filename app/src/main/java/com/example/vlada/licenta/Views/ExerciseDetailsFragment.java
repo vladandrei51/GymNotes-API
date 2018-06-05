@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.vlada.licenta.Base.BaseFragment;
@@ -20,7 +21,8 @@ public class ExerciseDetailsFragment extends BaseFragment {
 
     TextView mExerciseNameTV;
     Exercise mExercise;
-    private String mExerciseName;
+    String mExerciseName;
+    RatingBar mRatingBar;
 
     public ExerciseDetailsFragment() {
 
@@ -44,6 +46,7 @@ public class ExerciseDetailsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
         mExerciseNameTV = rootView.findViewById(R.id.textView);
+        mRatingBar = rootView.findViewById(R.id.ratingBar3);
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
         else {
@@ -52,7 +55,6 @@ public class ExerciseDetailsFragment extends BaseFragment {
         }
 
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
-
         if (mExercise != null) {
             populatePage();
         }
@@ -62,6 +64,7 @@ public class ExerciseDetailsFragment extends BaseFragment {
 
     private void populatePage() {
         mExerciseNameTV.setText(mExercise.getName());
+        mRatingBar.setRating(mExercise.getRating() / 2);
     }
 
     @Override

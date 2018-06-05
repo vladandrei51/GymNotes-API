@@ -1,36 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <HorizontalScrollView
-        android:id="@+id/horizontal_scroll"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/linear"
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/horizontal_scroll"
+            android:layout_marginTop="137dp"
+            android:autoSizeTextType="uniform"
+            android:background="#CC303F9F"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textColor="#EEEEEE"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            tools:text="exercise name" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontal_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+
+        </HorizontalScrollView>
+
+        <RatingBar
+            android:id="@+id/ratingBar3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"></LinearLayout>
+            android:layout_alignBottom="@+id/textView"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="40dp"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5" />
 
-    </HorizontalScrollView>
+    </RelativeLayout>
 
+</RelativeLayout>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="354dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:autoSizeTextType="uniform"
-        android:maxLines="1"
-        android:textAlignment="center"
-        android:textColor="#616161"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        tools:text="exercise name" />
-
-</LinearLayout>
