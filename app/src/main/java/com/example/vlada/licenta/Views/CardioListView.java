@@ -212,7 +212,7 @@ public class CardioListView extends AppCompatActivity implements SearchView.OnQu
         class ItemsListener implements AdapterView.OnClickListener {
             @Override
             public void onClick(View view) {
-                Exercise exercise = mRealmHelper.allCardioExercisesByRating(Exercise.class).get(mRecycler.getChildAdapterPosition(view));
+                Exercise exercise = mAdapter.getItem(mRecycler.getChildAdapterPosition(view));
                 Intent intent = new Intent(getContext(), ExerciseView.class);
                 intent.putExtra("exercise_name", exercise.getName());
                 startActivity(intent);
