@@ -7,6 +7,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.widget.Toast;
 
+import com.example.vlada.licenta.Domain.Cardio;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -54,6 +56,18 @@ public class Utils {
         }
     }
 
+    public static boolean is1RMCardio(Cardio cardio, RealmResults<Cardio> cardioRealmResults) {
+        return cardioRealmResults.stream().map(Cardio::getTime_spent).max(Integer::compare).orElse(-1) == cardio.getTime_spent();
+    }
+
+    public static boolean isCardio(Exercise exercise, Realm realm) {
+        return realm.where(Exercise.class).contains("name", exercise.getName())
+                .and().not().contains("type", "Cardio", Case.INSENSITIVE)
+                .and().not().contains("type", "Plyometrics", Case.INSENSITIVE)
+                .and().not().contains("type", "Stretching", Case.INSENSITIVE).findAll().size() == 0;
+
+    }
+
     public static boolean is1RM(Lift lift, RealmResults<Lift> lifts) {
         if (lifts.stream().map(Lift::getWeight).max(Integer::compare).orElse(0) == 0) { //if there are only body-weight lifts
             return lifts.stream().map(Lift::getReps).max(Integer::compare).orElse(0) == lift.getReps();
@@ -71,7 +85,7 @@ public class Utils {
         return higher + same == lifts.size();
     }
 
-    static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
     }

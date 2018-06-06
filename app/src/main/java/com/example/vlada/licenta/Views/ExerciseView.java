@@ -9,8 +9,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
+import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Views.Cardio.CardioChartFragment;
+import com.example.vlada.licenta.Views.Cardio.CardioLiftFragment;
+import com.example.vlada.licenta.Views.Exercise.ExerciseChartFragment;
+import com.example.vlada.licenta.Views.Exercise.ExerciseDetailsFragment;
+import com.example.vlada.licenta.Views.Exercise.ExerciseLiftFragment;
 
+import java.util.ArrayList;
+
+import io.realm.Realm;
 import me.relex.circleindicator.CircleIndicator;
 
 /**
@@ -19,7 +28,6 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ExerciseView extends FragmentActivity {
 
-    private static ViewPager mPager;
     Toolbar mToolbar;
     CircleIndicator mIndicator;
 
@@ -33,10 +41,10 @@ public class ExerciseView extends FragmentActivity {
             mToolbar.setTitle(getIntent().getExtras().getString("exercise_name"));
         mToolbar.setTitleTextColor(android.graphics.Color.WHITE);
 
-        mPager = findViewById(R.id.pager);
+        ViewPager pager = findViewById(R.id.pager);
         mIndicator = findViewById(R.id.main_indicator);
-        mPager.setAdapter(new ExerciseViewPageAdapter(getSupportFragmentManager()));
-        mIndicator.setViewPager(mPager);
+        pager.setAdapter(new ExerciseViewPageAdapter(getSupportFragmentManager()));
+        mIndicator.setViewPager(pager);
     }
 
     private class ExerciseViewPageAdapter extends FragmentPagerAdapter {
@@ -48,17 +56,33 @@ public class ExerciseView extends FragmentActivity {
         @Override
         public Fragment getItem(int pos) {
 
+            ArrayList<String> cardioTypes = new ArrayList<>();
+            cardioTypes.add("Cardio");
+            cardioTypes.add("Plyometrics");
+            cardioTypes.add("Stretching");
 
-            if (getIntent().getExtras() != null) {
+            final ArrayList<Exercise> exercise = new ArrayList<>();
+            try (Realm r = Realm.getDefaultInstance()) {
+                r.executeTransaction(realm -> {
+                    exercise.add(realm.where(Exercise.class).contains("name", getIntent().getExtras().getString("exercise_name")).findFirst());
+                });
+            }
+            if (exercise.get(0) != null) {
                 switch (pos) {
                     case 0:
-                        return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                        return ExerciseDetailsFragment.newInstance(exercise.get(0).getName());
                     case 1:
-                        return ExerciseLiftFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                        if (!cardioTypes.contains(exercise.get(0).getType())) {
+                            return ExerciseLiftFragment.newInstance(exercise.get(0).getName());
+                        }
+                        return CardioLiftFragment.newInstance(exercise.get(0).getName());
                     case 2:
-                        return ExerciseChartFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                        if (!cardioTypes.contains(exercise.get(0).getType()))
+                            return ExerciseChartFragment.newInstance(exercise.get(0).getName());
+                        return CardioChartFragment.newInstance(exercise.get(0).getName());
+
                     default:
-                        return ExerciseDetailsFragment.newInstance(getIntent().getExtras().getString("exercise_name"));
+                        return ExerciseDetailsFragment.newInstance(exercise.get(0).getName());
                 }
             }
             finish();

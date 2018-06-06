@@ -86,13 +86,6 @@ public class Lift extends RealmObject {
         return exercise_name;
     }
 
-    public String toPrettyString() {
-        return String.format("Weight = " + weight + "\n\n" +
-                "Reps = " + reps + "\n\n" +
-                "Notes = " + notes + "\n\n" +
-                "Date = " + new SimpleDateFormat("HH:mm  dd MMM. yyyy ", Locale.US).format(setDate));
-    }
-
     public String date2PrettyString() {
         if (setDate != null)
             return new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(setDate);

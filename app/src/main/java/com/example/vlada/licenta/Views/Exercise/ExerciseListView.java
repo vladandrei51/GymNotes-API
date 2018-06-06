@@ -1,4 +1,4 @@
-package com.example.vlada.licenta.Views;
+package com.example.vlada.licenta.Views.Exercise;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -31,6 +31,7 @@ import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.RealmBackup;
 import com.example.vlada.licenta.Utils.Utils;
+import com.example.vlada.licenta.Views.ExerciseView;
 
 import java.util.Comparator;
 import java.util.List;

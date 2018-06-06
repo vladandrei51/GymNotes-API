@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Views.Cardio.CardioListView;
+import com.example.vlada.licenta.Views.Exercise.ExerciseListView;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.vlada.licenta.Utils;
+package com.example.vlada.licenta.Adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,7 +13,8 @@ import android.widget.TextView;
 
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Views.ExerciseLiftFragment;
+import com.example.vlada.licenta.Utils.Utils;
+import com.example.vlada.licenta.Views.Exercise.ExerciseLiftFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import io.realm.RealmResults;
 
 import static com.example.vlada.licenta.Utils.Utils.distinctByKey;
 
-public class AdapterLiftRecycler extends RecyclerView.Adapter {
+public class ExerciseLiftsRecyclerAdapter extends RecyclerView.Adapter {
 
     private RealmResults<Lift> mItemsList;
     private List<Lift> mAdapterItems;
@@ -37,7 +38,7 @@ public class AdapterLiftRecycler extends RecyclerView.Adapter {
     private int mPreviousExpandedPosition = -1;
 
 
-    public AdapterLiftRecycler(RealmResults<Lift> itemList, Context context, View.OnClickListener listener, Fragment fragment) {
+    public ExerciseLiftsRecyclerAdapter(RealmResults<Lift> itemList, Context context, View.OnClickListener listener, Fragment fragment) {
         this.mItemsList = itemList;
         this.mFragment = fragment;
         this.mContext = context;

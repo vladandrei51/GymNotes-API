@@ -1,4 +1,4 @@
-package com.example.vlada.licenta.Views;
+package com.example.vlada.licenta.Views.Exercise;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,11 +15,13 @@ import android.widget.TextView;
 
 import com.example.vlada.licenta.Adapter.ImagePagerAdapter;
 import com.example.vlada.licenta.Base.BaseFragment;
+import com.example.vlada.licenta.Domain.Cardio;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.Utils;
 
+import io.realm.Sort;
 import me.relex.circleindicator.CircleIndicator;
 
 /**
@@ -28,13 +30,13 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ExerciseDetailsFragment extends BaseFragment {
 
-    private static ViewPager mPager;
     Exercise mExercise;
     TextView mTextViewDescription;
     TextView mTextView1RM;
     String mExerciseName;
     RatingBar mRatingBar;
     CircleIndicator indicator;
+    private ViewPager mPager;
 
     public ExerciseDetailsFragment() {
 
@@ -86,15 +88,20 @@ public class ExerciseDetailsFragment extends BaseFragment {
             mRatingBar.setVisibility(View.INVISIBLE);
         }
         LayerDrawable stars = (LayerDrawable) mRatingBar.getProgressDrawable();
-        double max_rm = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0.0);
-        if (max_rm != 0) {
-            mTextView1RM.append(String.valueOf((int) max_rm) + " kg");
-        } else if (mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).size() == 0) {
-            mTextView1RM.setText("Exercise not performed yet");
-        } else {
-            mTextView1RM.setText("Most amounts of repetitions using bodyweight: " + mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Lift::getReps).max(Integer::compare).orElse(0));
 
+        if (Utils.isCardio(mExercise, mRealmHelper.getRealm())) {
+            if (mRealmHelper.findAllFiltered(Cardio.class, "exercise_name", mExerciseName).size() > 0) {
+                mTextView1RM.setText("Highest recorded time: " + mRealmHelper.findAllFilteredSorted(Cardio.class, "exercise_name", mExerciseName, "time_spent", Sort.DESCENDING).get(0).getTime_spent() + " minutes");
+            }
+        } else {
+            double max_rm = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0.0);
+            if (max_rm > 0) {
+                mTextView1RM.setText("Maximum theoretical strength: " + String.valueOf((int) max_rm) + " kg");
+            } else if (mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).size() > 0) {
+                mTextView1RM.setText("Most amounts of repetitions using bodyweight: " + mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Lift::getReps).max(Integer::compare).orElse(0));
+            }
         }
+
         stars.getDrawable(2).setColorFilter(Color.rgb(48, 63, 159), PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(0).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
 

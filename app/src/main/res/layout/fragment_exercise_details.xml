@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:background="#80EEEEEE"
+                android:background="#66EEEEEE"
                 android:isIndicator="true"
                 android:numStars="5"
                 android:paddingTop="10dp"
@@ -89,7 +89,7 @@
                     android:background="@color/white"
                     android:padding="10dp"
                     android:paddingBottom="8dp"
-                    android:text="Maximum theoretical strength: " />
+                    android:text="Exercise not performed yet" />
 
             </LinearLayout>
         </ScrollView>

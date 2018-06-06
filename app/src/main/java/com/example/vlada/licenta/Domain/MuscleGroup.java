@@ -7,21 +7,22 @@ import java.util.Map;
 
 public enum MuscleGroup {
 
-    NECK("neck", "Neck"),
-    TRAPS("traps", "Trapezius"),
-    SHOULDERS("shoulders", "Shoulders"),
     CHEST("chest", "Chest"),
+    SHOULDERS("shoulders", "Shoulders"),
     BICEPS("biceps", "Biceps"),
-    FOREARMS("forearms", "Forearms"),
-    ABS("abdominals", "Abs"),
-    QUADS("quadriceps", "Quads"),
-    CALVES("calves", "Calves"),
     TRICEPS("triceps", "Triceps"),
     LATS("lats", "Lats"),
+    TRAPS("traps", "Trapezius"),
+    ABS("abdominals", "Abs"),
+    QUADS("quadriceps", "Quads"),
+    FOREARMS("forearms", "Forearms"),
+    CALVES("calves", "Calves"),
     MIDDLE_BACK("middle-back", "Middle Back"),
     LOWER_BACK("lower-back", "Lower Back"),
     GLUTES("glutes", "Glutes"),
-    HAMSTRINGS("hamstrings", "Hamstrings");
+    HAMSTRINGS("hamstrings", "Hamstrings"),
+    NECK("neck", "Neck");
+
 
     private static Map<String, MuscleGroup> nameEnumMap = new HashMap<>();
     private static Map<String, MuscleGroup> URLEnumMap = new HashMap<>();

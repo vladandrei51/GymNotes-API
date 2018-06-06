@@ -1,4 +1,4 @@
-package com.example.vlada.licenta.Views;
+package com.example.vlada.licenta.Views.Cardio;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +12,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.vlada.licenta.Base.BaseFragment;
-import com.example.vlada.licenta.Domain.Lift;
+import com.example.vlada.licenta.Domain.Cardio;
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Views.Exercise.ExerciseListView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -26,25 +27,23 @@ import java.util.concurrent.Callable;
 
 import io.realm.Sort;
 
-import static com.example.vlada.licenta.Utils.Utils.getEstimated1RM;
-
 /**
  * Created by andrei-valentin.vlad on 2/12/2018.
  */
 
-public class ExerciseChartFragment extends BaseFragment {
-    List<Lift> mLifts;
+public class CardioChartFragment extends BaseFragment {
+    List<Cardio> mCardioList;
     private BarChart mBarChart;
     private List<String> mXAxis;
     private String mExerciseName;
 
-    public ExerciseChartFragment() {
+    public CardioChartFragment() {
 
     }
 
-    public static ExerciseChartFragment newInstance(String text) {
+    public static CardioChartFragment newInstance(String text) {
 
-        ExerciseChartFragment f = new ExerciseChartFragment();
+        CardioChartFragment f = new CardioChartFragment();
         Bundle b = new Bundle();
         b.putString("exercise_name", text);
         f.setArguments(b);
@@ -70,37 +69,30 @@ public class ExerciseChartFragment extends BaseFragment {
         mBarChart = rootView.findViewById(R.id.chart);
         Spinner spinner = rootView.findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.chart_spinner_array, android.R.layout.simple_spinner_item);
+                R.array.cardio_chart_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
         TextView mExerciseTV = rootView.findViewById(R.id.exercise_name_chart);
-        mExerciseTV.setText(mExerciseName);
+        mExerciseTV.setText(R.string.chart_type_selector);
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    mBarChart.clear();
-                    mBarChart.setNoDataText("Feel free to select a chart type");
-                } else if (position > 0) {
-                    mLifts = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.ASCENDING);
-                    try {
-                        setupChart(() -> {
-                            switch (position) {
-                                case 1:
-                                    return getStrengthDataSet();
-                                case 2:
-                                    return getVolumeDataSet();
-                                default:
-                                    return null;
-                            }
-                        });
+                mCardioList = mRealmHelper.findAllFilteredSorted(Cardio.class, "exercise_name", mExerciseName, "setDate", Sort.ASCENDING);
+                try {
+                    setupChart(() -> {
+                        switch (position) {
+                            case 0:
+                                return getMinutesDataSet();
+                            default:
+                                return getMinutesDataSet();
+                        }
+                    });
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -112,47 +104,16 @@ public class ExerciseChartFragment extends BaseFragment {
     }
 
 
-    private ArrayList<BarDataSet> getStrengthDataSet() {
+    private ArrayList<BarDataSet> getMinutesDataSet() {
         ArrayList<BarDataSet> dataSets;
         ArrayList<BarEntry> valueSet = new ArrayList<>();
 
-        mXAxis.forEach(liftDate -> {
-            double highest1RM = 0;
-            for (Lift lift : mLifts) {
-                if (lift.date2PrettyString().equals(liftDate)) {
-                    double current1RM = getEstimated1RM(lift);
-                    if (current1RM >= highest1RM)
-                        highest1RM = current1RM;
-                }
-            }
-            BarEntry barEntry = new BarEntry((long) highest1RM, mXAxis.indexOf(liftDate));
+        mXAxis.forEach(cardioDate -> {
+            BarEntry barEntry = new BarEntry((long) mCardioList.stream().filter(cardio -> cardio.date2PrettyString().equals(cardioDate)).map(Cardio::getTime_spent).max(Integer::compareTo).orElse(0), mXAxis.indexOf(cardioDate));
             valueSet.add(barEntry);
         });
 
-        BarDataSet barDataSet = new BarDataSet(valueSet, "Maximum theoretical strength");
-        barDataSet.setColors(ColorTemplate.PASTEL_COLORS);
-
-        dataSets = new ArrayList<>();
-        dataSets.add(barDataSet);
-        return dataSets;
-    }
-
-    private ArrayList<BarDataSet> getVolumeDataSet() {
-        ArrayList<BarDataSet> dataSets;
-        ArrayList<BarEntry> valueSet = new ArrayList<>();
-
-        mXAxis.forEach(liftDate -> {
-            long volume = 0;
-            for (Lift lift : mLifts) {
-                if (lift.date2PrettyString().equals(liftDate)) {
-                    volume += lift.getWeight() * lift.getReps();
-                }
-            }
-            BarEntry barEntry = new BarEntry(volume, mXAxis.indexOf(liftDate));
-            valueSet.add(barEntry);
-        });
-
-        BarDataSet barDataSet = new BarDataSet(valueSet, "Work Volume");
+        BarDataSet barDataSet = new BarDataSet(valueSet, "Highest Time");
         barDataSet.setColors(ColorTemplate.PASTEL_COLORS);
 
         dataSets = new ArrayList<>();
@@ -163,21 +124,29 @@ public class ExerciseChartFragment extends BaseFragment {
 
     void setupChart(Callable<ArrayList<BarDataSet>> barDataFunc) throws Exception {
         mXAxis = new ArrayList<>();
-        mLifts.forEach(l -> {
+        mCardioList.forEach(l -> {
             String date = l.date2PrettyString();
             if (!mXAxis.contains(date)) mXAxis.add(date);
         });
-
-        BarData data = new BarData(mXAxis, barDataFunc.call());
-        if (getActivity() != null) {
+        if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
-                mBarChart.setData(data);
-                mBarChart.setDescription("");
-                mBarChart.animateXY(750, 750);
-                mBarChart.invalidate();
+                BarData data;
+                try {
+                    data = new BarData(mXAxis, barDataFunc.call());
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            mBarChart.setData(data);
+                            mBarChart.setDescription("");
+                            mBarChart.animateXY(750, 750);
+                            mBarChart.invalidate();
+
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             });
-        }
     }
 
 

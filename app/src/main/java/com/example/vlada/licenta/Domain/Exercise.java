@@ -43,10 +43,6 @@ public class Exercise extends RealmObject {
         return this.musclegroup;
     }
 
-    public void setMusclegroup(String musclegroup) {
-        this.musclegroup = musclegroup;
-    }
-
     public String getName() {
         return this.name;
     }
@@ -59,48 +55,20 @@ public class Exercise extends RealmObject {
         return this.picsUrl;
     }
 
-    public void setPicsUrl(String picsUrl) {
-        this.picsUrl = picsUrl;
-    }
-
     public float getRating() {
         return this.rating;
-    }
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
-
-    public String getVideoUrl() {
-        return this.videoUrl;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public List<Lift> getLifts() {
         return this.lifts;
     }
 
-    public void setLifts(List<Lift> lifts) {
-        this.lifts = lifts;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Lift addLift(Lift lift) {
@@ -110,12 +78,6 @@ public class Exercise extends RealmObject {
         return lift;
     }
 
-    public Lift removeLift(Lift lift) {
-        getLifts().remove(lift);
-        lift.setExercise(null);
-
-        return lift;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -124,17 +86,7 @@ public class Exercise extends RealmObject {
 
         Exercise exercise = (Exercise) o;
 
-        if (musclegroup != null ? !musclegroup.equals(exercise.musclegroup) : exercise.musclegroup != null)
-            return false;
-        return name != null ? name.equals(exercise.name) : exercise.name == null;
-    }
-
-    public String toPrettyString() {
-        return "Name = " + name + "\n\n" +
-                "Muscle Group = " + musclegroup + "\n\n" +
-                "Description = " + description + "\n\n" +
-                "Rating = " + rating + "\n\n" +
-                "Type = " + type + "\n";
+        return (musclegroup != null ? musclegroup.equals(exercise.musclegroup) : exercise.musclegroup == null) && (name != null ? name.equals(exercise.name) : exercise.name == null);
     }
 
     @Override

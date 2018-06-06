@@ -1,4 +1,4 @@
-package com.example.vlada.licenta.Views;
+package com.example.vlada.licenta.Views.Exercise;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -20,12 +20,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.example.vlada.licenta.Adapter.ExerciseLiftsRecyclerAdapter;
 import com.example.vlada.licenta.Base.BaseFragment;
 import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
-import com.example.vlada.licenta.Utils.AdapterLiftRecycler;
 import com.example.vlada.licenta.Utils.Utils;
 
 import java.util.Date;
@@ -43,11 +44,12 @@ public class ExerciseLiftFragment extends BaseFragment {
     Exercise mExercise;
     FloatingActionButton mAddBT;
     Lift mClickedLift;
+    TextView mNoLiftsTV;
 
     String mExerciseName;
     private RealmResults<Lift> mResults;
     private RecyclerView mRecyclerView;
-    private AdapterLiftRecycler mAdapter;
+    private ExerciseLiftsRecyclerAdapter mAdapter;
 
     public ExerciseLiftFragment() {
 
@@ -113,9 +115,17 @@ public class ExerciseLiftFragment extends BaseFragment {
         mAddBT = rootView.findViewById(R.id.fab);
         mAddBT.setOnClickListener(v -> showLiftDialog(false));
 
+        mNoLiftsTV = rootView.findViewById(R.id.no_lifts_registered);
+
         mRecyclerView = rootView.findViewById(R.id.historyLV);
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
         populateList();
+
+        if (mAdapter.getItemCount() == 0) {
+            mNoLiftsTV.setText("No lifts recorded yet");
+            mNoLiftsTV.setVisibility(View.VISIBLE);
+        }
+
         return rootView;
     }
 
@@ -124,8 +134,6 @@ public class ExerciseLiftFragment extends BaseFragment {
         liftDialog.setTargetFragment(this, 0);
         if (getFragmentManager() != null) {
             liftDialog.show(getFragmentManager(), "dialog");
-        } else {
-            Utils.displayToast(getContext(), "Error");
         }
     }
 
@@ -180,7 +188,7 @@ public class ExerciseLiftFragment extends BaseFragment {
     }
 
     private void populateList() {
-        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener(), this);
+        mAdapter = new ExerciseLiftsRecyclerAdapter(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
@@ -194,8 +202,10 @@ public class ExerciseLiftFragment extends BaseFragment {
 
 
     public void updateRVList() {
-        mAdapter = new AdapterLiftRecycler(mResults, getContext(), new ItemsListener(), this);
+        mAdapter = new ExerciseLiftsRecyclerAdapter(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setAdapter(mAdapter);
+        if (mAdapter.getItemCount() > 0) mNoLiftsTV.setVisibility(View.GONE);
+        else mNoLiftsTV.setVisibility(View.VISIBLE);
     }
 
     public Lift getClickedLift() {
@@ -278,8 +288,8 @@ public class ExerciseLiftFragment extends BaseFragment {
                     Lift newLift = new Lift();
                     newLift.setSetDate(mLift2Edit.getSetDate());
                     newLift.setNotes(mNotesET.getText().toString().length() > 0 && mNotesCB.isChecked() ? mNotesET.getText().toString() : "");
-                    newLift.setWeight(Integer.parseInt(mWeightET.getText() + ""));
-                    newLift.setReps(Integer.parseInt(mRepsET.getText() + ""));
+                    newLift.setWeight(mWeightET.getText().length() > 0 ? Integer.parseInt(mWeightET.getText() + "") : 0);
+                    newLift.setReps(mRepsET.getText().length() > 0 ? Integer.parseInt(mRepsET.getText() + "") : 0);
                     dismissDialog();
                     mExerciseLiftFragment.updateLiftFromRealm(mLift2Edit, newLift);
                 }

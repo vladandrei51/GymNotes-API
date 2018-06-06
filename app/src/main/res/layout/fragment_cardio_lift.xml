@@ -5,7 +5,7 @@
     android:fitsSystemWindows="false">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_cardio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -16,7 +16,7 @@
         android:src="@drawable/ic_add_white_24dp" />
 
     <TextView
-        android:id="@+id/no_lifts_registered"
+        android:id="@+id/no_lifts_registered_cardio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -24,7 +24,7 @@
         android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/historyLV"
+        android:id="@+id/historyLV_cardio"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
