@@ -82,6 +82,9 @@ public class ExerciseDetailsFragment extends BaseFragment {
         String s = "<b>Main Muscle: </b>" + mExercise.getMusclegroup() + "<br>" + "<b>Exercise Type: </b>" + mExercise.getType() + "<br>" + "<br>" + mExercise.getDescription();
         mTextViewDescription.setText(Utils.fromHtml(s));
         mRatingBar.setRating(mExercise.getRating() / 2);
+        if (mRatingBar.getRating() == 0) {
+            mRatingBar.setVisibility(View.INVISIBLE);
+        }
         LayerDrawable stars = (LayerDrawable) mRatingBar.getProgressDrawable();
         double max_rm = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0.0);
         if (max_rm != 0) {
@@ -92,8 +95,8 @@ public class ExerciseDetailsFragment extends BaseFragment {
             mTextView1RM.setText("Most amounts of repetitions using bodyweight: " + mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Lift::getReps).max(Integer::compare).orElse(0));
 
         }
-        stars.getDrawable(2).setColorFilter(Color.rgb(33, 150, 243), PorterDuff.Mode.SRC_ATOP);
-        stars.getDrawable(0).setColorFilter(Color.rgb(63, 81, 181), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(2).setColorFilter(Color.rgb(48, 63, 159), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
 
         mPager.setAdapter(new ImagePagerAdapter(getContext(), mExercise));
         indicator.setViewPager(mPager);
