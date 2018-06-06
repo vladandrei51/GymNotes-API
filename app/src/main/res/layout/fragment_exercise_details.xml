@@ -9,6 +9,7 @@
 
 
     <LinearLayout
+        android:id="@+id/image_pager_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.35"
@@ -23,7 +24,9 @@
             <android.support.v4.view.ViewPager
                 android:id="@+id/image_pager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
 
             <me.relex.circleindicator.CircleIndicator
                 android:id="@+id/indicator"
@@ -52,25 +55,45 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.65"
+        android:background="#EEEEEE"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/exercise_description"
-            android:layout_width="match_parent"
+        <ScrollView
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:padding="10dp"
-            android:scrollHorizontally="true" />
+            android:scrollbars="vertical">
 
-        <TextView
-            android:id="@+id/exercise_1RM"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="Maximum theoretical strength: " />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/exercise_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:scrollHorizontally="true" />
+
+                <TextView
+                    android:id="@+id/exercise_1RM"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:paddingBottom="8dp"
+                    android:text="Maximum theoretical strength: " />
+
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
-
 </LinearLayout>
 
 

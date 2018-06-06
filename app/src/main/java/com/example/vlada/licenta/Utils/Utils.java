@@ -1,7 +1,10 @@
 package com.example.vlada.licenta.Utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.Spanned;
 import android.widget.Toast;
 
 import com.example.vlada.licenta.Domain.Exercise;
@@ -42,7 +45,19 @@ public class Utils {
         return (double) lift.getWeight() * Math.pow((double) lift.getReps(), 0.10f);
     }
 
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String source) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(source);
+        }
+    }
+
     public static boolean is1RM(Lift lift, RealmResults<Lift> lifts) {
+        if (lifts.stream().map(Lift::getWeight).max(Integer::compare).orElse(0) == 0) { //if there are only body-weight lifts
+            return lifts.stream().map(Lift::getReps).max(Integer::compare).orElse(0) == lift.getReps();
+        }
         int higher = 0;
         int same = 0;
         for (Lift aux : lifts) {
@@ -53,7 +68,7 @@ public class Utils {
                 same++;
             }
         }
-        return lift.getWeight() > 0 ? higher + same == lifts.size() : lifts.stream().map(Lift::getReps).max(Integer::compare).orElse(0) == lift.getReps();
+        return higher + same == lifts.size();
     }
 
     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

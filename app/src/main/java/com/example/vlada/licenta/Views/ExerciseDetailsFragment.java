@@ -58,7 +58,7 @@ public class ExerciseDetailsFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_exercise_details, container, false);
 
         mTextView1RM = rootView.findViewById(R.id.exercise_1RM);
-        mTextViewDescription = rootView.findViewById(R.id.exercise_description);
+        mTextViewDescription = rootView.findViewById(R.id.exercise_details);
         mPager = rootView.findViewById(R.id.image_pager);
         mRatingBar = rootView.findViewById(R.id.ratingBar3);
         indicator = rootView.findViewById(R.id.indicator);
@@ -79,8 +79,8 @@ public class ExerciseDetailsFragment extends BaseFragment {
     }
 
     private void populatePage() {
-
-        mTextViewDescription.setText(mExercise.getDescription());
+        String s = "<b>Main Muscle: </b>" + mExercise.getMusclegroup() + "<br>" + "<b>Exercise Type: </b>" + mExercise.getType() + "<br>" + "<br>" + mExercise.getDescription();
+        mTextViewDescription.setText(Utils.fromHtml(s));
         mRatingBar.setRating(mExercise.getRating() / 2);
         LayerDrawable stars = (LayerDrawable) mRatingBar.getProgressDrawable();
         double max_rm = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0.0);
