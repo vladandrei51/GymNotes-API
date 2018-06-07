@@ -78,21 +78,14 @@ public class CardioLiftFragment extends BaseFragment {
         mRecyclerView = rootView.findViewById(R.id.historyLV_cardio);
         mAddBT = rootView.findViewById(R.id.fab_cardio);
         mAddBT.setOnClickListener(v -> showCardioDialog(false));
-
-
         mNoLiftsTV.setText(R.string.no_cardio_recorded);
 
 
         this.mResults = mRealmHelper.findAllFilteredSorted(Cardio.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
-
-        if (mRealmHelper.findAllFiltered(Cardio.class, "exercise_name", mExerciseName).size() == 0) {
+        populateList();
+        if (mAdapter.getItemCount() == 0) {
             mNoLiftsTV.setVisibility(View.VISIBLE);
         }
-
-
-        populateList();
-
-
         return rootView;
     }
 
@@ -139,7 +132,7 @@ public class CardioLiftFragment extends BaseFragment {
     private void updateRVList() {
         mAdapter = new CardioLiftsRecyclerAdapter(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setAdapter(mAdapter);
-        if (mRealmHelper.findAllFiltered(Cardio.class, "exercise_name", mExerciseName).size() == 0)
+        if (mAdapter.getItemCount() == 0)
             mNoLiftsTV.setVisibility(View.VISIBLE);
         else mNoLiftsTV.setVisibility(View.GONE);
     }

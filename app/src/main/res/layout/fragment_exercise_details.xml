@@ -40,13 +40,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:background="#66EEEEEE"
+                android:background="#26EEEEEE"
                 android:isIndicator="true"
                 android:numStars="5"
                 android:paddingTop="10dp"
-                android:scaleX="0.5"
-                android:scaleY="0.5"
-                android:stepSize="0.5" />
+                android:scaleX="0.6"
+                android:scaleY="0.6" />
         </RelativeLayout>
 
 
@@ -76,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:background="@color/white"
-                    android:padding="10dp"
+                    android:padding="11dp"
                     android:scrollHorizontally="true" />
 
                 <TextView
@@ -87,9 +86,9 @@
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="5dp"
                     android:background="@color/white"
-                    android:padding="10dp"
+                    android:padding="11dp"
                     android:paddingBottom="8dp"
-                    android:text="Exercise not performed yet" />
+                    android:text="@string/exercise_not_performed_yet" />
 
             </LinearLayout>
         </ScrollView>

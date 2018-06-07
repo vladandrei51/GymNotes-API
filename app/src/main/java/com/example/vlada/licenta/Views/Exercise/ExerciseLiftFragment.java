@@ -116,13 +116,13 @@ public class ExerciseLiftFragment extends BaseFragment {
         mAddBT.setOnClickListener(v -> showLiftDialog(false));
 
         mNoLiftsTV = rootView.findViewById(R.id.no_lifts_registered);
+        mNoLiftsTV.setText(R.string.no_lifts_added);
 
         mRecyclerView = rootView.findViewById(R.id.historyLV);
         this.mResults = mRealmHelper.findAllFilteredSorted(Lift.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
         populateList();
 
         if (mAdapter.getItemCount() == 0) {
-            mNoLiftsTV.setText("No lifts recorded yet");
             mNoLiftsTV.setVisibility(View.VISIBLE);
         }
 

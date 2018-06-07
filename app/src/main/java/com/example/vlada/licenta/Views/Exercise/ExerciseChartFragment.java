@@ -105,19 +105,33 @@ public class ExerciseChartFragment extends BaseFragment {
     private ArrayList<BarDataSet> getStrengthDataSet() {
         ArrayList<BarDataSet> dataSets;
         ArrayList<BarEntry> valueSet = new ArrayList<>();
+        if (mLifts.stream().map(Lift::getWeight).max(Integer::compare).orElse(-1) > 0) {
+            mXAxis.forEach(liftDate -> {
+                double highest1RM = mLifts.stream().filter(lift -> lift.date2PrettyString().equals(liftDate)).map(Utils::getEstimated1RM).max(Double::compare).orElse(0d);
+                BarEntry barEntry = new BarEntry((long) highest1RM, mXAxis.indexOf(liftDate));
+                valueSet.add(barEntry);
+            });
 
-        mXAxis.forEach(liftDate -> {
-            double highest1RM = mLifts.stream().filter(lift -> lift.date2PrettyString().equals(liftDate)).map(Utils::getEstimated1RM).max(Double::compare).orElse(0d);
-            BarEntry barEntry = new BarEntry((long) highest1RM, mXAxis.indexOf(liftDate));
-            valueSet.add(barEntry);
-        });
+            BarDataSet barDataSet = new BarDataSet(valueSet, "Highest theoretical strength");
+            barDataSet.setColors(ColorTemplate.PASTEL_COLORS);
 
-        BarDataSet barDataSet = new BarDataSet(valueSet, "Highest theoretical strength");
-        barDataSet.setColors(ColorTemplate.PASTEL_COLORS);
+            dataSets = new ArrayList<>();
+            dataSets.add(barDataSet);
+            return dataSets;
+        } else {
+            mXAxis.forEach(liftDate -> {
+                double highest1RM = mLifts.stream().filter(lift -> lift.date2PrettyString().equals(liftDate)).map(Lift::getReps).max(Double::compare).orElse(0);
+                BarEntry barEntry = new BarEntry((long) highest1RM, mXAxis.indexOf(liftDate));
+                valueSet.add(barEntry);
+            });
 
-        dataSets = new ArrayList<>();
-        dataSets.add(barDataSet);
-        return dataSets;
+            BarDataSet barDataSet = new BarDataSet(valueSet, "Most repetitions using bodyweight");
+            barDataSet.setColors(ColorTemplate.PASTEL_COLORS);
+
+            dataSets = new ArrayList<>();
+            dataSets.add(barDataSet);
+            return dataSets;
+        }
     }
 
     private ArrayList<BarDataSet> getVolumeDataSet() {
@@ -128,7 +142,11 @@ public class ExerciseChartFragment extends BaseFragment {
             long volume = 0;
             for (Lift lift : mLifts) {
                 if (lift.date2PrettyString().equals(liftDate)) {
-                    volume += lift.getWeight() * lift.getReps();
+                    if (lift.getReps() > 0 && lift.getWeight() > 0)
+                        volume += lift.getWeight() * lift.getReps();
+                    else if (lift.getReps() > 0 && lift.getWeight() == 0) {
+                        volume += lift.getReps();
+                    }
                 }
             }
             BarEntry barEntry = new BarEntry(volume, mXAxis.indexOf(liftDate));

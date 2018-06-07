@@ -7,6 +7,8 @@
     <string name="bw_for_1">Bodyweight lift for 1 rep</string>
     <string name="chart_type_selector">Select chart type</string>
     <string name="no_cardio_recorded">No time recorded yet</string>
+    <string name="no_lifts_added">No lifts recorded yet</string>
+    <string name="exercise_not_performed_yet">Exercise not performed yet</string>
 
     <string-array name="strength_chart_types">
         <item>Strength</item>

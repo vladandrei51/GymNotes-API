@@ -69,8 +69,10 @@ public class Utils {
     }
 
     public static boolean is1RM(Lift lift, RealmResults<Lift> lifts) {
-        if (lifts.stream().map(Lift::getWeight).max(Integer::compare).orElse(0) == 0) { //if there are only body-weight lifts
-            return lifts.stream().map(Lift::getReps).max(Integer::compare).orElse(0) == lift.getReps();
+        if (lift.getWeight() > 0 && lift.getReps() == 0)
+            return false;
+        if (lifts.stream().filter(l -> l.getReps() > 0).map(Lift::getWeight).max(Integer::compare).orElse(null) == 0) { //if there are only body-weight lifts
+            return lifts.stream().map(Lift::getReps).max(Integer::compare).orElse(null) == lift.getReps();
         }
         int higher = 0;
         int same = 0;
@@ -96,20 +98,13 @@ public class Utils {
 
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
-//                realm.deleteAll();
-                RealmResults<Exercise> exerciseList = null;
-                try {
-                    exerciseList = realm.where(Exercise.class).findAllAsync();
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                RealmResults<Exercise> exerciseList = realm.where(Exercise.class).contains("musclegroup", "Chest").findAll();
                 for (Exercise exercise : exerciseList) {
                     lift.setExercise(exercise);
-                    for (int i = 0; i < rand.nextInt(5) + 1; i++) {
-                        LocalDate localDate = LocalDate.of(rand.nextInt(2018 - 2017 + 1) + 2017, Month.of(rand.nextInt(12 - 1 + 1) + 1), rand.nextInt(28 - 1 + 1) + 1);
+                    for (int i = 0; i < rand.nextInt(6) + 5; i++) {
+                        LocalDate localDate = LocalDate.of(rand.nextInt(1) + 2017, Month.of(rand.nextInt(12) + 1), rand.nextInt(25) + 1);
                         lift.setSetDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                        for (int j = 0; j <= rand.nextInt(7) + 1; j++) {
+                        for (int j = 0; j <= rand.nextInt(8); j++) {
                             lift.setWeight(rand.nextInt(30));
                             lift.setReps(rand.nextInt(20));
                             realm.insertOrUpdate(lift);

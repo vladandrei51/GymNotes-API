@@ -81,29 +81,31 @@ public class ExerciseDetailsFragment extends BaseFragment {
     }
 
     private void populatePage() {
-        String s = "<b>Main Muscle: </b>" + mExercise.getMusclegroup() + "<br>" + "<b>Exercise Type: </b>" + mExercise.getType() + "<br>" + "<br>" + mExercise.getDescription();
-        mTextViewDescription.setText(Utils.fromHtml(s));
+        String description = "<b>Main Muscle: </b>" + mExercise.getMusclegroup() + "<br>" + "<b>Exercise Type: </b>" + mExercise.getType() + "<br>" + "<br>" + mExercise.getDescription();
+        mTextViewDescription.setText(Utils.fromHtml(description));
         mRatingBar.setRating(mExercise.getRating() / 2);
-        if (mRatingBar.getRating() == 0) {
-            mRatingBar.setVisibility(View.INVISIBLE);
-        }
         LayerDrawable stars = (LayerDrawable) mRatingBar.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.rgb(48, 63, 159), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(1).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
+
 
         if (Utils.isCardio(mExercise, mRealmHelper.getRealm())) {
             if (mRealmHelper.findAllFiltered(Cardio.class, "exercise_name", mExerciseName).size() > 0) {
-                mTextView1RM.setText("Highest recorded time: " + mRealmHelper.findAllFilteredSorted(Cardio.class, "exercise_name", mExerciseName, "time_spent", Sort.DESCENDING).get(0).getTime_spent() + " minutes");
+                String highest_time = "<b>Highest recorded time yet: </b>" + mRealmHelper.findAllFilteredSorted(Cardio.class, "exercise_name", mExerciseName, "time_spent", Sort.DESCENDING).get(0).getTime_spent() + " minutes";
+                mTextView1RM.setText(Utils.fromHtml(highest_time));
             }
         } else {
             double max_rm = mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0.0);
             if (max_rm > 0) {
-                mTextView1RM.setText("Maximum theoretical strength: " + String.valueOf((int) max_rm) + " kg");
+                String maximum_strength = "<b>Maximum theoretical strength: </b>" + String.valueOf((int) max_rm) + " kg";
+                mTextView1RM.setText(Utils.fromHtml(maximum_strength));
             } else if (mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).size() > 0) {
-                mTextView1RM.setText("Most amounts of repetitions using bodyweight: " + mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Lift::getReps).max(Integer::compare).orElse(0));
+                String maximum_bw = "<b>Most repetitions using bodyweight: </b>" + mRealmHelper.findAllFiltered(Lift.class, "exercise_name", mExerciseName).stream().map(Lift::getReps).max(Integer::compare).orElse(0);
+                mTextView1RM.setText(Utils.fromHtml(maximum_bw));
             }
         }
 
-        stars.getDrawable(2).setColorFilter(Color.rgb(48, 63, 159), PorterDuff.Mode.SRC_ATOP);
-        stars.getDrawable(0).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
 
         mPager.setAdapter(new ImagePagerAdapter(getContext(), mExercise));
         indicator.setViewPager(mPager);
