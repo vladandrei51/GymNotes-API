@@ -74,21 +74,23 @@ public class CardioLiftFragment extends BaseFragment {
 
         mExercise = (Exercise) mRealmHelper.getRealmObject(Exercise.class, "name", mExerciseName);
 
+        mNoLiftsTV = rootView.findViewById(R.id.no_lifts_registered_cardio);
+        mRecyclerView = rootView.findViewById(R.id.historyLV_cardio);
         mAddBT = rootView.findViewById(R.id.fab_cardio);
         mAddBT.setOnClickListener(v -> showCardioDialog(false));
 
-        mNoLiftsTV = rootView.findViewById(R.id.no_lifts_registered_cardio);
 
-        mRecyclerView = rootView.findViewById(R.id.historyLV_cardio);
+        mNoLiftsTV.setText(R.string.no_cardio_recorded);
+
 
         this.mResults = mRealmHelper.findAllFilteredSorted(Cardio.class, "exercise_name", mExerciseName, "setDate", Sort.DESCENDING);
 
-        populateList();
-
-        if (mAdapter.getItemCount() == 0) {
-            mNoLiftsTV.setText(R.string.no_cardio_recorded);
+        if (mRealmHelper.findAllFiltered(Cardio.class, "exercise_name", mExerciseName).size() == 0) {
             mNoLiftsTV.setVisibility(View.VISIBLE);
         }
+
+
+        populateList();
 
 
         return rootView;
@@ -137,8 +139,9 @@ public class CardioLiftFragment extends BaseFragment {
     private void updateRVList() {
         mAdapter = new CardioLiftsRecyclerAdapter(mResults, getContext(), new ItemsListener(), this);
         mRecyclerView.setAdapter(mAdapter);
-        if (mAdapter.getItemCount() > 0) mNoLiftsTV.setVisibility(View.GONE);
-        else mNoLiftsTV.setVisibility(View.VISIBLE);
+        if (mRealmHelper.findAllFiltered(Cardio.class, "exercise_name", mExerciseName).size() == 0)
+            mNoLiftsTV.setVisibility(View.VISIBLE);
+        else mNoLiftsTV.setVisibility(View.GONE);
     }
 
     private void deleteLiftFromRealm(Cardio clickedCardio) {
@@ -174,7 +177,7 @@ public class CardioLiftFragment extends BaseFragment {
                 realm.commitTransaction();
                 updateRVList();
                 if (Utils.is1RMCardio(newCardio, mResults)) {
-                    Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+                    Utils.showAlertDialog(getContext(), "Congratulations", "Highest time recorded yet");
                 }
             }
             realm.close();
@@ -196,7 +199,7 @@ public class CardioLiftFragment extends BaseFragment {
             });
 
             if (Utils.is1RMCardio(cardio2Add, mResults)) {
-                Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+                Utils.showAlertDialog(getContext(), "Congratulations", "Highest time recorded yet");
             }
 
         }
@@ -268,7 +271,10 @@ public class CardioLiftFragment extends BaseFragment {
                     cardio2Add.setTime_spent(mMinutesET.getText().toString().length() > 0 ? Integer.parseInt(mMinutesET.getText().toString()) : 0);
                     cardio2Add.setSetDate(new Date());
                     dismissDialog();
-                    mCardioLiftFragment.insertCardioFromDialog(cardio2Add);
+                    if (cardio2Add.getTime_spent() > 0)
+                        mCardioLiftFragment.insertCardioFromDialog(cardio2Add);
+                    else
+                        Utils.displayToast(getContext(), "Number of minutes should be higher than 0");
                 } else {
                     Cardio newLift = new Cardio();
                     newLift.setSetDate(mLift2Edit.getSetDate());
