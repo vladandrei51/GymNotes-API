@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,6 +53,15 @@ public class Utils {
 
     public static double getEstimated1RM(Lift lift) {
         return (double) lift.getWeight() * Math.pow((double) lift.getReps(), 0.10f);
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("deprecation")
@@ -120,6 +131,74 @@ public class Utils {
             });
         }
 
+    }
+
+    public static int get1RMofExercise(String exercise_name) {
+        final double[] lift = new double[1];
+        try (Realm r = Realm.getDefaultInstance()) {
+            r.executeTransaction(realm -> {
+                lift[0] = realm.where(Lift.class).equalTo("exercise_name", exercise_name).findAll().stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0d);
+            });
+        }
+        return (int) lift[0];
+    }
+
+    public static String getStrengthLevel(boolean isMale, int bodyweight, String exercise_name, Context context) {
+        List<Integer> bw = get_bw(isMale);
+        List<Integer> novice = new ArrayList<>();
+        List<Integer> intermediate = new ArrayList<>();
+        List<Integer> advanced = new ArrayList<>();
+        List<Integer> elite = new ArrayList<>();
+
+        if (exercise_name.equals(context.getString(R.string.benchpress_strength_exercise))) {
+            novice = bp_novice(isMale);
+            intermediate = bp_intermediate(isMale);
+            advanced = bp_advanced(isMale);
+            elite = bp_elite(isMale);
+        } else if (exercise_name.equals(context.getString(R.string.pull_strength_exercise))) {
+            novice = dl_novice(isMale);
+            intermediate = dl_intermediate(isMale);
+            advanced = dl_advanced(isMale);
+            elite = dl_elite(isMale);
+        } else if (exercise_name.equals(context.getString(R.string.ohp_strength_exercise))) {
+            novice = ohp_novice(isMale);
+            intermediate = ohp_intermediate(isMale);
+            advanced = ohp_advanced(isMale);
+            elite = ohp_elite(isMale);
+        } else if (exercise_name.equals(context.getString(R.string.squat_strength_exercise))) {
+            novice = squat_novice(isMale);
+            intermediate = squat_intermediate(isMale);
+            advanced = squat_advanced(isMale);
+            elite = ohp_elite(isMale);
+        } else if (exercise_name.equals(context.getString(R.string.row_strength_exercise))) {
+            novice = row_novice(isMale);
+            intermediate = row_intermediate(isMale);
+            advanced = row_advanced(isMale);
+            elite = row_elite(isMale);
+        }
+
+        final double[] lift = new double[1];
+        try (Realm r = Realm.getDefaultInstance()) {
+            r.executeTransaction(realm -> {
+                lift[0] = realm.where(Lift.class).contains("exercise_name", exercise_name).findAll().stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(-1d);
+            });
+        }
+        if (lift[0] != -1d) {
+            int index = bw.indexOf(bw.stream().filter(i -> i < bodyweight).max(Integer::compare).orElse(-1));
+            if (novice.get(index) > lift[0]) {
+                return "Untrained";
+            }
+            if (intermediate.get(index) > lift[0]) {
+                return "Novice";
+            }
+            if (advanced.get(index) > lift[0]) {
+                return "Intermediate";
+            }
+            if (elite.get(index) > lift[0]) {
+                return "Advanced";
+            }
+            return "Elite";
+        } else return context.getString(R.string.exercise_not_performed_yet);
     }
 
     private static List<Integer> get_bw(boolean isMale) {
@@ -238,64 +317,4 @@ public class Utils {
     }
 
 
-    public static String getStrengthLevel(boolean isMale, int bodyweight, String exercise_name, Context context) {
-        List<Integer> bw = get_bw(isMale);
-        List<Integer> novice = new ArrayList<>();
-        List<Integer> intermediate = new ArrayList<>();
-        List<Integer> advanced = new ArrayList<>();
-        List<Integer> elite = new ArrayList<>();
-
-        if (exercise_name.equals(context.getString(R.string.benchpress_strength_exercise))) {
-            novice = bp_novice(isMale);
-            intermediate = bp_intermediate(isMale);
-            advanced = bp_advanced(isMale);
-            elite = bp_elite(isMale);
-        } else if (exercise_name.equals(context.getString(R.string.pull_strength_exercise))) {
-            novice = dl_novice(isMale);
-            intermediate = dl_intermediate(isMale);
-            advanced = dl_advanced(isMale);
-            elite = dl_elite(isMale);
-        } else if (exercise_name.equals(context.getString(R.string.ohp_strength_exercise))) {
-            novice = ohp_novice(isMale);
-            intermediate = ohp_intermediate(isMale);
-            advanced = ohp_advanced(isMale);
-            elite = ohp_elite(isMale);
-        } else if (exercise_name.equals(context.getString(R.string.squat_strength_exercise))) {
-            novice = squat_novice(isMale);
-            intermediate = squat_intermediate(isMale);
-            advanced = squat_advanced(isMale);
-            elite = ohp_elite(isMale);
-        } else if (exercise_name.equals(context.getString(R.string.row_strength_exercise))) {
-            novice = row_novice(isMale);
-            intermediate = row_intermediate(isMale);
-            advanced = row_advanced(isMale);
-            elite = row_elite(isMale);
-        }
-
-        final double[] lift = new double[1];
-        try (Realm r = Realm.getDefaultInstance()) {
-            r.executeTransaction(realm -> {
-                lift[0] = realm.where(Lift.class).contains("exercise_name", exercise_name).findAll().stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(-1d);
-            });
-        }
-        if (lift[0] != -1d) {
-            int index = bw.indexOf(bw.stream().filter(i -> i < bodyweight).max(Integer::compare).orElse(-1));
-            if (novice.get(index) > lift[0]) {
-                return "Untrained";
-            }
-            if (intermediate.get(index) > lift[0]) {
-                return "Novice";
-            }
-            if (advanced.get(index) > lift[0]) {
-                return "Intermediate";
-            }
-            if (elite.get(index) > lift[0]) {
-                return "Advanced";
-            }
-            return "Elite";
-        } else return context.getString(R.string.exercise_not_performed_yet);
-    }
-
 }
-
-

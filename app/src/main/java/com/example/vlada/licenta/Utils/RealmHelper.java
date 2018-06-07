@@ -30,7 +30,7 @@ public class RealmHelper {
 
     public <E extends RealmObject> RealmResults<E> findAllFiltered(Class<E> realmObject, String field, String key) {
         return mRealm.where(realmObject)
-                .contains(field, key, Case.INSENSITIVE)
+                .equalTo(field, key, Case.INSENSITIVE)
                 .findAll();
     }
 
@@ -42,7 +42,7 @@ public class RealmHelper {
 
     public <E extends RealmObject> RealmResults<E> allStrengthExercisesByRating(Class<E> realmObject, String field, String key) {
         return mRealm.where(realmObject)
-                .contains(field, key, Case.INSENSITIVE)
+                .equalTo(field, key, Case.INSENSITIVE)
                 .and().not().contains("type", "Cardio", Case.INSENSITIVE)
                 .and().not().contains("type", "Plyometrics", Case.INSENSITIVE)
                 .and().not().contains("type", "Stretching", Case.INSENSITIVE)
@@ -62,7 +62,7 @@ public class RealmHelper {
 
     public <E extends RealmObject> RealmResults<E> findAllFilteredSorted(Class<E> realmObject, String field, String key, String sortField, Sort sortOrder) {
         return mRealm.where(realmObject)
-                .contains(field, key, Case.INSENSITIVE)
+                .equalTo(field, key, Case.INSENSITIVE)
                 .findAll()
                 .sort(sortField, sortOrder);
     }
@@ -82,7 +82,7 @@ public class RealmHelper {
     public <E extends RealmObject> void deleteAllStrengthFiltered(Class<E> realmObject, String field, String key) {
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> realm.where(realmObject)
-                    .contains(field, key, Case.INSENSITIVE)
+                    .equalTo(field, key, Case.INSENSITIVE)
                     .findAll()
                     .deleteAllFromRealm());
         }
