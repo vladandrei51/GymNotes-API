@@ -38,16 +38,10 @@ public class HomeActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            Intent intent = getIntent();
-            overridePendingTransition(0, 0);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            finish();
-            overridePendingTransition(0, 0);
-            startActivity(intent);
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
 
         populateStrengthLayout();
+
 
         mMainFab.setOnClickListener(v -> {
             if (!isFabOpen) {
@@ -70,17 +64,37 @@ public class HomeActivity extends AppCompatActivity {
             closeFabMenu();
         });
 
-        bgFabMenu.setOnClickListener(view -> {
-            closeFabMenu();
-        });
+        bgFabMenu.setOnClickListener(view -> closeFabMenu());
 
         super.onCreate(savedInstanceState);
+    }
+
+    private void refreshActivity() {
+        Intent intent = getIntent();
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+
     }
 
     private void populateStrengthLayout() {
 
         Integer averageLevel = 0;
+
+        ArrayList<Integer> exercise2level = new ArrayList<>();
+
+        HashMap<Integer, String> compound2usedMuscles = new HashMap<>();
+        compound2usedMuscles.put(0, "Chest, Triceps");
+        compound2usedMuscles.put(1, "Lower Back, Traps");
+        compound2usedMuscles.put(2, "Shoulders");
+        compound2usedMuscles.put(3, "Legs");
+        compound2usedMuscles.put(4, "Back, Biceps");
+
+
         HashMap<String, Integer> label2level = new HashMap<>();
+        label2level.put(getApplicationContext().getString(R.string.exercise_not_performed_yet), 0);
         label2level.put("Untrained", 1);
         label2level.put("Novice", 2);
         label2level.put("Intermediate", 3);
@@ -92,16 +106,17 @@ public class HomeActivity extends AppCompatActivity {
         BPExerciseName.setText(R.string.benchpress_strength_exercise);
         TextView BPStrengthLabel = benchPressView.findViewById(R.id.home_exercise_strength);
         BPStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.benchpress_strength_exercise), getApplicationContext()));
-        averageLevel += label2level.get(BPStrengthLabel.getText().toString());
+        exercise2level.add(label2level.get(BPStrengthLabel.getText().toString()));
         TextView BPStrengthLevel = benchPressView.findViewById(R.id.home_exercise_level);
         BPStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.benchpress_strength_exercise)) + " kg"));
+
 
         View pullView = findViewById(R.id.home_exercise_dl);
         TextView DLExerciseName = pullView.findViewById(R.id.home_exercise_name);
         DLExerciseName.setText(R.string.pull_strength_exercise);
         TextView DLStrengthLabel = pullView.findViewById(R.id.home_exercise_strength);
         DLStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.pull_strength_exercise), getApplicationContext()));
-        averageLevel += label2level.get(DLStrengthLabel.getText().toString());
+        exercise2level.add(label2level.get(DLStrengthLabel.getText().toString()));
         TextView DLStrengthLevel = pullView.findViewById(R.id.home_exercise_level);
         DLStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.pull_strength_exercise)) + " kg"));
 
@@ -111,7 +126,7 @@ public class HomeActivity extends AppCompatActivity {
         ohpExerciseName.setText(R.string.ohp_strength_exercise);
         TextView ohpStrengthLabel = shoulderPressView.findViewById(R.id.home_exercise_strength);
         ohpStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.ohp_strength_exercise), getApplicationContext()));
-        averageLevel += label2level.get(ohpStrengthLabel.getText().toString());
+        exercise2level.add(label2level.get(ohpStrengthLabel.getText().toString()));
         TextView ohpStrengthLevel = shoulderPressView.findViewById(R.id.home_exercise_level);
         ohpStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.ohp_strength_exercise)) + " kg"));
 
@@ -121,7 +136,7 @@ public class HomeActivity extends AppCompatActivity {
         squatExerciseName.setText(R.string.squat_strength_exercise);
         TextView squatStrengthLabel = squatView.findViewById(R.id.home_exercise_strength);
         squatStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.squat_strength_exercise), getApplicationContext()));
-        averageLevel += label2level.get(squatStrengthLabel.getText().toString());
+        exercise2level.add(label2level.get(squatStrengthLabel.getText().toString()));
         TextView squatStrengthLevel = squatView.findViewById(R.id.home_exercise_level);
         squatStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.squat_strength_exercise)) + " kg"));
 
@@ -131,14 +146,24 @@ public class HomeActivity extends AppCompatActivity {
         rowExerciseName.setText(R.string.row_strength_exercise);
         TextView rowStrengthLabel = rowView.findViewById(R.id.home_exercise_strength);
         rowStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.row_strength_exercise), getApplicationContext()));
-        averageLevel += label2level.get(rowStrengthLabel.getText().toString());
+        exercise2level.add(label2level.get(rowStrengthLabel.getText().toString()));
         TextView rowStrengthLevel = rowView.findViewById(R.id.home_exercise_level);
         rowStrengthLevel.setText(String.valueOf((Utils.get1RMofExercise(getString(R.string.row_strength_exercise)) + " kg")));
 
+
+        TextView strongPoints = findViewById(R.id.strong_points);
+        TextView weakPoints = findViewById(R.id.weak_points);
+        int minimum_level = exercise2level.stream().mapToInt(a -> a).min().orElse(0);
+        int maximum_level = exercise2level.stream().mapToInt(a -> a).max().orElse(0);
+        strongPoints.setText(minimum_level != 0 && minimum_level < maximum_level ? compound2usedMuscles.get(exercise2level.indexOf(maximum_level)) : "Not enough data");
+        weakPoints.setText(maximum_level != 0 && maximum_level > minimum_level ? compound2usedMuscles.get(exercise2level.indexOf(minimum_level)) : "Not enough data");
+
+
         TextView strengthLevel = findViewById(R.id.main_strength_level);
-        averageLevel /= 5;
+        averageLevel = exercise2level.stream().mapToInt(a -> a).sum() / 5;
         strengthLevel.setText(Utils.getKeyByValue(label2level, averageLevel));
     }
+
 
     private void ShowFabMenu() {
         isFabOpen = true;
