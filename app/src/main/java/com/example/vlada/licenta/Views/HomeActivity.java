@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.vlada.licenta.R;
+import com.example.vlada.licenta.Utils.Utils;
 import com.example.vlada.licenta.Views.Cardio.CardioListView;
 import com.example.vlada.licenta.Views.Exercise.ExerciseListView;
 
@@ -25,12 +27,12 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setContentView(R.layout.layout_main);
+        setContentView(R.layout.activity_home);
         mMainFab = findViewById(R.id.main_fab);
         mLiftingFab = findViewById(R.id.lifting_fab);
         mCardioFab = findViewById(R.id.cardio_fab);
         bgFabMenu = findViewById(R.id.bg_fab_menu);
-
+        populateStrengthLayout();
         mMainFab.setOnClickListener(v -> {
             if (!isFabOpen) {
                 ShowFabMenu();
@@ -57,6 +59,40 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         super.onCreate(savedInstanceState);
+    }
+
+    private void populateStrengthLayout() {
+        View benchPressView = findViewById(R.id.home_exercise_bench);
+        TextView BPExerciseName = benchPressView.findViewById(R.id.home_exercise_name);
+        BPExerciseName.setText(R.string.benchpress_strength_exercise);
+        TextView BPStrengthLevel = benchPressView.findViewById(R.id.home_exercise_strength);
+        BPStrengthLevel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.benchpress_strength_exercise), getApplicationContext()));
+
+        View pullView = findViewById(R.id.home_exercise_dl);
+        TextView DLExerciseName = pullView.findViewById(R.id.home_exercise_name);
+        DLExerciseName.setText(R.string.pull_strength_exercise);
+        TextView DLStrengthLevel = pullView.findViewById(R.id.home_exercise_strength);
+        DLStrengthLevel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.pull_strength_exercise), getApplicationContext()));
+
+        View shoulderPressView = findViewById(R.id.home_exercise_ohp);
+        TextView ohpExerciseName = shoulderPressView.findViewById(R.id.home_exercise_name);
+        ohpExerciseName.setText(R.string.ohp_strength_exercise);
+        TextView ohpStrengthLevel = shoulderPressView.findViewById(R.id.home_exercise_strength);
+        ohpStrengthLevel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.ohp_strength_exercise), getApplicationContext()));
+
+        View squatView = findViewById(R.id.home_exercise_squat);
+        TextView squatExerciseName = squatView.findViewById(R.id.home_exercise_name);
+        squatExerciseName.setText(R.string.squat_strength_exercise);
+        TextView squatStrengthLevel = squatView.findViewById(R.id.home_exercise_strength);
+        squatStrengthLevel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.squat_strength_exercise), getApplicationContext()));
+
+        View rowView = findViewById(R.id.home_exercise_row);
+        TextView rowExerciseName = rowView.findViewById(R.id.home_exercise_name);
+        rowExerciseName.setText(R.string.row_strength_exercise);
+        TextView rowStrengthLevel = rowView.findViewById(R.id.home_exercise_strength);
+        rowStrengthLevel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.row_strength_exercise), getApplicationContext()));
+
+
     }
 
     private void ShowFabMenu() {

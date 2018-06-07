@@ -305,4 +305,8 @@
     <color name="dark_bg_light_disabled_text">#80FFFFFF</color>
     <color name="dark_bg_light_hint_text">#80FFFFFF</color>
 
+    <!--Colors for home page -->
+    <color name="main_text_green">#E0E0E0</color>
+    <color name="secondary_text_green">#71beb4</color>
+
 </resources>
