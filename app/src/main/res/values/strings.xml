@@ -10,7 +10,7 @@
     <string name="no_lifts_added">No lifts recorded yet</string>
     <string name="exercise_not_performed_yet">Exercise not performed yet</string>
     <string name="benchpress_strength_exercise">Barbell Bench Press - Medium Grip</string>
-    <string name="pull_strength_exercise">Barbell Deadlift</string>
+    <string name="pull_strength_exercise">Clean Deadlift</string>
     <string name="ohp_strength_exercise">Standing Military Press</string>
     <string name="squat_strength_exercise">Barbell Full Squat</string>
     <string name="row_strength_exercise">Bent Over Barbell Row</string>
