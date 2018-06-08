@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.example.vlada.licenta.Domain.Exercise;
-import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Views.Cardio.CardioChartFragment;
 import com.example.vlada.licenta.Views.Cardio.CardioLiftFragment;
@@ -20,8 +19,6 @@ import com.example.vlada.licenta.Views.Exercise.ExerciseLiftFragment;
 
 import java.util.ArrayList;
 
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import me.relex.circleindicator.CircleIndicator;
 
@@ -52,7 +49,6 @@ public class ExerciseView extends FragmentActivity {
 
     private class ExerciseViewPageAdapter extends FragmentPagerAdapter {
 
-        final ArrayList<Exercise> exercises = new ArrayList<>();
         Realm realm;
         String exercise_name;
 
@@ -73,22 +69,8 @@ public class ExerciseView extends FragmentActivity {
 
             exercise_name = getIntent().getExtras().getString("exercise_name");
 
-            boolean found_exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findAll().size() > 0;
-            if (!found_exercise) {
-                CompositeDisposable disposable = new CompositeDisposable();
-                ExerciseClient client = new ExerciseClient(getApplicationContext());
-                disposable.add(client.getExerciseByName(exercise_name)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(
-                                this::getExercisesSuccess,
-                                this::getExercisesError
-                        )
-                );
-
-
-            } else {
-                exercises.add(realm.where(Exercise.class).equalTo("name", exercise_name).findFirst());
-            }
+            final ArrayList<Exercise> exercises = new ArrayList<>();
+            exercises.add(realm.where(Exercise.class).equalTo("name", exercise_name).findFirst());
 
             if (exercises.get(0) != null) {
                 switch (pos) {
@@ -113,18 +95,6 @@ public class ExerciseView extends FragmentActivity {
             return null;
         }
 
-        private void getExercisesError(Throwable throwable) {
-        }
-
-
-        private void getExercisesSuccess(Exercise exercise) {
-            try (Realm r = Realm.getDefaultInstance()) {
-                r.executeTransaction(realm -> {
-                    realm.insertOrUpdate(exercise);
-                    exercises.add(realm.where(Exercise.class).equalTo("name", exercise_name).findFirst());
-                });
-            }
-        }
 
         @Override
         public int getCount() {
