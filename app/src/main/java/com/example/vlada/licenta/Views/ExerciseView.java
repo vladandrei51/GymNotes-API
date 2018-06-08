@@ -86,6 +86,8 @@ public class ExerciseView extends FragmentActivity {
                 );
 
 
+            } else {
+                exercises.add(realm.where(Exercise.class).equalTo("name", exercise_name).findFirst());
             }
 
             if (exercises.get(0) != null) {
