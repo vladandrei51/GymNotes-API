@@ -43,7 +43,6 @@ public class HomeActivity extends AppCompatActivity {
         bgFabMenu = findViewById(R.id.bg_fab_menu);
         mSharedPreferances = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         setTitle(getString(R.string.app_name));
-
         mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
 
@@ -125,6 +124,11 @@ public class HomeActivity extends AppCompatActivity {
         exercise2level.add(label2level.get(BPStrengthLabel.getText().toString()));
         TextView BPStrengthLevel = benchPressView.findViewById(R.id.home_exercise_level);
         BPStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.benchpress_strength_exercise)) + " kg"));
+        benchPressView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ExerciseView.class);
+            intent.putExtra("exercise_name", getString(R.string.benchpress_strength_exercise));
+            startActivity(intent);
+        });
 
 
         View pullView = findViewById(R.id.home_exercise_dl);
@@ -135,6 +139,11 @@ public class HomeActivity extends AppCompatActivity {
         exercise2level.add(label2level.get(DLStrengthLabel.getText().toString()));
         TextView DLStrengthLevel = pullView.findViewById(R.id.home_exercise_level);
         DLStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.pull_strength_exercise)) + " kg"));
+        pullView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ExerciseView.class);
+            intent.putExtra("exercise_name", getString(R.string.pull_strength_exercise));
+            startActivity(intent);
+        });
 
 
         View shoulderPressView = findViewById(R.id.home_exercise_ohp);
@@ -145,6 +154,11 @@ public class HomeActivity extends AppCompatActivity {
         exercise2level.add(label2level.get(ohpStrengthLabel.getText().toString()));
         TextView ohpStrengthLevel = shoulderPressView.findViewById(R.id.home_exercise_level);
         ohpStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.ohp_strength_exercise)) + " kg"));
+        shoulderPressView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ExerciseView.class);
+            intent.putExtra("exercise_name", getString(R.string.ohp_strength_exercise));
+            startActivity(intent);
+        });
 
 
         View squatView = findViewById(R.id.home_exercise_squat);
@@ -155,6 +169,11 @@ public class HomeActivity extends AppCompatActivity {
         exercise2level.add(label2level.get(squatStrengthLabel.getText().toString()));
         TextView squatStrengthLevel = squatView.findViewById(R.id.home_exercise_level);
         squatStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.squat_strength_exercise)) + " kg"));
+        squatView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ExerciseView.class);
+            intent.putExtra("exercise_name", getString(R.string.squat_strength_exercise));
+            startActivity(intent);
+        });
 
 
         View rowView = findViewById(R.id.home_exercise_row);
@@ -165,6 +184,11 @@ public class HomeActivity extends AppCompatActivity {
         exercise2level.add(label2level.get(rowStrengthLabel.getText().toString()));
         TextView rowStrengthLevel = rowView.findViewById(R.id.home_exercise_level);
         rowStrengthLevel.setText(String.valueOf((Utils.get1RMofExercise(getString(R.string.row_strength_exercise)) + " kg")));
+        rowView.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ExerciseView.class);
+            intent.putExtra("exercise_name", getString(R.string.row_strength_exercise));
+            startActivity(intent);
+        });
 
 
         TextView strongPoints = findViewById(R.id.strong_points);

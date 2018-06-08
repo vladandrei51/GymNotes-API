@@ -3,6 +3,8 @@ package com.example.vlada.licenta.Views.Cardio;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,7 @@ import io.realm.Sort;
 
 public class CardioChartFragment extends BaseFragment {
     List<Cardio> mCardioList;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private BarChart mBarChart;
     private List<String> mXAxis;
     private String mExerciseName;
@@ -73,6 +76,10 @@ public class CardioChartFragment extends BaseFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
+        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh_chart);
+        mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
+
+
         TextView mExerciseTV = rootView.findViewById(R.id.exercise_name_chart);
         mExerciseTV.setText(R.string.chart_type_selector);
 
@@ -101,6 +108,14 @@ public class CardioChartFragment extends BaseFragment {
             }
         });
         return rootView;
+    }
+
+    private void refreshActivity() {
+        if (getFragmentManager() != null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }
+
     }
 
 

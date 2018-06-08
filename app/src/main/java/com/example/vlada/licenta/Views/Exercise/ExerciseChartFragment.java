@@ -3,6 +3,8 @@ package com.example.vlada.licenta.Views.Exercise;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import io.realm.Sort;
 
 public class ExerciseChartFragment extends BaseFragment {
     List<Lift> mLifts;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private BarChart mBarChart;
     private List<String> mXAxis;
     private String mExerciseName;
@@ -54,6 +57,7 @@ public class ExerciseChartFragment extends BaseFragment {
             startActivity(intent);
         }
 
+
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
         else {
@@ -64,6 +68,11 @@ public class ExerciseChartFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_chart, container, false);
         mBarChart = rootView.findViewById(R.id.chart);
         Spinner spinner = rootView.findViewById(R.id.spinner);
+
+        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh_chart);
+        mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
+
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.strength_chart_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -99,6 +108,13 @@ public class ExerciseChartFragment extends BaseFragment {
             }
         });
         return rootView;
+    }
+
+    private void refreshActivity() {
+        if (getFragmentManager() != null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }
     }
 
 

@@ -49,6 +49,8 @@ public class ExerciseView extends FragmentActivity {
 
     private class ExerciseViewPageAdapter extends FragmentPagerAdapter {
 
+        Realm realm = Realm.getDefaultInstance();
+
         ExerciseViewPageAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -62,11 +64,7 @@ public class ExerciseView extends FragmentActivity {
             cardioTypes.add("Stretching");
 
             final ArrayList<Exercise> exercise = new ArrayList<>();
-            try (Realm r = Realm.getDefaultInstance()) {
-                r.executeTransaction(realm -> {
-                    exercise.add(realm.where(Exercise.class).contains("name", getIntent().getExtras().getString("exercise_name")).findFirst());
-                });
-            }
+            exercise.add(realm.where(Exercise.class).contains("name", getIntent().getExtras().getString("exercise_name")).findFirst());
             if (exercise.get(0) != null) {
                 switch (pos) {
                     case 0:
@@ -86,6 +84,7 @@ public class ExerciseView extends FragmentActivity {
                 }
             }
             finish();
+            realm.close();
             return null;
         }
 

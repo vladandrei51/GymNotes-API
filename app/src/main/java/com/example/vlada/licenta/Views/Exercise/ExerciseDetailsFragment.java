@@ -6,7 +6,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ public class ExerciseDetailsFragment extends BaseFragment {
     String mExerciseName;
     RatingBar mRatingBar;
     CircleIndicator indicator;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private ViewPager mPager;
 
     public ExerciseDetailsFragment() {
@@ -64,7 +67,8 @@ public class ExerciseDetailsFragment extends BaseFragment {
         mPager = rootView.findViewById(R.id.image_pager);
         mRatingBar = rootView.findViewById(R.id.ratingBar3);
         indicator = rootView.findViewById(R.id.indicator);
-
+        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh_details);
+        mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
         if (getArguments() != null)
             mExerciseName = getArguments().getString("exercise_name");
         else {
@@ -78,6 +82,13 @@ public class ExerciseDetailsFragment extends BaseFragment {
         }
 
         return rootView;
+    }
+
+    private void refreshActivity() {
+        if (getFragmentManager() != null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }
     }
 
     private void populatePage() {
