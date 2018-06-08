@@ -1,22 +1,27 @@
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:preference="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="Personal information">
+        <Preference
+            android:selectable="false"
+            android:summary="Home screen labels represent how well you would fare in a strength competition against lifters at your gender and bodyweight, thus setting them appropriately is mandatory for showing corrent information" />
 
-    <android.support.v7.preference.PreferenceCategory android:title="Personal info settings">
-
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="80"
-            android:inputType="number"
+        <com.example.vlada.licenta.Utils.NumberPickerPreference
+            android:defaultValue="70"
             android:key="bodyweight_key"
-            android:summary="Input your bodyweight in kilograms"
-            android:title="Bodyweight" />
+            android:summary="Select your bodyweight in kilograms"
+            android:title="Bodyweight"
+            preference:maxValue="150"
+            preference:minValue="44"
+            preference:wrapSelectorWheel="false" />
+
 
         <ListPreference
-            android:defaultValue="True"
+            android:defaultValue="Male"
             android:entries="@array/genders"
             android:entryValues="@array/genders_values_array"
             android:key="list_gender"
-            android:title="Select gender" />
+            android:summary="%s"
+            android:title="Gender" />
+    </PreferenceCategory>
 
-
-    </android.support.v7.preference.PreferenceCategory>
-
-</android.support.v7.preference.PreferenceScreen>
+</PreferenceScreen>

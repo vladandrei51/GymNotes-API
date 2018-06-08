@@ -4,11 +4,11 @@ import android.animation.Animator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,16 +23,19 @@ import com.example.vlada.licenta.Views.Exercise.ExerciseListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
+    private final static String PREF_BODYWEIGHT_KEY = "bodyweight_key";
+    private final static String PREF_GENDER_KEY = "list_gender";
     private static boolean isFabOpen;
     FloatingActionButton mMainFab;
     FloatingActionButton mLiftingFab;
     FloatingActionButton mCardioFab;
     View bgFabMenu;
     SwipeRefreshLayout mSwipeRefreshLayout;
-    SharedPreferences mSharedPreferances;
-
+    private int settings_bodyweight;
+    private boolean settings_isMale;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,7 +44,6 @@ public class HomeActivity extends AppCompatActivity {
         mLiftingFab = findViewById(R.id.lifting_fab);
         mCardioFab = findViewById(R.id.cardio_fab);
         bgFabMenu = findViewById(R.id.bg_fab_menu);
-        mSharedPreferances = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         setTitle(getString(R.string.app_name));
         mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
@@ -87,17 +89,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private void populateStrengthLayout() {
 
-        int bw;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int bw = prefs.getInt(PREF_BODYWEIGHT_KEY, 70);
+        boolean isMale = Objects.equals(prefs.getString(PREF_GENDER_KEY, "Male"), "Male");
+
         Integer averageLevel;
-        String bw_string = mSharedPreferances.getString("bodyweight_key", "0");
-        try {
-            bw = Integer.parseInt(bw_string);
-        } catch (NumberFormatException e) {
-            bw = 90;
-        }
-        boolean isMale;
-        String gender_string = mSharedPreferances.getString("list_gender", "True");
-        isMale = gender_string.equals("True");
+        TextView bwTV = findViewById(R.id.bodyweight_tv);
+        bwTV.setText(bw + " kg");
+
         ArrayList<Integer> exercise2level = new ArrayList<>();
 
         HashMap<Integer, String> compound2usedMuscles = new HashMap<>();
@@ -268,6 +267,11 @@ public class HomeActivity extends AppCompatActivity {
                 .translationY(0f)
                 .rotation(90f).setListener(new FabAnimatorListener(bgFabMenu, mLiftingFab, mCardioFab));
     }
+//
+//    public void onDataPass(int bodyweight, boolean isMale) {
+//        this.settings_bodyweight = bodyweight;
+//        this.settings_isMale = isMale;
+//    }
 
 
     private class FabAnimatorListener implements Animator.AnimatorListener {

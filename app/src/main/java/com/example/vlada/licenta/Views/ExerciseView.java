@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.example.vlada.licenta.Domain.Exercise;
+import com.example.vlada.licenta.Net.Client.ExerciseClient;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Views.Cardio.CardioChartFragment;
 import com.example.vlada.licenta.Views.Cardio.CardioLiftFragment;
@@ -19,6 +20,8 @@ import com.example.vlada.licenta.Views.Exercise.ExerciseLiftFragment;
 
 import java.util.ArrayList;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import me.relex.circleindicator.CircleIndicator;
 
@@ -49,10 +52,13 @@ public class ExerciseView extends FragmentActivity {
 
     private class ExerciseViewPageAdapter extends FragmentPagerAdapter {
 
-        Realm realm = Realm.getDefaultInstance();
+        final ArrayList<Exercise> exercises = new ArrayList<>();
+        Realm realm;
+        String exercise_name;
 
         ExerciseViewPageAdapter(FragmentManager fm) {
             super(fm);
+
         }
 
         @Override
@@ -63,29 +69,59 @@ public class ExerciseView extends FragmentActivity {
             cardioTypes.add("Plyometrics");
             cardioTypes.add("Stretching");
 
-            final ArrayList<Exercise> exercise = new ArrayList<>();
-            exercise.add(realm.where(Exercise.class).contains("name", getIntent().getExtras().getString("exercise_name")).findFirst());
-            if (exercise.get(0) != null) {
+            realm = Realm.getDefaultInstance();
+
+            exercise_name = getIntent().getExtras().getString("exercise_name");
+
+            boolean found_exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findAll().size() > 0;
+            if (!found_exercise) {
+                CompositeDisposable disposable = new CompositeDisposable();
+                ExerciseClient client = new ExerciseClient(getApplicationContext());
+                disposable.add(client.getExerciseByName(exercise_name)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                this::getExercisesSuccess,
+                                this::getExercisesError
+                        )
+                );
+
+
+            }
+
+            if (exercises.get(0) != null) {
                 switch (pos) {
                     case 0:
-                        return ExerciseDetailsFragment.newInstance(exercise.get(0).getName());
+                        return ExerciseDetailsFragment.newInstance(exercises.get(0).getName());
                     case 1:
-                        if (!cardioTypes.contains(exercise.get(0).getType())) {
-                            return ExerciseLiftFragment.newInstance(exercise.get(0).getName());
+                        if (!cardioTypes.contains(exercises.get(0).getType())) {
+                            return ExerciseLiftFragment.newInstance(exercises.get(0).getName());
                         }
-                        return CardioLiftFragment.newInstance(exercise.get(0).getName());
+                        return CardioLiftFragment.newInstance(exercises.get(0).getName());
                     case 2:
-                        if (!cardioTypes.contains(exercise.get(0).getType()))
-                            return ExerciseChartFragment.newInstance(exercise.get(0).getName());
-                        return CardioChartFragment.newInstance(exercise.get(0).getName());
+                        if (!cardioTypes.contains(exercises.get(0).getType()))
+                            return ExerciseChartFragment.newInstance(exercises.get(0).getName());
+                        return CardioChartFragment.newInstance(exercises.get(0).getName());
 
                     default:
-                        return ExerciseDetailsFragment.newInstance(exercise.get(0).getName());
+                        return ExerciseDetailsFragment.newInstance(exercises.get(0).getName());
                 }
             }
             finish();
             realm.close();
             return null;
+        }
+
+        private void getExercisesError(Throwable throwable) {
+        }
+
+
+        private void getExercisesSuccess(Exercise exercise) {
+            try (Realm r = Realm.getDefaultInstance()) {
+                r.executeTransaction(realm -> {
+                    realm.insertOrUpdate(exercise);
+                    exercises.add(realm.where(Exercise.class).equalTo("name", exercise_name).findFirst());
+                });
+            }
         }
 
         @Override
