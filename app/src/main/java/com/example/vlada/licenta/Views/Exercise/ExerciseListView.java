@@ -70,20 +70,15 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.left_drawer);
 
-        // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        // set up the drawer's list view with items and click listener
         mDrawerList.setAdapter(new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, mMuscleGroups));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        // enable ActionBar app icon to behave as action to toggle nav drawer
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                /* host Activity */
                 mDrawerLayout,              /* DrawerLayout object */
@@ -92,15 +87,15 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
         ) {
             public void onDrawerClosed(View view) {
                 if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle(mTitle);
-                    invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                    getSupportActionBar().setTitle(mTitle + " exercises");
+                    invalidateOptionsMenu();
                 }
             }
 
             public void onDrawerOpened(View drawerView) {
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(R.string.drawer_open);
-                    invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                    invalidateOptionsMenu();
                 }
             }
         };
@@ -146,7 +141,7 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(mMuscleGroups.get(position));
+        setTitle(mMuscleGroups.get(position) + " exercises");
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -154,7 +149,7 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
     public void setTitle(CharSequence title) {
         mTitle = title;
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mTitle);
+            getSupportActionBar().setTitle(mTitle + " exercises");
         }
     }
 
@@ -189,14 +184,12 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 

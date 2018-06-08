@@ -2,11 +2,16 @@ package com.example.vlada.licenta.Views;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,6 +31,7 @@ public class HomeActivity extends AppCompatActivity {
     FloatingActionButton mCardioFab;
     View bgFabMenu;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    SharedPreferences mSharedPreferances;
 
 
     @Override
@@ -35,9 +41,10 @@ public class HomeActivity extends AppCompatActivity {
         mLiftingFab = findViewById(R.id.lifting_fab);
         mCardioFab = findViewById(R.id.cardio_fab);
         bgFabMenu = findViewById(R.id.bg_fab_menu);
+        mSharedPreferances = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        setTitle(getString(R.string.app_name));
 
         mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshActivity);
 
         populateStrengthLayout();
@@ -81,8 +88,17 @@ public class HomeActivity extends AppCompatActivity {
 
     private void populateStrengthLayout() {
 
-        Integer averageLevel = 0;
-
+        int bw;
+        Integer averageLevel;
+        String bw_string = mSharedPreferances.getString("bodyweight_key", "0");
+        try {
+            bw = Integer.parseInt(bw_string);
+        } catch (NumberFormatException e) {
+            bw = 90;
+        }
+        boolean isMale;
+        String gender_string = mSharedPreferances.getString("list_gender", "True");
+        isMale = gender_string.equals("True");
         ArrayList<Integer> exercise2level = new ArrayList<>();
 
         HashMap<Integer, String> compound2usedMuscles = new HashMap<>();
@@ -105,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView BPExerciseName = benchPressView.findViewById(R.id.home_exercise_name);
         BPExerciseName.setText(R.string.benchpress_strength_exercise);
         TextView BPStrengthLabel = benchPressView.findViewById(R.id.home_exercise_strength);
-        BPStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.benchpress_strength_exercise), getApplicationContext()));
+        BPStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.benchpress_strength_exercise), getApplicationContext()));
         exercise2level.add(label2level.get(BPStrengthLabel.getText().toString()));
         TextView BPStrengthLevel = benchPressView.findViewById(R.id.home_exercise_level);
         BPStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.benchpress_strength_exercise)) + " kg"));
@@ -115,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView DLExerciseName = pullView.findViewById(R.id.home_exercise_name);
         DLExerciseName.setText(R.string.pull_strength_exercise);
         TextView DLStrengthLabel = pullView.findViewById(R.id.home_exercise_strength);
-        DLStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.pull_strength_exercise), getApplicationContext()));
+        DLStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.pull_strength_exercise), getApplicationContext()));
         exercise2level.add(label2level.get(DLStrengthLabel.getText().toString()));
         TextView DLStrengthLevel = pullView.findViewById(R.id.home_exercise_level);
         DLStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.pull_strength_exercise)) + " kg"));
@@ -125,7 +141,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView ohpExerciseName = shoulderPressView.findViewById(R.id.home_exercise_name);
         ohpExerciseName.setText(R.string.ohp_strength_exercise);
         TextView ohpStrengthLabel = shoulderPressView.findViewById(R.id.home_exercise_strength);
-        ohpStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.ohp_strength_exercise), getApplicationContext()));
+        ohpStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.ohp_strength_exercise), getApplicationContext()));
         exercise2level.add(label2level.get(ohpStrengthLabel.getText().toString()));
         TextView ohpStrengthLevel = shoulderPressView.findViewById(R.id.home_exercise_level);
         ohpStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.ohp_strength_exercise)) + " kg"));
@@ -135,7 +151,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView squatExerciseName = squatView.findViewById(R.id.home_exercise_name);
         squatExerciseName.setText(R.string.squat_strength_exercise);
         TextView squatStrengthLabel = squatView.findViewById(R.id.home_exercise_strength);
-        squatStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.squat_strength_exercise), getApplicationContext()));
+        squatStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.squat_strength_exercise), getApplicationContext()));
         exercise2level.add(label2level.get(squatStrengthLabel.getText().toString()));
         TextView squatStrengthLevel = squatView.findViewById(R.id.home_exercise_level);
         squatStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.squat_strength_exercise)) + " kg"));
@@ -145,7 +161,7 @@ public class HomeActivity extends AppCompatActivity {
         TextView rowExerciseName = rowView.findViewById(R.id.home_exercise_name);
         rowExerciseName.setText(R.string.row_strength_exercise);
         TextView rowStrengthLabel = rowView.findViewById(R.id.home_exercise_strength);
-        rowStrengthLabel.setText(Utils.getStrengthLevel(true, 90, getString(R.string.row_strength_exercise), getApplicationContext()));
+        rowStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.row_strength_exercise), getApplicationContext()));
         exercise2level.add(label2level.get(rowStrengthLabel.getText().toString()));
         TextView rowStrengthLevel = rowView.findViewById(R.id.home_exercise_level);
         rowStrengthLevel.setText(String.valueOf((Utils.get1RMofExercise(getString(R.string.row_strength_exercise)) + " kg")));
@@ -161,9 +177,44 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView strengthLevel = findViewById(R.id.main_strength_level);
         averageLevel = exercise2level.stream().mapToInt(a -> a).sum() / 5;
-        strengthLevel.setText(Utils.getKeyByValue(label2level, averageLevel));
+        strengthLevel.setText(exercise2level.contains(0) ? "Not all exercises are performed" : Utils.getKeyByValue(label2level, averageLevel));
     }
 
+    @Override
+    public void onBackPressed() {
+        invalidateOptionsMenu();
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            getFragmentManager().popBackStack();
+            setTitle(getString(R.string.app_name));
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        item.setVisible(getFragmentManager().getFragments().size() == 0);
+        switch (item.getItemId()) {
+            case R.id.settings_menu:
+                getFragmentManager().beginTransaction()
+                        .replace(android.R.id.content, new SettingsFragment())
+                        .addToBackStack("SettingsFragment")
+                        .commit();
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void ShowFabMenu() {
         isFabOpen = true;
@@ -229,5 +280,6 @@ public class HomeActivity extends AppCompatActivity {
         public void onAnimationRepeat(Animator animator) {
 
         }
+
     }
 }

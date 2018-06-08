@@ -180,11 +180,11 @@ public class Utils {
         final double[] lift = new double[1];
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
-                lift[0] = realm.where(Lift.class).contains("exercise_name", exercise_name).findAll().stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(-1d);
+                lift[0] = realm.where(Lift.class).contains("exercise_name", exercise_name).findAll().stream().map(Utils::getEstimated1RM).max(Double::compare).orElse(0d);
             });
         }
-        if (lift[0] != -1d) {
-            int index = bw.indexOf(bw.stream().filter(i -> i < bodyweight).max(Integer::compare).orElse(-1));
+        if (lift[0] != 0d) {
+            int index = bw.indexOf(bw.stream().filter(i -> i < bodyweight).max(Integer::compare).orElse(bw.get(0)));
             if (novice.get(index) > lift[0]) {
                 return "Untrained";
             }

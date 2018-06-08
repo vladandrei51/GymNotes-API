@@ -58,7 +58,7 @@
 
                     <include
                         android:id="@+id/home_exercise_squat"
-                        layout="@layout/home_exercise"
+                        layout="@layout/home_green_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/home_horizontal_line"
@@ -67,7 +67,7 @@
 
                     <include
                         android:id="@+id/home_exercise_dl"
-                        layout="@layout/home_exercise"
+                        layout="@layout/home_green_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/home_exercise_squat"
@@ -76,7 +76,7 @@
 
                     <include
                         android:id="@+id/home_exercise_bench"
-                        layout="@layout/home_exercise"
+                        layout="@layout/home_green_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/home_exercise_dl"
@@ -85,7 +85,7 @@
 
                     <include
                         android:id="@+id/home_exercise_ohp"
-                        layout="@layout/home_exercise"
+                        layout="@layout/home_green_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/home_exercise_bench"
@@ -94,7 +94,7 @@
 
                     <include
                         android:id="@+id/home_exercise_row"
-                        layout="@layout/home_exercise"
+                        layout="@layout/home_green_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/home_exercise_ohp"
