@@ -25,5 +25,7 @@
     </string-array>
 
     <string name="home_main_text">Compound Strength Level</string>
+    <string name="not_enough_data">Not enough data</string>
+    <string name="symmetrical_strength">Symmetrical Strength</string>
 
 </resources>

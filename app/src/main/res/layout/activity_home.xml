@@ -160,6 +160,7 @@
                         android:paddingTop="5dp" />
 
                     <TextView
+                        android:id="@+id/weak_points_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/b2"
@@ -176,6 +177,10 @@
                         android:layout_below="@+id/b2"
                         android:layout_marginBottom="7sp"
                         android:layout_marginTop="7sp"
+                        android:layout_toRightOf="@id/weak_points_text"
+                        android:autoSizeMinTextSize="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
                         android:textAlignment="textEnd"
                         android:textColor="@android:color/black" />
 
@@ -189,6 +194,7 @@
                         android:paddingTop="5dp" />
 
                     <TextView
+                        android:id="@+id/strong_points_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/b3"
@@ -205,6 +211,10 @@
                         android:layout_below="@+id/b3"
                         android:layout_marginBottom="7sp"
                         android:layout_marginTop="7sp"
+                        android:layout_toRightOf="@id/strong_points_tv"
+                        android:autoSizeMinTextSize="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
                         android:textAlignment="textEnd"
                         android:textColor="@android:color/black" />
 

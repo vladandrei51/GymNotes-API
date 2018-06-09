@@ -100,11 +100,11 @@ public class HomeActivity extends AppCompatActivity {
         ArrayList<Integer> exercise2level = new ArrayList<>();
 
         HashMap<Integer, String> compound2usedMuscles = new HashMap<>();
-        compound2usedMuscles.put(0, "Chest, Triceps");
-        compound2usedMuscles.put(1, "Lower Back, Traps");
+        compound2usedMuscles.put(0, "Chest");
+        compound2usedMuscles.put(1, "Lower Back");
         compound2usedMuscles.put(2, "Shoulders");
         compound2usedMuscles.put(3, "Legs");
-        compound2usedMuscles.put(4, "Back, Biceps");
+        compound2usedMuscles.put(4, "Middle Back");
 
 
         HashMap<String, Integer> label2level = new HashMap<>();
@@ -192,11 +192,29 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView strongPoints = findViewById(R.id.strong_points);
         TextView weakPoints = findViewById(R.id.weak_points);
+        strongPoints.setText("");
+        weakPoints.setText("");
         int minimum_level = exercise2level.stream().mapToInt(a -> a).min().orElse(0);
         int maximum_level = exercise2level.stream().mapToInt(a -> a).max().orElse(0);
-        strongPoints.setText(minimum_level != 0 && minimum_level < maximum_level ? compound2usedMuscles.get(exercise2level.indexOf(maximum_level)) : minimum_level == maximum_level && maximum_level > 0 && minimum_level > 0 ? "Symmetrical Strength" : "Not enough data");
-        weakPoints.setText(maximum_level != 0 && maximum_level > minimum_level ? compound2usedMuscles.get(exercise2level.indexOf(minimum_level)) : minimum_level == maximum_level && maximum_level > 0 && minimum_level > 0 ? "Symmetrical Strength" : "Not enough data");
 
+        if (exercise2level.contains(0)) {
+            strongPoints.setText(R.string.not_enough_data);
+            weakPoints.setText(R.string.not_enough_data);
+        } else if (minimum_level == maximum_level) {
+            strongPoints.setText(R.string.symmetrical_strength);
+            weakPoints.setText(R.string.symmetrical_strength);
+        } else {
+            for (int i = 0; i < exercise2level.size(); i++) {
+                if (exercise2level.get(i) == minimum_level) {
+                    weakPoints.append(compound2usedMuscles.get(i) + ", ");
+                } else if (exercise2level.get(i) == maximum_level) {
+                    strongPoints.append(compound2usedMuscles.get(i) + ", ");
+                }
+            }
+            weakPoints.setText(weakPoints.getText().toString().substring(0, weakPoints.getText().toString().length() - 2));
+            strongPoints.setText(strongPoints.getText().toString().substring(0, strongPoints.getText().toString().length() - 2));
+
+        }
 
         TextView strengthLevel = findViewById(R.id.main_strength_level);
         averageLevel = exercise2level.stream().mapToInt(a -> a).sum() / 5;
