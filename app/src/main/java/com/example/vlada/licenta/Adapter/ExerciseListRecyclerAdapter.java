@@ -22,7 +22,6 @@ public class ExerciseListRecyclerAdapter extends RealmRecyclerViewAdapter<Exerci
 
     private View.OnClickListener mListener;
     private Realm realm;
-    private String mSelectedMuscleGroup;
 
     public ExerciseListRecyclerAdapter(RealmResults<Exercise> exercises, View.OnClickListener listener, Realm realm) {
         super(exercises, true);
@@ -32,7 +31,7 @@ public class ExerciseListRecyclerAdapter extends RealmRecyclerViewAdapter<Exerci
 
     @NonNull
     @Override
-    public ExerciseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ExerciseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.exercise_list_adapter_layout, parent, false);
         view.setOnClickListener(mListener);
         return new ExerciseViewHolder(view);
@@ -79,9 +78,6 @@ public class ExerciseListRecyclerAdapter extends RealmRecyclerViewAdapter<Exerci
         }
         updateData(query.findAll());
     }
-
-
-
 
 
     class ExerciseViewHolder extends RecyclerView.ViewHolder {

@@ -194,8 +194,8 @@ public class HomeActivity extends AppCompatActivity {
         TextView weakPoints = findViewById(R.id.weak_points);
         int minimum_level = exercise2level.stream().mapToInt(a -> a).min().orElse(0);
         int maximum_level = exercise2level.stream().mapToInt(a -> a).max().orElse(0);
-        strongPoints.setText(minimum_level != 0 && minimum_level < maximum_level ? compound2usedMuscles.get(exercise2level.indexOf(maximum_level)) : "Not enough data");
-        weakPoints.setText(maximum_level != 0 && maximum_level > minimum_level ? compound2usedMuscles.get(exercise2level.indexOf(minimum_level)) : "Not enough data");
+        strongPoints.setText(minimum_level != 0 && minimum_level < maximum_level ? compound2usedMuscles.get(exercise2level.indexOf(maximum_level)) : minimum_level == maximum_level && maximum_level > 0 && minimum_level > 0 ? "Symmetrical Strength" : "Not enough data");
+        weakPoints.setText(maximum_level != 0 && maximum_level > minimum_level ? compound2usedMuscles.get(exercise2level.indexOf(minimum_level)) : minimum_level == maximum_level && maximum_level > 0 && minimum_level > 0 ? "Symmetrical Strength" : "Not enough data");
 
 
         TextView strengthLevel = findViewById(R.id.main_strength_level);

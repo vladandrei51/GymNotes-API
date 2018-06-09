@@ -142,27 +142,27 @@ public class ExerciseLiftFragment extends BaseFragment {
         if (getActivity() == null)
             return;
         getActivity().runOnUiThread(() -> {
+            try (Realm r = Realm.getDefaultInstance()) {
+                r.executeTransaction(realm -> {
+                            Lift newLift = realm.where(Lift.class)
+                                    .equalTo("date_ms", lift1.getDate_ms())
+                                    .equalTo("notes", lift1.getNotes())
+                                    .equalTo("reps", lift1.getReps())
+                                    .equalTo("weight", lift1.getWeight())
+                                    .findFirst();
+                            if (newLift != null) {
+                                newLift.setNotes(lift2.getNotes());
+                                newLift.setReps(lift2.getReps());
+                                newLift.setWeight(lift2.getWeight());
+                                updateRVList();
+                                if (Utils.is1RM(newLift, mResults)) {
+                                    Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+                                }
+                            }
+                        }
 
-            Realm realm;
-            realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            Lift newLift = realm.where(Lift.class)
-                    .equalTo("date_ms", lift1.getDate_ms())
-                    .equalTo("notes", lift1.getNotes())
-                    .equalTo("reps", lift1.getReps())
-                    .equalTo("weight", lift1.getWeight())
-                    .findFirst();
-            if (newLift != null) {
-                newLift.setNotes(lift2.getNotes());
-                newLift.setReps(lift2.getReps());
-                newLift.setWeight(lift2.getWeight());
-                realm.commitTransaction();
-                updateRVList();
-                if (Utils.is1RM(newLift, mResults)) {
-                    Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
-                }
+                );
             }
-            realm.close();
         });
     }
 
@@ -215,6 +215,10 @@ public class ExerciseLiftFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    public void toggleFABVisibility(boolean visibility) {
+        mAddBT.setVisibility(visibility ? View.GONE : View.VISIBLE);
     }
 
     public static class LiftDialog extends DialogFragment {

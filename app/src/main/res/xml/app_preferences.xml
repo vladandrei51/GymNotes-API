@@ -20,7 +20,7 @@
             android:entries="@array/genders"
             android:entryValues="@array/genders_values_array"
             android:key="list_gender"
-            android:summary="%s"
+            android:summary="Currently selected: %s"
             android:title="Gender" />
     </PreferenceCategory>
 
