@@ -135,7 +135,11 @@ public class CardioLiftsRecyclerAdapter extends RecyclerView.Adapter {
             mDateTV.setVisibility(View.GONE);
             mCardioTextTV.setVisibility(View.VISIBLE);
             if (currentCardio.getTime_spent() > 0) {
-                mCardioTextTV.setText(String.format(Locale.US, "%d minutes", currentCardio.getTime_spent()));
+                if (currentCardio.getTime_spent() > 1)
+                    mCardioTextTV.setText(String.format(Locale.US, "%d minutes", currentCardio.getTime_spent()));
+                else if (currentCardio.getTime_spent() == 1) {
+                    mCardioTextTV.setText("1 minute");
+                }
             }
             if (currentCardio.getNotes().length() > 0) {
                 mCardioTextTV.append("*");

@@ -34,8 +34,6 @@ public class HomeActivity extends AppCompatActivity {
     FloatingActionButton mCardioFab;
     View bgFabMenu;
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private int settings_bodyweight;
-    private boolean settings_isMale;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

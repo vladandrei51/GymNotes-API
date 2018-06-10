@@ -73,10 +73,9 @@ public class ExerciseLiftsRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder itemViewHolder = (ViewHolder) holder;
-        if (mIsLift.get(position)) itemViewHolder.loadLift(mAdapterItems.get(position));
-        else itemViewHolder.loadDate(mAdapterItems.get(position));
 
         if (mIsLift.get(position)) {
+            itemViewHolder.loadLift(mAdapterItems.get(position));
             final boolean isExpanded = position == mExpandedPosition;
             itemViewHolder.mDetailsLayout.setVisibility(isExpanded && mAdapterItems.get(position).getNotes().length() > 0 ? View.VISIBLE : View.GONE);
             itemViewHolder.mNotesTV.setText(mAdapterItems.get(position).getNotes().length() > 0 ? mAdapterItems.get(position).getNotes() : "");
@@ -94,8 +93,7 @@ public class ExerciseLiftsRecyclerAdapter extends RecyclerView.Adapter {
                 notifyItemChanged(mPreviousExpandedPosition);
                 notifyItemChanged(position);
             });
-        }
-
+        } else itemViewHolder.loadDate(mAdapterItems.get(position));
     }
 
     private Lift getClickedLift() {
@@ -104,8 +102,7 @@ public class ExerciseLiftsRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return mItemsList.size()
-                + (int) mItemsList.stream().map(Lift::date2PrettyString).distinct().count();
+        return mItemsList.size() + (int) mItemsList.stream().map(Lift::date2PrettyString).distinct().count();
     }
 
 

@@ -245,39 +245,19 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/cardio_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/standard_23"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:rotation="90"
-        android:visibility="gone"
+        style="@style/home_secondary_fab"
         app:fabSize="mini"
         app:srcCompat="@drawable/bike" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/lifting_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/standard_23"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:rotation="90"
-        android:visibility="gone"
+        style="@style/home_secondary_fab"
         app:fabSize="mini"
         app:srcCompat="@drawable/barebell" />
 
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/main_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:clickable="true"
+        style="@style/home_main_fab"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_white_24dp" />
 

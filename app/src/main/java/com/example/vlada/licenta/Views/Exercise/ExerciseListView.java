@@ -210,7 +210,6 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
 
     public interface ListenFromActivity {
         void filterResultsInFragment(String text);
-
         void clearSearch();
     }
 
