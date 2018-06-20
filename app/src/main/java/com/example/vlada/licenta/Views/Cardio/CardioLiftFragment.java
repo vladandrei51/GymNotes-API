@@ -170,7 +170,7 @@ public class CardioLiftFragment extends BaseFragment {
                 realm.commitTransaction();
                 updateRVList();
                 if (Utils.is1RMCardio(newCardio, mResults)) {
-                    Utils.showAlertDialog(getContext(), "Congratulations", "Highest time recorded yet");
+                    Utils.showAlertDialog(getContext(), "Congratulations", "Highest time recorded " + new String(Character.toChars(0x1F4AA)));
                 }
             }
             realm.close();
@@ -192,7 +192,7 @@ public class CardioLiftFragment extends BaseFragment {
             });
 
             if (Utils.is1RMCardio(cardio2Add, mResults)) {
-                Utils.showAlertDialog(getContext(), "Congratulations", "Highest time recorded yet");
+                Utils.showAlertDialog(getContext(), "Congratulations", "Highest time recorded " + new String(Character.toChars(0x1F4AA)));
             }
 
         }

@@ -88,7 +88,7 @@ public class Lift extends RealmObject {
 
     public String date2PrettyString() {
         if (setDate != null)
-            return new SimpleDateFormat("dd MMM. yyyy ", Locale.US).format(setDate);
+            return new SimpleDateFormat("dd MMM. yyyy", Locale.US).format(setDate);
         return "";
     }
 

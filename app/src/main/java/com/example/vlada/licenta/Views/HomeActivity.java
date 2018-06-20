@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.Utils;
+import com.example.vlada.licenta.Views.Calendar.CalendarActivity;
 import com.example.vlada.licenta.Views.Cardio.CardioListView;
 import com.example.vlada.licenta.Views.Exercise.ExerciseListView;
 
@@ -243,14 +244,17 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        item.setVisible(getFragmentManager().getFragments().size() == 0);
         switch (item.getItemId()) {
             case R.id.settings_menu:
                 getFragmentManager().beginTransaction()
                         .replace(android.R.id.content, new SettingsFragment())
                         .addToBackStack("SettingsFragment")
                         .commit();
-
+                break;
+            case R.id.calendar_menu:
+                Intent intent = new Intent(HomeActivity.this, CalendarActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

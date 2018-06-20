@@ -8,7 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:text="name placeholder"
         android:textColor="@color/main_text_green" />
 
     <TextView
@@ -16,7 +15,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:text="72.2"
         android:textAlignment="textEnd"
         android:textColor="@color/main_text_green"
         android:textStyle="bold" />
@@ -27,7 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@id/home_exercise_name"
-        android:text="Intermediate"
         android:textColor="@color/secondary_text_green" />
 
 

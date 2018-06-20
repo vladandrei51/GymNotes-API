@@ -6,13 +6,10 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/fab_style"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:clickable="true"
         android:src="@drawable/ic_add_white_24dp" />
 
     <TextView
@@ -27,9 +24,6 @@
         android:id="@+id/historyLV"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp" />
+        android:layout_margin="8dp" />
 
 </RelativeLayout>

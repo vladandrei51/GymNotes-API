@@ -210,6 +210,7 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
 
     public interface ListenFromActivity {
         void filterResultsInFragment(String text);
+
         void clearSearch();
     }
 
@@ -281,7 +282,7 @@ public class ExerciseListView extends AppCompatActivity implements SearchView.On
         private void getExercisesError(Throwable throwable) {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Utils.showAlertDialog(getContext(), "Cached data is being used", throwable.getMessage());
+                    Utils.displayToast(getContext(), "Cached data is used");
                     mAdapter.notifyDataSetChanged();
                 });
             }

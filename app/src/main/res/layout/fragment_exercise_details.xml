@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:background="#26EEEEEE"
+                android:background="#80EEEEEE"
                 android:isIndicator="true"
                 android:numStars="5"
                 android:paddingTop="10dp"
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.65"
-        android:background="#E0E0E0"
+        android:background="@color/gray_ish_background"
         android:orientation="vertical">
 
             <ScrollView

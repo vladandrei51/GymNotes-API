@@ -156,7 +156,7 @@ public class ExerciseLiftFragment extends BaseFragment {
                                 newLift.setWeight(lift2.getWeight());
                                 updateRVList();
                                 if (Utils.is1RM(newLift, mResults)) {
-                                    Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+                                    Utils.showAlertDialog(getContext(), "Congratulations", "New strength record " + new String(Character.toChars(0x1F4AA)));
                                 }
                             }
                         }
@@ -180,7 +180,7 @@ public class ExerciseLiftFragment extends BaseFragment {
             });
 
             if (Utils.is1RM(lift, mResults)) {
-                Utils.showAlertDialog(getContext(), "Congratulations", "New strength record");
+                Utils.showAlertDialog(getContext(), "Congratulations", "New strength record " + new String(Character.toChars(0x1F4AA)));
             }
 
         }
@@ -197,6 +197,7 @@ public class ExerciseLiftFragment extends BaseFragment {
                 DividerItemDecoration.VERTICAL
         );
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
+
         mRecyclerView.setAdapter(mAdapter);
     }
 

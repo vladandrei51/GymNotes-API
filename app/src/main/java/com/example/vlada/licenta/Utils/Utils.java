@@ -17,8 +17,10 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -36,6 +38,13 @@ import io.realm.RealmResults;
  */
 
 public class Utils {
+
+
+    public static Calendar toCalendar(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
 
 
     public static void displayToast(Context context, String message) {
@@ -115,13 +124,14 @@ public class Utils {
 
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
-                RealmResults<Exercise> exerciseList = realm.where(Exercise.class).contains("musclegroup", "Chest").findAll();
+                RealmResults<Exercise> exerciseList = realm.where(Exercise.class).equalTo("musclegroup", "Chest")
+                        .and().equalTo("type", "Strength").findAll();
                 for (Exercise exercise : exerciseList) {
                     lift.setExercise(exercise);
-                    for (int i = 0; i < rand.nextInt(6) + 5; i++) {
-                        LocalDate localDate = LocalDate.of(rand.nextInt(1) + 2017, Month.of(rand.nextInt(12) + 1), rand.nextInt(25) + 1);
+                    for (int i = 0; i < 5; i++) {
+                        LocalDate localDate = LocalDate.of(2018, Month.of(rand.nextInt(6) + 1), rand.nextInt(25) + 1);
                         lift.setSetDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                        for (int j = 0; j <= rand.nextInt(8); j++) {
+                        for (int j = 0; j <= rand.nextInt(4); j++) {
                             lift.setWeight(rand.nextInt(30));
                             lift.setReps(rand.nextInt(20));
                             realm.insertOrUpdate(lift);
@@ -131,6 +141,45 @@ public class Utils {
             });
         }
 
+    }
+
+    public static String getPrettySetFromLift(int weight, int reps) {
+        if (reps > 1) {
+            if (weight > 1)
+                return String.format(Locale.US, "%d kgs for %d reps", weight, reps);
+            else if (weight == 1)
+                return (String.format(Locale.US, "%d kg for %d reps", weight, reps));
+            else if (weight == 0) {
+                return (String.format(Locale.US, "Bodyweight lift for %d reps", reps));
+            }
+        } else if (reps == 0) {
+            if (weight > 1)
+                return (String.format(Locale.US, "Failed attempt for %d kgs", weight));
+            else if (weight == 1)
+                return (String.format(Locale.US, "Failed attempt for %d kg", weight));
+            else if (weight == 0)
+                return (String.valueOf(R.string.failed_bw));
+        } else if (reps == 1) {
+            if (weight > 1)
+                return (String.format(Locale.US, "%d kgs for 1 rep", weight));
+            else if (weight == 1)
+                return (String.format(Locale.US, "%d kg for 1 rep", weight));
+            else if (weight == 0) {
+                return (String.valueOf(R.string.bw_for_1));
+            }
+        }
+        return "";
+    }
+
+    public static String getPrettySetFromCardio(int time) {
+        if (time > 0) {
+            if (time > 1)
+                return String.format(Locale.US, "%d minutes", time);
+            else if (time == 1) {
+                return "1 minute";
+            }
+        }
+        return "";
     }
 
     public static int get1RMofExercise(String exercise_name) {

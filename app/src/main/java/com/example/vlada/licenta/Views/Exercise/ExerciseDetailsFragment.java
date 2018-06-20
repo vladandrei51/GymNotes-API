@@ -84,7 +84,7 @@ public class ExerciseDetailsFragment extends BaseFragment {
         mTextViewDescription.setText(Utils.fromHtml(description));
         mRatingBar.setRating(mExercise.getRating() / 2);
         LayerDrawable stars = (LayerDrawable) mRatingBar.getProgressDrawable();
-        stars.getDrawable(2).setColorFilter(Color.rgb(48, 63, 159), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(2).setColorFilter(Color.rgb(55, 59, 79), PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(0).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(1).setColorFilter(Color.rgb(158, 158, 158), PorterDuff.Mode.SRC_ATOP);
 

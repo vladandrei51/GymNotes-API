@@ -37,7 +37,7 @@ public class RealmBackup {
         exportRealmFile.delete();
         // copy current realm to backup file
         realm.writeCopyTo(exportRealmFile);
-        String msg = "File exported to Path: " + context.getExternalFilesDir(null);
+        String msg = "Backup successful";
         Utils.displayToast(context, msg);
         if (realm != null) realm.close();
     }

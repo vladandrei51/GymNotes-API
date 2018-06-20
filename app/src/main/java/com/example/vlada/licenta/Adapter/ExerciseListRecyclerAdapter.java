@@ -32,7 +32,7 @@ public class ExerciseListRecyclerAdapter extends RealmRecyclerViewAdapter<Exerci
     @NonNull
     @Override
     public ExerciseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.exercise_list_adapter_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_exercise_list, parent, false);
         view.setOnClickListener(mListener);
         return new ExerciseViewHolder(view);
     }
@@ -86,7 +86,7 @@ public class ExerciseListRecyclerAdapter extends RealmRecyclerViewAdapter<Exerci
 
         ExerciseViewHolder(View itemView) {
             super(itemView);
-            textTitle = itemView.findViewById(R.id.adapter_TV);
+            textTitle = itemView.findViewById(R.id.exercise_name_adapter);
             this.context = itemView.getContext();
         }
 

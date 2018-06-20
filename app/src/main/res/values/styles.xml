@@ -9,21 +9,21 @@
 
     </style>
 
-    <style name="home_main_fab" parent="home_fab">
+    <style name="home_main_fab" parent="fab_style">
         <item name="android:layout_margin">@dimen/fab_margin</item>
     </style>
 
-    <style name="home_secondary_fab" parent="home_fab">
+    <style name="home_secondary_fab" parent="fab_style">
         <item name="android:layout_margin">@dimen/standard_23</item>
         <item name="android:rotation">90</item>
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="home_fab">
+    <style name="fab_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">end|bottom</item>
         <item name="android:clickable">true</item>
-        <item name="android:backgroundTint">@android:color/holo_blue_dark</item>
+        <item name="android:backgroundTint">@color/primary</item>
     </style>
 </resources>

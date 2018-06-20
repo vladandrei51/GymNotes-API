@@ -18,7 +18,6 @@ import com.example.vlada.licenta.Views.Cardio.CardioLiftFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.realm.RealmResults;
@@ -62,7 +61,7 @@ public class CardioLiftsRecyclerAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.cardio_list_view, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.adapter_cardio_lift, parent, false);
         view.setOnClickListener(mListener);
         return new ViewHolder(view);
 
@@ -134,13 +133,7 @@ public class CardioLiftsRecyclerAdapter extends RecyclerView.Adapter {
         void loadCardio(Cardio currentCardio) {
             mDateTV.setVisibility(View.GONE);
             mCardioTextTV.setVisibility(View.VISIBLE);
-            if (currentCardio.getTime_spent() > 0) {
-                if (currentCardio.getTime_spent() > 1)
-                    mCardioTextTV.setText(String.format(Locale.US, "%d minutes", currentCardio.getTime_spent()));
-                else if (currentCardio.getTime_spent() == 1) {
-                    mCardioTextTV.setText("1 minute");
-                }
-            }
+            mCardioTextTV.setText(Utils.getPrettySetFromCardio(currentCardio.getTime_spent()));
             if (currentCardio.getNotes().length() > 0) {
                 mCardioTextTV.append("*");
             }

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/calendar_menu"
+        android:icon="@drawable/calendar"
+        app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle" />
+
     <item
         android:id="@+id/settings_menu"
         android:icon="@drawable/settings_icon"
-        android:title="Settings"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle" />
 
 </menu>

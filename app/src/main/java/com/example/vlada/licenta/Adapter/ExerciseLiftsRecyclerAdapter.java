@@ -18,7 +18,6 @@ import com.example.vlada.licenta.Views.Exercise.ExerciseLiftFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.realm.RealmResults;
@@ -64,7 +63,7 @@ public class ExerciseLiftsRecyclerAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.lift_list_view, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.adapter_exercise_lift, parent, false);
         view.setOnClickListener(mListener);
         return new ViewHolder(view);
     }
@@ -133,34 +132,10 @@ public class ExerciseLiftsRecyclerAdapter extends RecyclerView.Adapter {
         void loadLift(Lift currentLift) {
             mDateTV.setVisibility(View.GONE);
             mLiftTextTV.setVisibility(View.VISIBLE);
-            if (currentLift.getReps() > 1) {
-                if (currentLift.getWeight() > 1)
-                    mLiftTextTV.setText(String.format(Locale.US, "%d kgs for %d reps", currentLift.getWeight(), currentLift.getReps()));
-                else if (currentLift.getWeight() == 1)
-                    mLiftTextTV.setText(String.format(Locale.US, "%d kg for %d reps", currentLift.getWeight(), currentLift.getReps()));
-                else if (currentLift.getWeight() == 0) {
-                    mLiftTextTV.setText(String.format(Locale.US, "Bodyweight lift for %d reps", currentLift.getReps()));
-                }
-            } else if (currentLift.getReps() == 0) {
-                if (currentLift.getWeight() > 1)
-                    mLiftTextTV.setText(String.format(Locale.US, "Failed attempt for %d kgs", currentLift.getWeight()));
-                else if (currentLift.getWeight() == 1)
-                    mLiftTextTV.setText(String.format(Locale.US, "Failed attempt for %d kg", currentLift.getWeight()));
-                else if (currentLift.getWeight() == 0)
-                    mLiftTextTV.setText(R.string.failed_bw);
-            } else if (currentLift.getReps() == 1) {
-                if (currentLift.getWeight() > 1)
-                    mLiftTextTV.setText(String.format(Locale.US, "%d kgs for 1 rep", currentLift.getWeight()));
-                else if (currentLift.getWeight() == 1)
-                    mLiftTextTV.setText(String.format(Locale.US, "%d kg for 1 rep", currentLift.getWeight()));
-                else if (currentLift.getWeight() == 0) {
-                    mLiftTextTV.setText(R.string.bw_for_1);
-                }
-            }
+            mLiftTextTV.setText(Utils.getPrettySetFromLift(currentLift.getWeight(), currentLift.getReps()));
             if (currentLift.getNotes().length() > 0) {
                 mLiftTextTV.append("*");
             }
-
             if (Utils.is1RM(currentLift, mItemsList)) {
                 mLiftTextTV.setText(new String(Character.toChars(0x1F3C6)) + " " + mLiftTextTV.getText());
             }

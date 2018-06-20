@@ -187,7 +187,7 @@ public class CardioListView extends AppCompatActivity implements SearchView.OnQu
         private void getExercisesError(Throwable throwable) {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Utils.showAlertDialog(getContext(), "Cached data is being used", throwable.getMessage());
+                    Utils.displayToast(getContext(), "Cached data is used");
                     mAdapter.notifyDataSetChanged();
                 });
             }

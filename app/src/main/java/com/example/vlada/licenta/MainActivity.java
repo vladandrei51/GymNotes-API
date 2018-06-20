@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
+
 //        Utils.addPlaceHolderLifts();
 
         insertHomeExercises();

@@ -24,6 +24,7 @@ public class RealmHelper {
         return mRealm;
     }
 
+
     public <E extends RealmObject> RealmObject getRealmObject(Class<E> realmObject, String field, String key) {
         return mRealm.where(realmObject).equalTo(field, key).findFirst();
     }

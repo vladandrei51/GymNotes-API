@@ -78,7 +78,6 @@ public class Exercise extends RealmObject {
         return lift;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,7 +85,12 @@ public class Exercise extends RealmObject {
 
         Exercise exercise = (Exercise) o;
 
-        return (musclegroup != null ? musclegroup.equals(exercise.musclegroup) : exercise.musclegroup == null) && (name != null ? name.equals(exercise.name) : exercise.name == null);
+        return name.equals(exercise.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Override
