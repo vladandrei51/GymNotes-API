@@ -27,6 +27,7 @@
         <activity android:name=".Views.Cardio.CardioListView" />
         <activity android:name=".Views.Calendar.CalendarActivity"></activity>
         <activity android:name=".Views.Calendar.LiftPreviewActivity" />
+        <activity android:name=".Views.ExerciseGenerator.ExerciseGeneratorView" />
 
     </application>
 

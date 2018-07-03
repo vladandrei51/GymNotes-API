@@ -20,6 +20,7 @@ import com.example.vlada.licenta.Utils.Utils;
 import com.example.vlada.licenta.Views.Calendar.CalendarActivity;
 import com.example.vlada.licenta.Views.Cardio.CardioListView;
 import com.example.vlada.licenta.Views.Exercise.ExerciseListView;
+import com.example.vlada.licenta.Views.ExerciseGenerator.ExerciseGeneratorView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
+    public final static String WEAK_BODY_PARTS_INTENT = "weak_muscle_groups";
     private final static String PREF_BODYWEIGHT_KEY = "bodyweight_key";
     private final static String PREF_GENDER_KEY = "list_gender";
     private static boolean isFabOpen;
@@ -35,6 +37,9 @@ public class HomeActivity extends AppCompatActivity {
     FloatingActionButton mCardioFab;
     View bgFabMenu;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    TextView strongPoints;
+    TextView weakPoints;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +79,11 @@ public class HomeActivity extends AppCompatActivity {
         bgFabMenu.setOnClickListener(view -> closeFabMenu());
 
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(HomeActivity.this, ExerciseGeneratorView.class);
+        intent.putExtra(WEAK_BODY_PARTS_INTENT, weakPoints.getText().toString());
+        startActivity(intent);
+
     }
 
     private void refreshActivity() {
@@ -189,8 +199,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        TextView strongPoints = findViewById(R.id.strong_points);
-        TextView weakPoints = findViewById(R.id.weak_points);
+        strongPoints = findViewById(R.id.strong_points);
+        weakPoints = findViewById(R.id.weak_points);
         strongPoints.setText("");
         weakPoints.setText("");
         int minimum_level = exercise2level.stream().mapToInt(a -> a).min().orElse(0);

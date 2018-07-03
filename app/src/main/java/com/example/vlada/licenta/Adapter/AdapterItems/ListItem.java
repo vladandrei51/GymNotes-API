@@ -35,4 +35,7 @@ public class ListItem implements Item {
         return view;
     }
 
+    public String getStr1() {
+        return str1;
+    }
 }

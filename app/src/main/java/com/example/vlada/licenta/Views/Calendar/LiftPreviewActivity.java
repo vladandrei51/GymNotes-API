@@ -57,21 +57,24 @@ public class LiftPreviewActivity extends AppCompatActivity {
         for (String exercise_name : allExercises) {
             Exercise exercise = realm.where(Exercise.class).equalTo("name", exercise_name).findFirst();
             items.add(new Header(exercise_name));
-            if (exercise.getType().equals("Cardio") || exercise.getType().equals("Plyometrics") || exercise.getType().equals("Stretching")) {
-                ArrayList<Cardio> cardioArrayList = realm.where(Cardio.class).equalTo("exercise_name", exercise_name)
-                        .findAll().stream().filter(cardio -> cardio.date2PrettyString().equals(prettyString)).sorted(Comparator.comparing(Cardio::getDate_ms).reversed()).collect(Collectors.toCollection(ArrayList::new));
+            if (exercise != null) {
+                if (exercise.getType().equals("Cardio") || exercise.getType().equals("Plyometrics") || exercise.getType().equals("Stretching")) {
+                    ArrayList<Cardio> cardioArrayList = realm.where(Cardio.class).equalTo("exercise_name", exercise_name)
+                            .findAll().stream().filter(cardio -> cardio.date2PrettyString().equals(prettyString)).sorted(Comparator.comparing(Cardio::getDate_ms).reversed()).collect(Collectors.toCollection(ArrayList::new));
 
-                for (Cardio cardio : cardioArrayList) {
-                    items.add(new ListItem(Utils.getPrettySetFromCardio(cardio.getTime_spent())));
+                    for (Cardio cardio : cardioArrayList) {
+                        items.add(new ListItem(Utils.getPrettySetFromCardio(cardio.getTime_spent())));
+
+                    }
+                } else {
+                    ArrayList<Lift> lifts = realm.where(Lift.class).equalTo("exercise_name", exercise_name)
+                            .findAll().stream().filter(lift -> lift.date2PrettyString().equals(prettyString)).sorted(Comparator.comparing(Lift::getDate_ms).reversed()).collect(Collectors.toCollection(ArrayList::new));
+
+                    for (Lift lift : lifts) {
+                        items.add(new ListItem(Utils.getPrettySetFromLift(lift.getWeight(), lift.getReps())));
+                    }
+
                 }
-            } else {
-                ArrayList<Lift> lifts = realm.where(Lift.class).equalTo("exercise_name", exercise_name)
-                        .findAll().stream().filter(lift -> lift.date2PrettyString().equals(prettyString)).sorted(Comparator.comparing(Lift::getDate_ms).reversed()).collect(Collectors.toCollection(ArrayList::new));
-
-                for (Lift lift : lifts) {
-                    items.add(new ListItem(Utils.getPrettySetFromLift(lift.getWeight(), lift.getReps())));
-                }
-
             }
         }
 
