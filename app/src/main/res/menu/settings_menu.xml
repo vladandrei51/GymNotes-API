@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/assistant"
+        android:icon="@drawable/assistant"
+        app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle" />
+
+    <item
         android:id="@+id/calendar_menu"
         android:icon="@drawable/calendar"
         app:showAsAction="ifRoom"
@@ -14,5 +20,6 @@
         android:icon="@drawable/settings_icon"
         app:showAsAction="ifRoom"
         tools:ignore="MenuTitle" />
+
 
 </menu>

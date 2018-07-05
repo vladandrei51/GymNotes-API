@@ -2,7 +2,9 @@ package com.example.vlada.licenta.Views.ExerciseGenerator;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
@@ -33,7 +35,7 @@ import io.realm.Sort;
 import static com.example.vlada.licenta.Views.HomeActivity.WEAK_BODY_PARTS_INTENT;
 
 public class ExerciseGeneratorView extends AppCompatActivity {
-    private final static int NUMBER_OF_EXERCISES = 8;
+    private final static String PREF_EXERCISE_NUMBER_KEY = "exercises_number_key";
     ListView list;
 
     @Override
@@ -46,8 +48,11 @@ public class ExerciseGeneratorView extends AppCompatActivity {
             put("Legs", getResources().getString(R.string.squat_strength_exercise));
             put("Middle Back", getResources().getString(R.string.row_strength_exercise));
         }};
+//exercises_number_key
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int numberOfExercises = prefs.getInt(PREF_EXERCISE_NUMBER_KEY, 8);
 
-        setTitle("Personalised workout");
+        setTitle("Personalized workout");
         setContentView(R.layout.activity_exercise_generator);
         ArrayList<String> weakMuscleGroups;
 
@@ -69,30 +74,38 @@ public class ExerciseGeneratorView extends AppCompatActivity {
                     }
                     return found;
                 })
-                .sorted(Comparator.comparing(GeneratedExercises::getmPrettyDate).reversed()) //TODO: Delete reverse for appropriate order
+                .sorted(Comparator.comparing(GeneratedExercises::getmPrettyDate).reversed())
                 .findFirst().orElse(null);
         if (generatedExercises != null)
             weakMuscleGroups = generatedExercises.getArrWeakBodyParts();
 
+        if (weakMuscleGroups.size() == 0 || weakMuscleGroups.get(0) == null || weakMuscleGroups.contains(getResources().getString(R.string.not_enough_data)) || weakMuscleGroups.contains(getResources().getString(R.string.symmetrical_strength))) {
+            Utils.displayToast(getApplicationContext(), "Not enough data yet");
+            finish();
+        }
 
+        String ms;
         list = findViewById(R.id.generated_list);
         List<Item> items = new ArrayList<>();
         for (String s : weakMuscleGroups) {
             items.add(new Header(s));
-            if (s.equals("Legs"))
-                s = "Quads";
-
             items.add(new ListItem(muscleGroup2Compound.get(s)));
 
+            int x = getLimit(numberOfExercises, weakMuscleGroups.size(), weakMuscleGroups.indexOf(s)) - 1;
+            if (s.equals("Legs"))
+                ms = "Quads";
+            else {
+                ms = s;
+            }
             List<Exercise> exercisesToAdd = realm.where(Exercise.class)
-                    .equalTo("musclegroup", s, Case.INSENSITIVE)
+                    .equalTo("musclegroup", ms, Case.INSENSITIVE)
                     .and().not().equalTo("type", "Cardio", Case.INSENSITIVE)
                     .and().not().equalTo("type", "Plyometrics", Case.INSENSITIVE)
                     .and().not().equalTo("type", "Stretching", Case.INSENSITIVE)
                     .and().not().equalTo("name", muscleGroup2Compound.get(s))
                     .sort("rating", Sort.DESCENDING)
                     .findAll()
-                    .stream().limit(getLimit(NUMBER_OF_EXERCISES, weakMuscleGroups.size(), weakMuscleGroups.indexOf(s)) - 1).collect(Collectors.toCollection(ArrayList::new));
+                    .stream().limit(x).collect(Collectors.toCollection(ArrayList::new));
 
             for (Exercise exercise : exercisesToAdd) {
                 items.add(new ListItem(exercise.getName()));
@@ -117,6 +130,7 @@ public class ExerciseGeneratorView extends AppCompatActivity {
     }
 
     private int getLimit(int maxExercises, int numberOfTotalMuscleGroups, int numberOfMuscleGroup) {
+        if (maxExercises == 0) maxExercises = 8;
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> valuesMap = new HashMap<>();
         for (int i = 0; i < numberOfTotalMuscleGroups; i++) {
             valuesMap.put(i, 0);

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_ish_background">
@@ -108,7 +109,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="10sp"
+                android:layout_marginBottom="125sp"
                 android:layout_marginLeft="20sp"
                 android:layout_marginRight="20sp"
                 android:layout_marginTop="10sp"
@@ -177,7 +178,7 @@
                         android:layout_below="@+id/b2"
                         android:layout_marginBottom="7sp"
                         android:layout_marginTop="7sp"
-                        android:layout_toRightOf="@id/weak_points_text"
+                        android:layout_toEndOf="@id/weak_points_text"
                         android:autoSizeMinTextSize="2sp"
                         android:autoSizeTextType="uniform"
                         android:maxLines="1"
@@ -211,7 +212,7 @@
                         android:layout_below="@+id/b3"
                         android:layout_marginBottom="7sp"
                         android:layout_marginTop="7sp"
-                        android:layout_toRightOf="@id/strong_points_tv"
+                        android:layout_toEndOf="@id/strong_points_tv"
                         android:autoSizeMinTextSize="2sp"
                         android:autoSizeTextType="uniform"
                         android:maxLines="1"
@@ -226,6 +227,170 @@
                         android:background="@android:color/darker_gray"
                         android:paddingBottom="5dp"
                         android:paddingTop="5dp" />
+
+                    <TextView
+                        android:id="@+id/total_lifts_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b4"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:text="Total weight lifted"
+                        android:textColor="@android:color/black" />
+
+
+                    <TextView
+                        android:id="@+id/total_lifts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@+id/b4"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:layout_toEndOf="@id/total_lifts_tv"
+                        android:autoSizeMinTextSize="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
+                        android:textAlignment="textEnd"
+                        android:textColor="@android:color/black" />
+
+                    <View
+                        android:id="@+id/b5"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/total_lifts_tv"
+                        android:background="@android:color/darker_gray"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp" />
+
+                    <TextView
+                        android:id="@+id/days_streak_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b5"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:text="Time since started lifting"
+                        android:textColor="@android:color/black" />
+
+
+                    <TextView
+                        android:id="@+id/days_streak"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@+id/b5"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:layout_toEndOf="@id/days_streak_tv"
+                        android:autoSizeMinTextSize="2sp"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
+                        android:textAlignment="textEnd"
+                        android:textColor="@android:color/black" />
+
+                    <View
+                        android:id="@+id/b8"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/days_streak_tv"
+                        android:background="@android:color/darker_gray"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp" />
+
+                    <TextView
+                        android:id="@+id/total_lifts_achievement_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b8"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:text="Lifted a total of over 100 tons"
+                        android:textColor="@android:color/black" />
+
+
+                    <ImageView
+                        android:id="@+id/total_lifts_achievement"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b8"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:scaleType="fitEnd"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:id="@+id/b6"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/total_lifts_achievement_tv"
+                        android:background="@android:color/darker_gray"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp" />
+
+                    <TextView
+                        android:id="@+id/has_elite_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b6"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:text="Elite status in at least one exercise"
+                        android:textColor="@android:color/black" />
+
+
+                    <ImageView
+                        android:id="@+id/has_elite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b6"
+                        android:layout_gravity="end"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:scaleType="fitEnd"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:id="@+id/b7"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/has_elite_tv"
+                        android:background="@android:color/darker_gray"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp" />
+
+
+                    <TextView
+                        android:id="@+id/lifting_over1year_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b7"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:text="Lifting for over an year"
+                        android:textColor="@android:color/black" />
+
+
+                    <ImageView
+                        android:id="@+id/lifting_over1year"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/b7"
+                        android:layout_gravity="end"
+                        android:layout_marginBottom="7sp"
+                        android:layout_marginTop="7sp"
+                        android:scaleType="fitEnd"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:id="@+id/b9"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/lifting_over1year_tv"
+                        android:background="@android:color/darker_gray"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp" />
+
 
                 </RelativeLayout>
 

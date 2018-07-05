@@ -1,5 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:preference="http://schemas.android.com/apk/res-auto">
+
     <PreferenceCategory android:title="Personal information">
         <Preference
             android:selectable="false"
@@ -22,6 +23,19 @@
             android:key="list_gender"
             android:summary="Currently selected: %s"
             android:title="Gender" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Additional settings">
+
+        <com.example.vlada.licenta.Utils.NumberPickerPreference
+            android:defaultValue="8"
+            android:key="exercises_number_key"
+            android:summary="Doing 8 or above exercises is recommended"
+            android:title="Number of exercises for personalized workout"
+            preference:maxValue="12"
+            preference:minValue="5"
+            preference:wrapSelectorWheel="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

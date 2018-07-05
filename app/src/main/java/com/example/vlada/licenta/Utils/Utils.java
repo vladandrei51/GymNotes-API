@@ -133,16 +133,25 @@ public class Utils {
 
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
+                realm.deleteAll();
+            });
+        }
+        ;
+
+        try (Realm r = Realm.getDefaultInstance()) {
+            r.executeTransaction(realm -> {
                 RealmResults<Exercise> exerciseList = realm.where(Exercise.class).equalTo("musclegroup", "Chest")
                         .and().equalTo("type", "Strength").findAll();
                 for (Exercise exercise : exerciseList) {
                     lift.setExercise(exercise);
-                    for (int i = 0; i < 5; i++) {
-                        LocalDate localDate = LocalDate.of(2018, Month.of(rand.nextInt(6) + 1), rand.nextInt(25) + 1);
+                    for (int i = 0; i < 2; i++) {
+                        LocalDate localDate = LocalDate.of(2018, Month.of(rand.nextInt(6) + 5), rand.nextInt(18) + 1);
                         lift.setSetDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
                         for (int j = 0; j <= rand.nextInt(4); j++) {
-                            lift.setWeight(rand.nextInt(30));
+                            lift.setWeight(rand.nextInt(120));
                             lift.setReps(rand.nextInt(20));
+                            if (lift.getReps() < 5)
+                                lift.setNotes("Low reps");
                             realm.insertOrUpdate(lift);
                         }
                     }

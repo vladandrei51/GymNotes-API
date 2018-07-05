@@ -1,6 +1,7 @@
 package com.example.vlada.licenta.Views;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,8 +14,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.Utils;
 import com.example.vlada.licenta.Views.Calendar.CalendarActivity;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import io.realm.Realm;
 
 public class HomeActivity extends AppCompatActivity {
     public final static String WEAK_BODY_PARTS_INTENT = "weak_muscle_groups";
@@ -39,8 +44,10 @@ public class HomeActivity extends AppCompatActivity {
     SwipeRefreshLayout mSwipeRefreshLayout;
     TextView strongPoints;
     TextView weakPoints;
+    private boolean hasElite = false;
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_home);
@@ -54,6 +61,42 @@ public class HomeActivity extends AppCompatActivity {
 
         populateStrengthLayout();
 
+        Realm realm = Realm.getDefaultInstance();
+        int distinctLifts = 0;
+        distinctLifts = (int) realm.where(Lift.class).findAll().stream().map(Lift::date2PrettyString).distinct().count();
+        long sumLift = 0;
+        sumLift = realm.where(Lift.class).findAll().stream().mapToInt(l -> l.getWeight() * l.getReps()).sum();
+        realm.close();
+
+        TextView totalLifts = findViewById(R.id.total_lifts);
+        ImageView totalLiftsIV = findViewById(R.id.total_lifts_achievement);
+        if (sumLift > 1000) {
+            totalLifts.setText(sumLift / 1000 + " tons");
+        } else {
+            totalLifts.setText(sumLift + " kgs");
+        }
+
+        if (sumLift > 100000) {
+            totalLiftsIV.setImageResource(R.drawable.done);
+        } else {
+            totalLiftsIV.setImageResource(R.drawable.close);
+        }
+
+        ImageView eliteStatusLV = findViewById(R.id.has_elite);
+        if (hasElite) {
+            eliteStatusLV.setImageResource(R.drawable.done);
+        } else {
+            eliteStatusLV.setImageResource(R.drawable.close);
+        }
+
+        TextView daysStreak = findViewById(R.id.days_streak);
+        daysStreak.setText(String.valueOf(distinctLifts) + " days");
+        ImageView distinctLiftsIV = findViewById(R.id.lifting_over1year);
+        if (distinctLifts > 365) {
+            distinctLiftsIV.setImageResource(R.drawable.done);
+        } else {
+            distinctLiftsIV.setImageResource(R.drawable.close);
+        }
 
         mMainFab.setOnClickListener(v -> {
             if (!isFabOpen) {
@@ -79,10 +122,6 @@ public class HomeActivity extends AppCompatActivity {
         bgFabMenu.setOnClickListener(view -> closeFabMenu());
 
         super.onCreate(savedInstanceState);
-
-        Intent intent = new Intent(HomeActivity.this, ExerciseGeneratorView.class);
-        intent.putExtra(WEAK_BODY_PARTS_INTENT, weakPoints.getText().toString());
-        startActivity(intent);
 
     }
 
@@ -129,6 +168,8 @@ public class HomeActivity extends AppCompatActivity {
         BPExerciseName.setText(R.string.benchpress_strength_exercise);
         TextView BPStrengthLabel = benchPressView.findViewById(R.id.home_exercise_strength);
         BPStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.benchpress_strength_exercise), getApplicationContext()));
+        if (BPStrengthLabel.getText().equals("Elite"))
+            hasElite = true;
         exercise2level.add(label2level.get(BPStrengthLabel.getText().toString()));
         TextView BPStrengthLevel = benchPressView.findViewById(R.id.home_exercise_level);
         BPStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.benchpress_strength_exercise)) + " kg"));
@@ -144,6 +185,8 @@ public class HomeActivity extends AppCompatActivity {
         DLExerciseName.setText(R.string.pull_strength_exercise);
         TextView DLStrengthLabel = pullView.findViewById(R.id.home_exercise_strength);
         DLStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.pull_strength_exercise), getApplicationContext()));
+        if (DLStrengthLabel.getText().equals("Elite"))
+            hasElite = true;
         exercise2level.add(label2level.get(DLStrengthLabel.getText().toString()));
         TextView DLStrengthLevel = pullView.findViewById(R.id.home_exercise_level);
         DLStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.pull_strength_exercise)) + " kg"));
@@ -159,6 +202,8 @@ public class HomeActivity extends AppCompatActivity {
         ohpExerciseName.setText(R.string.ohp_strength_exercise);
         TextView ohpStrengthLabel = shoulderPressView.findViewById(R.id.home_exercise_strength);
         ohpStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.ohp_strength_exercise), getApplicationContext()));
+        if (ohpStrengthLabel.getText().equals("Elite"))
+            hasElite = true;
         exercise2level.add(label2level.get(ohpStrengthLabel.getText().toString()));
         TextView ohpStrengthLevel = shoulderPressView.findViewById(R.id.home_exercise_level);
         ohpStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.ohp_strength_exercise)) + " kg"));
@@ -174,6 +219,8 @@ public class HomeActivity extends AppCompatActivity {
         squatExerciseName.setText(R.string.squat_strength_exercise);
         TextView squatStrengthLabel = squatView.findViewById(R.id.home_exercise_strength);
         squatStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.squat_strength_exercise), getApplicationContext()));
+        if (squatStrengthLabel.getText().equals("Elite"))
+            hasElite = true;
         exercise2level.add(label2level.get(squatStrengthLabel.getText().toString()));
         TextView squatStrengthLevel = squatView.findViewById(R.id.home_exercise_level);
         squatStrengthLevel.setText(String.valueOf(Utils.get1RMofExercise(getString(R.string.squat_strength_exercise)) + " kg"));
@@ -189,6 +236,8 @@ public class HomeActivity extends AppCompatActivity {
         rowExerciseName.setText(R.string.row_strength_exercise);
         TextView rowStrengthLabel = rowView.findViewById(R.id.home_exercise_strength);
         rowStrengthLabel.setText(Utils.getStrengthLevel(isMale, bw, getString(R.string.row_strength_exercise), getApplicationContext()));
+        if (rowStrengthLabel.getText().equals("Elite"))
+            hasElite = true;
         exercise2level.add(label2level.get(rowStrengthLabel.getText().toString()));
         TextView rowStrengthLevel = rowView.findViewById(R.id.home_exercise_level);
         rowStrengthLevel.setText(String.valueOf((Utils.get1RMofExercise(getString(R.string.row_strength_exercise)) + " kg")));
@@ -265,6 +314,12 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(HomeActivity.this, CalendarActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.assistant:
+                Intent intent1 = new Intent(HomeActivity.this, ExerciseGeneratorView.class);
+                intent1.putExtra(WEAK_BODY_PARTS_INTENT, weakPoints.getText().toString());
+                startActivity(intent1);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -297,12 +352,6 @@ public class HomeActivity extends AppCompatActivity {
                 .translationY(0f)
                 .rotation(90f).setListener(new FabAnimatorListener(bgFabMenu, mLiftingFab, mCardioFab));
     }
-//
-//    public void onDataPass(int bodyweight, boolean isMale) {
-//        this.settings_bodyweight = bodyweight;
-//        this.settings_isMale = isMale;
-//    }
-
 
     private class FabAnimatorListener implements Animator.AnimatorListener {
         List<View> mViewsToHide;
