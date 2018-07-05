@@ -14,6 +14,7 @@ import com.example.vlada.licenta.Domain.Exercise;
 import com.example.vlada.licenta.Domain.Lift;
 import com.example.vlada.licenta.R;
 import com.example.vlada.licenta.Utils.Utils;
+import com.example.vlada.licenta.Views.ExerciseView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,6 +83,18 @@ public class LiftPreviewActivity extends AppCompatActivity {
         HeaderItemListAdapter adapter = new HeaderItemListAdapter(this, items);
         ListView list = findViewById(R.id.preview_list);
         list.setAdapter(adapter);
+
+        list.setOnItemClickListener((adapterView, view, i, l) ->
+
+        {
+            if (list.getItemAtPosition(i) instanceof Header) {
+                String s = ((Header) list.getItemAtPosition(i)).getName();
+                Intent intent1 = new Intent(getApplicationContext(), ExerciseView.class);
+                intent1.putExtra("exercise_name", s);
+                startActivity(intent1);
+
+            }
+        });
 
         realm.close();
     }

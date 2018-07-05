@@ -5,8 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.vlada.licenta.Domain.Exercise;
+import com.example.vlada.licenta.Domain.MuscleGroup;
 import com.example.vlada.licenta.Net.Client.ExerciseClient;
+import com.example.vlada.licenta.Utils.Utils;
 import com.example.vlada.licenta.Views.HomeActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -28,19 +33,24 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Realm.setDefaultConfiguration(config);
 
+//        Utils.deleteAllLifts();
 //        Utils.addPlaceHolderLifts();
 
-        insertHomeExercises();
+        Realm realm = Realm.getDefaultInstance();
+        if ((long) realm.where(Exercise.class).findAll().size() < 250)
+            populateFromDB();
+        realm.close();
 
         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void insertHomeExercises() {
+    private void populateFromDB() {
         CompositeDisposable disposable = new CompositeDisposable();
         ExerciseClient client = new ExerciseClient(getApplicationContext());
-        disposable.add(client.getExerciseByName(getString(R.string.benchpress_strength_exercise))
+
+        disposable.add(client.getExercises()
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         this::getExercisesSuccess,
@@ -48,46 +58,18 @@ public class MainActivity extends AppCompatActivity {
                 )
         );
 
-        disposable.add(client.getExerciseByName(getString(R.string.pull_strength_exercise))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        this::getExercisesSuccess,
-                        this::getExercisesError
-                )
-        );
-
-        disposable.add(client.getExerciseByName(getString(R.string.row_strength_exercise))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        this::getExercisesSuccess,
-                        this::getExercisesError
-                )
-        );
-
-        disposable.add(client.getExerciseByName(getString(R.string.squat_strength_exercise))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        this::getExercisesSuccess,
-                        this::getExercisesError
-                )
-        );
-
-        disposable.add(client.getExerciseByName(getString(R.string.ohp_strength_exercise))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        this::getExercisesSuccess,
-                        this::getExercisesError
-                )
-        );
     }
+
+
 
     private void getExercisesError(Throwable throwable) {
     }
 
-    private void getExercisesSuccess(Exercise exercise) {
+    private void getExercisesSuccess(List<Exercise> exercise) {
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
-                if (realm.where(Exercise.class).equalTo("name", exercise.getName()).findFirst() == null)
+                for (Exercise current : exercise)
+                if (realm.where(Exercise.class).equalTo("name", current.getName()).findFirst() == null)
                     realm.insertOrUpdate(exercise);
             });
         }

@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -127,16 +128,20 @@ public class Utils {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
+    public static void deleteAllLifts(){
+
+        try (Realm r = Realm.getDefaultInstance()) {
+            r.executeTransaction(realm -> {
+                realm.delete(Lift.class);
+            });
+        }
+        ;
+    }
+
     public static void addPlaceHolderLifts() {
         Lift lift = new Lift();
         Random rand = new Random();
 
-        try (Realm r = Realm.getDefaultInstance()) {
-            r.executeTransaction(realm -> {
-                realm.deleteAll();
-            });
-        }
-        ;
 
         try (Realm r = Realm.getDefaultInstance()) {
             r.executeTransaction(realm -> {
@@ -150,8 +155,6 @@ public class Utils {
                         for (int j = 0; j <= rand.nextInt(4); j++) {
                             lift.setWeight(rand.nextInt(120));
                             lift.setReps(rand.nextInt(20));
-                            if (lift.getReps() < 5)
-                                lift.setNotes("Low reps");
                             realm.insertOrUpdate(lift);
                         }
                     }

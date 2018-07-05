@@ -10,6 +10,10 @@ import com.example.vlada.licenta.R;
 public class Header implements Item {
     private final String name;
 
+    public String getName() {
+        return name;
+    }
+
     public Header(String name) {
         this.name = name;
     }
