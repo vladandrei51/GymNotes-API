@@ -1,19 +1,15 @@
 package com.example.vlada.licenta.Domain;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
-import static com.example.vlada.licenta.Views.ExerciseGenerator.ExerciseGeneratorView.DATE_FORMAT;
-
 public class GeneratedExercises extends RealmObject {
     @Required
-    private String mPrettyDate;
+    private Date mPrettyDate;
 
     private RealmList<String> mWeakBodyParts;
 
@@ -21,8 +17,7 @@ public class GeneratedExercises extends RealmObject {
     }
 
     public GeneratedExercises(RealmList<String> weakBodyParts) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        mPrettyDate = simpleDateFormat.format(new Date());
+        mPrettyDate = new Date();
         this.mWeakBodyParts = weakBodyParts;
     }
 
@@ -32,7 +27,7 @@ public class GeneratedExercises extends RealmObject {
         return returnMe;
     }
 
-    public String getmPrettyDate() {
+    public Date getmPrettyDate() {
         return mPrettyDate;
     }
 }
